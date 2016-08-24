@@ -531,6 +531,7 @@ module webimmodel {
         userInfo: UserInfo;
         content: string;
         extra: string;
+        sendState: webimmodel.SentStatus;
         constructor(msg?: any) {
             msg = msg || {};
             this.content = msg.content;

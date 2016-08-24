@@ -517,6 +517,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             });
 
             var msgouter = packmysend(msg, webimmodel.MessageType.TextMessage);
+            msgouter.sentStatus = webimmodel.SentStatus.SENDING;
 
             //添加消息到历史消息并清空发送消息框
             conversationServer.addHistoryMessages(targetId, targetType, webimmodel.Message.convertMsg(msgouter));
@@ -857,7 +858,10 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                 $scope.$apply();
             });
           },
-          onFileUploaded:function( file: any, message: webimmodel.Message){
+          onFileUploaded:function( file: any, message: webimmodel.Message, err: any){
+              if(err){
+
+              }
               if (file.uploadType == 'IMAGE') {
                 $scope.uploadStatus.show = false;
                 $scope.uploadStatus.progress = 0;

@@ -477,6 +477,7 @@ conversationDire.directive("textMessage", [function() {
             uid: "="
         },
         template: '<div class="" id="{{uid}}">' +
+        '<div class="message_statue_unsend message_statue_position"></div>' +
         '<div class="Message-text">' +
         // '<pre class="at_all_people" ng-show="isAtAll">@所有人</pre>' +
         '<pre class="Message-entry" ng-bind-html="content|trustHtml">' +

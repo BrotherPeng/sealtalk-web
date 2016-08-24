@@ -3370,3 +3370,41 @@ input::-ms-clear{display:none;}
 
 
 }
+/*消息发送状态*/
+.message_statue_unsend{
+    width: 18px;
+    height: 18px;
+    background: url(../img/message_state.png) no-repeat;
+    background-size: 16px auto;
+    background-position: 0px 0px;
+    display: inline-block;
+}
+.message_statue_position{
+    position: absolute;
+    top:50%;
+    margin-top: -8px;
+    right: -40px;
+}
+.chat_item .ext .attr{
+    text-align: center;
+}
+.chat_item .attr span{
+    float: none !important;
+    display: inline-block;
+}
+.message_statue_sending{
+    width: 18px;
+    height: 18px;
+    background: url(../img/message_state.png) no-repeat;
+    background-size: 16px auto;
+    background-position: 0px -30px;
+    display: inline-block;
+}
+.message_statue_send{
+    width: 18px;
+    height: 18px;
+    background: url(../img/message_state.png) no-repeat;
+    background-size: 16px auto;
+    background-position: 0px -16px;
+    display: inline-block;
+}
