@@ -40,7 +40,7 @@ groupAddMember.controller("groupaddmemberController", ["$scope", "$state", "$sta
                 }
                 var membersid = <string[]>[];
                 var members = <webimmodel.Friend[]>[];
-                $scope.friendList.forEach(function(item: any) {
+                rawFriendList.forEach(function(item: any) {
                     if (item.isSelected) {
                         membersid.push(item.id + "");
                         members.push(item);
@@ -149,7 +149,7 @@ groupAddMember.controller("groupaddmemberController", ["$scope", "$state", "$sta
                 $scope.isLoading = true;
                 var membersid = <string[]>[];
                 var members = <webimmodel.Friend[]>[];
-                $scope.friendList.forEach(function(item: any) {
+                rawFriendList.forEach(function(item: any) {
                     if (item.isSelected) {
                         membersid.push(item.id + "");
                         members.push(item);

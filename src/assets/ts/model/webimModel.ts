@@ -353,6 +353,9 @@ module webimmodel {
                     msg.panelType = webimmodel.PanelType.InformationNotification;
                     break;
                 case MessageType.InviteMessage:
+                    msg.content = '当前版本暂不支持查看此消息';
+                    msg.panelType = webimmodel.PanelType.InformationNotification;
+                    break;
                 case MessageType.HungupMessage:
                     // if(SDKmsg.content.mediaType == '1'){
                     //   msg.content = '音频消息';
@@ -360,8 +363,8 @@ module webimmodel {
                     // else if(SDKmsg.content.mediaType == '2'){
                     //   msg.content = '视频消息';
                     // }
-                    msg.content = '当前版本暂不支持查看此消息';
-                    msg.panelType = webimmodel.PanelType.InformationNotification;
+                    // msg.content = '当前版本暂不支持查看此消息';
+                    // msg.panelType = webimmodel.PanelType.InformationNotification;
                     break;
                 default:
                     if (SDKmsg.objectName == "RC:GrpNtf") {

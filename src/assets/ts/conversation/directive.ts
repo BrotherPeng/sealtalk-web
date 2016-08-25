@@ -474,10 +474,10 @@ conversationDire.directive("textMessage", [function() {
         restrict: "E",
         scope: {
             item: "=",
-            uid: "="
+            message: "="
         },
-        template: '<div class="" id="{{uid}}">' +
-        '<div class="message_statue_unsend message_statue_position"></div>' +
+        template: '<div class="" id="{{message.messageUId}}">' +
+        // '<div class="{{msgStyle}} message_statue_position"></div>' +
         '<div class="Message-text">' +
         // '<pre class="at_all_people" ng-show="isAtAll">@所有人</pre>' +
         '<pre class="Message-entry" ng-bind-html="content|trustHtml">' +
@@ -491,10 +491,10 @@ conversationDire.directive("textMessage", [function() {
             var EMailArr = <string[]>[];
             scope.isAtAll = false;
             scope.isAtPart = false;
-            if(scope.$parent.item.mentionedInfo && scope.$parent.item.mentionedInfo.type == webimmodel.AtTarget.All){
+            if(scope.message.mentionedInfo && scope.message.mentionedInfo.type == webimmodel.AtTarget.All){
               scope.isAtAll = true;
             }
-            if(scope.$parent.item.mentionedInfo && scope.$parent.item.mentionedInfo.type == webimmodel.AtTarget.Part){
+            if(scope.message.mentionedInfo && scope.message.mentionedInfo.type == webimmodel.AtTarget.Part){
               scope.isAtPart = true;
             }
             // scope.itemid = scope.$parent.item.messageUId;
@@ -516,6 +516,27 @@ conversationDire.directive("textMessage", [function() {
             for (var i = 0, len = EMailArr.length; i < len; i++) {
                 scope.content = scope.content.replace('[email`' + i + ']', '<a href="mailto:' + EMailArr[i] + '">' + EMailArr[i] + '<a>');
             }
+
+            // var _reg = /^([A-Z0-9]{4}-){3}[A-Z0-9]{4}$/;
+            // if(_reg.test(scope.message.messageUId)){
+            //   return;
+            // }
+            // var unbingWatch = scope.$watch("message.sentStatus", function (newVal: number, oldVal: number) {
+            //     switch(newVal){
+            //       case webimmodel.SentStatus.SENDING:
+            //          scope.msgStyle = 'message_statue_sending';
+            //          break;
+            //       case webimmodel.SentStatus.FAILED:
+            //           scope.msgStyle = 'message_statue_unsend';
+            //           unbingWatch();
+            //           break;
+            //       case webimmodel.SentStatus.SENT:
+            //          scope.msgStyle = '';
+            //          unbingWatch();
+            //          break;
+            //
+            //     }
+            // });
             // TODO 匹配 @ 信息显示消息内容
         }
     }
@@ -526,6 +547,7 @@ conversationDire.directive("imageMessage", [function() {
         restrict: "E",
         scope: { item: "=" },
         template: '<div class="">' +
+        // '<div class="{{msgStyle}} message_statue_position"></div>' +
         '<div class="Message-img">' +
         '<span id="{{\'rebox_\'+$id}}" ng-click="showBigImage()"   class="Message-entry gallery" style="">' +
         '<!-- <p>发给您一张示意图</p> -->' +
@@ -625,8 +647,12 @@ conversationDire.directive("locationMessage", [function() {
 conversationDire.directive("fileMessage", [function() {
     return {
         restrict: "E",
-        scope: { item: "=" },
+        scope: {
+          item: "=" ,
+          message: "="
+        },
         template: '<div class="" id="{{itemid}}">' +
+        '<div class="{{msgStyle}} message_statue_position"></div>' +
         '<div class="upload_file">' +
          '<div class="out_border">' +
             '<div class="file_type fl">' +
@@ -849,6 +875,27 @@ conversationDire.directive("fileMessage", [function() {
                 return;
             updateState();
           });
+
+          // var _reg = /^([A-Z0-9]{4}-){3}[A-Z0-9]{4}$/;
+          // if(_reg.test(scope.message.messageUId)){
+          //   return;
+          // }
+          // var unbingSentStatus = scope.$watch("message.sentStatus", function (newVal: number, oldVal: number) {
+          //     switch(newVal){
+          //       case webimmodel.SentStatus.SENDING:
+          //          scope.msgStyle = 'message_statue_sending';
+          //          break;
+          //       case webimmodel.SentStatus.FAILED:
+          //           scope.msgStyle = 'message_statue_unsend';
+          //           unbingSentStatus();
+          //           break;
+          //       case webimmodel.SentStatus.SENT:
+          //          scope.msgStyle = '';
+          //          unbingSentStatus();
+          //          break;
+          //
+          //     }
+          // });
         }
     }
 }])

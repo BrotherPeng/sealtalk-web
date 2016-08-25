@@ -22,12 +22,12 @@
      </div>
      <div class="Message-body" >
          <div  ng-switch="item.messageType">
-           <text-message item="item.content" uid="item.messageUId" ng-switch-when="TextMessage"></text-message>
+           <text-message item="item.content" message="item" ng-switch-when="TextMessage"></text-message>
            <image-message item="item.content" ng-switch-when="ImageMessage"></image-message>
            <voice-message item="item.content" ng-switch-when="VoiceMessage"></voice-message>
            <richcontent-message item="item.content" ng-switch-when="RichContentMessage"></richcontent-message>
            <location-message  item="item.content" ng-switch-when="LocationMessage"></location-message>
-           <file-message  item="item.content" ng-switch-when="FileMessage"></file-message>
+           <file-message  item="item.content" message="item" ng-switch-when="FileMessage"></file-message>
          </div>
      </div>
   </div>

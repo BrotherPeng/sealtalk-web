@@ -1828,7 +1828,7 @@ var RongIMLib;
             return RongIMClient._instance;
         };
         RongIMClient.reconnect = function (callback) {
-            if (RongIMLib.Bridge._client && RongIMLib.Bridge._client.channel && RongIMLib.Bridge._client.channel.connectionStatus != RongIMLib.ConnectionStatus.CONNECTED && RongIMLib.Bridge._client.channel.connectionStatus != RongIMLib.ConnectionStatus.CONNECTING) {
+            if (!RongIMLib.Bridge._client || (RongIMLib.Bridge._client.channel.connectionStatus != RongIMLib.ConnectionStatus.CONNECTED && RongIMLib.Bridge._client.channel.connectionStatus != RongIMLib.ConnectionStatus.CONNECTING)) {
                 RongIMClient.bridge.reconnect(callback);
             }
         };
@@ -2213,7 +2213,6 @@ var RongIMLib;
                                 msg.messageUId = data.messageUId;
                                 msg.sentTime = data.timestamp;
                                 msg.sentStatus = RongIMLib.SentStatus.SENT;
-                                msg.messageId = data.messageId;
                                 RongIMClient._dataAccessProvider.updateMessage(msg);
                             },
                             onError: function () { }
@@ -2455,10 +2454,6 @@ var RongIMLib;
                     });
                 }
             });
-        };
-        RongIMClient.prototype.clearLocalStorage = function (callback) {
-            RongIMLib.LocalStorageProvider.getInstance().clearItem();
-            callback();
         };
         RongIMClient.prototype.setMessageExtra = function (messageId, value, callback) {
             RongIMClient._dataAccessProvider.setMessageExtra(messageId, value, {
@@ -3601,7 +3596,7 @@ var RongIMLib;
                                 RongIMLib.RongIMClient._cookieHelper.setItem(temp, RongIMLib.RongIMClient._cookieHelper.getItem("RongBackupServer"));
                                 var url = RongIMLib.Bridge._client.channel.socket.currentURL;
                                 Bridge._client.channel.socket.currentURL = arrs[0] + url.substring(url.indexOf("/"), url.length);
-                                if (Bridge._client.channel && Bridge._client.channel.connectionStatus != RongIMLib.ConnectionStatus.CONNECTED && Bridge._client.channel.connectionStatus != RongIMLib.ConnectionStatus.CONNECTING) {
+                                if (Bridge._client.channel.connectionStatus != RongIMLib.ConnectionStatus.CONNECTED && Bridge._client.channel.connectionStatus != RongIMLib.ConnectionStatus.CONNECTING) {
                                     RongIMLib.RongIMClient.connect(RongIMLib.RongIMClient._memoryStore.token, RongIMLib.RongIMClient._memoryStore.callback);
                                 }
                             }
@@ -4234,7 +4229,7 @@ var RongIMLib;
                 case "PubAckMessage":
                     var item = Bridge._client.handler.map[msg.getMessageId()];
                     if (item) {
-                        item.Callback.process(msg.getStatus() || 0, msg.getMessageUId(), msg.getTimestamp(), item.Message, msg.getMessageId());
+                        item.Callback.process(msg.getStatus() || 0, msg.getMessageUId(), msg.getTimestamp(), item.Message);
                         delete Bridge._client.handler.map[msg.getMessageId()];
                     }
                     else {
@@ -4377,14 +4372,14 @@ var RongIMLib;
             this._cb = _cb;
             this._timeout = _timeout;
         }
-        PublishCallback.prototype.process = function (_status, messageUId, timestamp, _msg, messageId) {
+        PublishCallback.prototype.process = function (_status, messageUId, timestamp, _msg) {
             this.readTimeOut();
             if (_status == 0) {
                 if (_msg) {
                     _msg.setSentStatus = _status;
                 }
                 RongIMLib.RongIMClient._cookieHelper.setItem(RongIMLib.Bridge._client.userId, timestamp);
-                this._cb({ messageUId: messageUId, timestamp: timestamp, messageId: messageId });
+                this._cb({ messageUId: messageUId, timestamp: timestamp });
             }
             else {
                 this._timeout(_status);
@@ -4501,7 +4496,7 @@ var RongIMLib;
                 }
             }
             else if (status == 6) {
-                //重定向 连错 CMP
+                //重定向
                 var x = {};
                 var me = this;
                 new RongIMLib.Navigation().getServerEndpoint(this._client.token, this._client.appId, function () {
@@ -7332,8 +7327,8 @@ var RongIMLib;
     })();
     RongIMLib.PublicServiceProfile = PublicServiceProfile;
     var UserInfo = (function () {
-        function UserInfo(id, name, portraitUri) {
-            this.id = id;
+        function UserInfo(userId, name, portraitUri) {
+            this.userId = userId;
             this.name = name;
             this.portraitUri = portraitUri;
         }
@@ -7569,7 +7564,6 @@ var RongIMLib;
             var me = this;
             this.getConversation(conversationType, targetId, {
                 onSuccess: function (conver) {
-                    conver.isTop = true;
                     me.addConversation(conver, callback);
                     callback.onSuccess(true);
                 },
@@ -7971,12 +7965,8 @@ var RongIMLib;
 (function (RongIMLib) {
     var CookieProvider = (function () {
         function CookieProvider() {
-            this.prefix = 'rong_';
         }
         CookieProvider.prototype.setItem = function (composedKey, object, isSave) {
-            if (composedKey.indexOf(this.prefix) == -1) {
-                composedKey = this.prefix + composedKey;
-            }
             if (isSave) {
                 var exp = new Date();
                 exp.setTime(exp.getTime() + 1 * 24 * 3600 * 1000);
@@ -7988,9 +7978,6 @@ var RongIMLib;
         };
         CookieProvider.prototype.getItem = function (composedKey) {
             if (composedKey) {
-                if (composedKey.indexOf(this.prefix) == -1) {
-                    composedKey = this.prefix + composedKey;
-                }
                 composedKey = composedKey.replace(/\|/, "\\|");
             }
             var arr = document.cookie.match(new RegExp("(^| )" + composedKey + "=([^;]*)(;|$)"));
@@ -8000,15 +7987,12 @@ var RongIMLib;
             return null;
         };
         CookieProvider.prototype.removeItem = function (composedKey) {
-            if (composedKey.indexOf(this.prefix) == -1) {
-                composedKey = this.prefix + composedKey;
-            }
             if (this.getItem(composedKey)) {
                 document.cookie = composedKey + "=;path=/;expires=Thu, 01-Jan-1970 00:00:01 GMT";
             }
         };
         CookieProvider.prototype.getItemKey = function (regStr) {
-            var arrs = document.cookie.match(new RegExp("(^| )rong_navi\\w+?=([^;]*)(;|$)")), val = "";
+            var arrs = document.cookie.match(new RegExp("(^| )navi\\w+?=([^;]*)(;|$)")), val = "";
             if (arrs) {
                 for (var i = 0, len = arrs.length; i < len; i++) {
                     if (arrs[i].indexOf(regStr) > -1) {
@@ -8020,12 +8004,11 @@ var RongIMLib;
             return val ? val.split("=")[0].replace(/^\s/, "") : null;
         };
         CookieProvider.prototype.clearItem = function () {
-            var keys = document.cookie.match(/[^ =;]+(?=\=)/g), me = this;
+            var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
             if (keys) {
                 for (var i = keys.length; i--;) {
-                    if (keys[i].indexOf(me.prefix) > -1) {
-                        document.cookie = keys[i] + "=0;path=/;expires=" + new Date(0).toUTCString();
-                    }
+                    //TODO 条件判断，不要删除用户自己的 cookie
+                    document.cookie = keys[i] + "=0;path=/;expires=" + new Date(0).toUTCString();
                 }
             }
         };
@@ -8039,7 +8022,6 @@ var RongIMLib;
     var MemeoryProvider = (function () {
         function MemeoryProvider() {
             this._memeoryStore = {};
-            this.prefix = "rong_";
         }
         MemeoryProvider.prototype.setItem = function (composedKey, object) {
             this._memeoryStore[composedKey] = decodeURIComponent(object);
@@ -8080,40 +8062,26 @@ var RongIMLib;
 (function (RongIMLib) {
     var LocalStorageProvider = (function () {
         function LocalStorageProvider() {
-            this.prefix = 'cu';
         }
         LocalStorageProvider.getInstance = function () {
-            return LocalStorageProvider._instance;
+            return new LocalStorageProvider();
         };
         LocalStorageProvider.prototype.setItem = function (composedKey, object) {
-            if (composedKey) {
-                localStorage.setItem(composedKey.toString(), object);
-            }
+            localStorage.setItem(composedKey.toString(), object);
         };
         LocalStorageProvider.prototype.getItem = function (composedKey) {
-            if (composedKey) {
-                return localStorage.getItem(composedKey ? composedKey.toString() : "");
-            }
-            return "";
+            return localStorage.getItem(composedKey ? composedKey.toString() : "");
         };
         LocalStorageProvider.prototype.removeItem = function (composedKey) {
-            if (composedKey) {
-                localStorage.removeItem(composedKey.toString());
-            }
+            localStorage.removeItem(composedKey.toString());
         };
         LocalStorageProvider.prototype.clearItem = function () {
-            var me = this, str = me.prefix + RongIMLib.Bridge._client.userId;
-            for (var key in localStorage) {
-                if (key.indexOf(str) > -1) {
-                    me.removeItem(key);
-                }
-            }
+            localStorage.clear();
         };
         //单位：字节
         LocalStorageProvider.prototype.onOutOfQuota = function () {
             return JSON.stringify(localStorage).length;
         };
-        LocalStorageProvider._instance = new LocalStorageProvider();
         return LocalStorageProvider;
     })();
     RongIMLib.LocalStorageProvider = LocalStorageProvider;

@@ -920,10 +920,19 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
 
                         break;
                     case webimmodel.MessageType.InviteMessage:
+                        // msg.content.inviteUserIds
+                        // mainDataServer.loginUser.id
+                        var _inviteMsg = <any>data.content;
+                        var changemembers = _inviteMsg.inviteUserIds;
+                        var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
+                        if(self > -1){
+                           addmessage(msg);
+                        }
+                        break;
                     case webimmodel.MessageType.HungupMessage:
                         //判断如果为当前输入页面用户
                         // msg.content = msg.senderUserName + msg.content;
-                        addmessage(msg);
+                        // addmessage(msg);
                         break;
                     default:
                         console.log(data.messageType + "：未处理")

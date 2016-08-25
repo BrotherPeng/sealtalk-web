@@ -382,10 +382,25 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
             if (currenthis[i].panelType == webimmodel.PanelType.Message
               && currenthis[i].messageUId == undefined
               && currenthis[i].messageDirection == webimmodel.MessageDirection.SEND
-              && currenthis[i].messageType == msg.messageType
-              && currenthis[i].content.extra == msg.content.extra
+              && currenthis[i].messageId == msg.messageId
             ) {
+                currenthis[i].messageUId = msg.messageUId;
+                currenthis[i].sentStatus = webimmodel.SentStatus.SENT;
                 currenthis.splice(i, 1, msg);
+                break;
+            }
+          }
+        }
+
+        function updateSendStatus(id: string, type: string, messageid: string, status: webimmodel.SentStatus){
+          var currenthis = conversationServer.historyMessagesCache[type + "_" + id];
+          for(var i = currenthis.length - 1; i > -1; i--){
+            if (currenthis[i].panelType == webimmodel.PanelType.Message
+              && currenthis[i].messageUId == undefined
+              && currenthis[i].messageDirection == webimmodel.MessageDirection.SEND
+              && currenthis[i].messageId == messageid
+            ) {
+                currenthis[i].sentStatus = status;
                 break;
             }
           }
@@ -419,6 +434,7 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
         conversationServer.getLastMessageTime = getLastMessageTime;
         conversationServer.getMessageById = getMessageById;
         conversationServer.updateSendMessage = updateSendMessage;
+        conversationServer.updateSendStatus = updateSendStatus;
 
         return conversationServer;
     }])
@@ -444,4 +460,5 @@ interface conversationServer {
     clearHistoryMessages(id: string, type: number): void
     getLastMessageTime(id: string, type: number): number
     updateSendMessage(id: string, type:number, message: webimmodel.Message): boolean
+    updateSendStatus(id: string, type:number, uid: string, status: webimmodel.SentStatus): boolean
 }

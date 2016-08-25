@@ -354,6 +354,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             msgouter.messageDirection = RongIMLib.MessageDirection.SEND;
             msgouter.messageType = msgType;
             msgouter.senderUserId = mainDataServer.loginUser.id;
+            msgouter.messageId = (RongIMLib.MessageIdHandler.messageId + 1).toString();
             return msgouter;
         }
 
@@ -483,15 +484,40 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
               // mentioneds.mentionedContent = con;
               msg.mentionedInfo = mentioneds;
             }
-            msg.extra = getRandom(1,1000).toString();
+            // msg.extra = getRandom(1,1000).toString();
+
+            var msgouter = packmysend(msg, webimmodel.MessageType.TextMessage);
+            var appendMsg = webimmodel.Message.convertMsg(msgouter);
+            appendMsg.sentStatus = webimmodel.SentStatus.SENDING;
+
+            //添加消息到历史消息并清空发送消息框
+            conversationServer.addHistoryMessages(targetId, targetType, appendMsg);
+            $scope.$emit("msglistchange");
+            // setTimeout(function () {
+            //     $scope.$emit("conversationChange");
+            // }, 200);
+            // $scope.mainData.conversation.updateConStatic(webimmodel.Message.convertMsg(msgouter), true, true);
+            $scope.currentConversation.draftMsg = "";
+
+            var obj = document.getElementById("message-content");
+            webimutil.Helper.getFocus(obj);
+
+//TODO 消息发送状态
+            // $scope.mainData.conversation.updateConStaticBeforeSend(appendMsg, true);
+            // $('#' + targetType + '_' + targetId).find('.no-remind').siblings('span').removeClass().addClass("message_statue_sending");
 
             RongIMSDKServer.sendMessage(targetType, targetId, msg, atFlag && (targetType == webimmodel.conversationType.Group || targetType == webimmodel.conversationType.Discussion)).then(function(msg) {
                atArray = [];
+//TODO 消息发送状态
+              //  $('#' + targetType + '_' + targetId).find('.no-remind').siblings('span').removeClass();
                var _message = webimmodel.Message.convertMsg(msg);
                $scope.mainData.conversation.updateConStatic(_message, true, true);
-              //  conversationServer.updateSendMessage(targetId, targetType, _message);
+               conversationServer.updateSendMessage(targetId, targetType, _message);
             }, function(error: any) {
               var content = '';
+//TODO 消息发送状态
+              // $('#' + targetType + '_' + targetId).find('.no-remind').siblings('span').removeClass().addClass("message_statue_unsend");
+              // conversationServer.updateSendStatus(targetId, targetType, appendMsg.messageId, webimmodel.SentStatus.FAILED);
               switch (error.errorCode) {
                 case RongIMLib.ErrorCode.TIMEOUT:
                   //  if(!mainDataServer.isConnected){
@@ -516,20 +542,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
               }
             });
 
-            var msgouter = packmysend(msg, webimmodel.MessageType.TextMessage);
-            msgouter.sentStatus = webimmodel.SentStatus.SENDING;
 
-            //添加消息到历史消息并清空发送消息框
-            conversationServer.addHistoryMessages(targetId, targetType, webimmodel.Message.convertMsg(msgouter));
-            $scope.$emit("msglistchange");
-            // setTimeout(function () {
-            //     $scope.$emit("conversationChange");
-            // }, 200);
-            // $scope.mainData.conversation.updateConStatic(webimmodel.Message.convertMsg(msgouter), true, true);
-            $scope.currentConversation.draftMsg = "";
-
-            var obj = document.getElementById("message-content");
-            webimutil.Helper.getFocus(obj);
         }
 
         $scope.back = function() {
@@ -828,6 +841,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                 filemsg.state = webimmodel.FileState.Uploading;
                 msg.content = filemsg;
                 addmessage(msg);
+
               // }
               $scope.$apply();
           },
@@ -838,30 +852,28 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             }
           },
           onUploadProgress:function(file: any){
+            var item = conversationServer.getMessageById($scope.currentConversation.targetId, $scope.currentConversation.targetType, file.id);
             if (file.uploadType == 'IMAGE') {
               $scope.uploadStatus.progress = file.percent + "%";
             }
             else if(file.percent > 0){
-              var item = conversationServer.getMessageById($scope.currentConversation.targetId, $scope.currentConversation.targetType, file.id);
               // item.content.extra = file.percent + "%";
               item.content.progress = file.percent;
               item.content.state = item.content.state == webimmodel.FileState.Uploading ? -1 : webimmodel.FileState.Uploading;
             }
-            // else if(file.percent == 0){
-            //   var item = conversationServer.getMessageById($scope.currentConversation.targetId, $scope.currentConversation.targetType, file.id);
-            //   if(item){
-            //     item.content.state = webimmodel.FileState.Failed;
-            //   }
+
+//TODO 消息发送状态
+            // if(item && file.percent == 100){
+            //   $scope.mainData.conversation.updateConStaticBeforeSend(item, true);
+            //   item.sentStatus = webimmodel.SentStatus.SENDING;
+            //   $('#' + item.conversationType + '_' + item.targetId).find('.no-remind').siblings('span').removeClass().addClass("message_statue_sending");
             // }
-            // $('#'+file.id).find('div.up_process > div').css('width', file.percent + "%");
             setTimeout(function () {
                 $scope.$apply();
             });
           },
           onFileUploaded:function( file: any, message: webimmodel.Message, err: any){
-              if(err){
 
-              }
               if (file.uploadType == 'IMAGE') {
                 $scope.uploadStatus.show = false;
                 $scope.uploadStatus.progress = 0;
@@ -871,12 +883,21 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                 item.content.fileUrl = message.content.fileUrl;
                 item.content.state = webimmodel.FileState.Success;
                 $scope.mainData.conversation.updateConStatic(webimmodel.Message.convertMsg(message), true, true);
+//TODO 消息发送状态
+                // if(err && item){
+                //   item.sentStatus = webimmodel.SentStatus.FAILED;
+                //   $('#' + item.conversationType + '_' + item.targetId).find('.no-remind').siblings('span').removeClass().addClass("message_statue_unsend");
+                // }
+                // else if(message && item){
+                //   item.sentStatus = webimmodel.SentStatus.SENT;
+                //   $('#' + item.conversationType + '_' + item.targetId).find('.no-remind').siblings('span').removeClass();
+                // }
               }
               if(message.messageType == webimmodel.MessageType.ImageMessage){
                 conversationServer.addHistoryMessages($scope.currentConversation.targetId, $scope.currentConversation.targetType, webimmodel.Message.convertMsg(message));
                 setTimeout(function () {
                     $scope.$emit("msglistchange");
-                    $scope.$emit("conversationChange");
+                    // $scope.$emit("conversationChange");
                 }, 200);
               }
               $scope.$apply();

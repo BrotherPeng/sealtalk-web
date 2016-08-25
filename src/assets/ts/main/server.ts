@@ -750,6 +750,40 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
               console.log("RongIMSDKServer.getConversation err:" + err, type, id);
             });
         },
+        updateConStaticBeforeSend: function (msg: webimmodel.Message, add: boolean){
+          var type = msg.conversationType , id = msg.targetId;
+          var hasCon = false;
+          var oldUnread = 0, totalUnreadCount = mainDataServer.conversation.totalUnreadCount, isfirst = false, conversationItem:webimmodel.Conversation;
+          for (var i = 0, len = mainDataServer.conversation.conversations.length; i < len; i++) {
+              conversationItem = mainDataServer.conversation.conversations[i];
+              if (conversationItem.targetType == type && conversationItem.targetId == id) {
+                  switch(msg.messageType){
+                    case webimmodel.MessageType.TextMessage:
+                      conversationItem.lastMsg = msg.content.content;
+                      break;
+                    case webimmodel.MessageType.ImageMessage:
+                      conversationItem.lastMsg = '[图片';
+                      break;
+                    case webimmodel.MessageType.FileMessage:
+                      conversationItem.lastMsg = '[文件] ' + msg.content.name;
+                      break;
+                  }
+
+                  conversationItem.lastTime = msg.sentTime;
+                  conversationItem.unReadNum = 0;
+                  conversationItem.atStr = '';
+                  if(type == webimmodel.conversationType.Group){
+                     conversationItem.lastMsg = '你: ' + conversationItem.lastMsg;
+                  }
+
+                  if(i > 0){
+                    mainDataServer.conversation.conversations.splice(i, 1);
+                    mainDataServer.conversation.conversations.unshift(conversationItem);
+                  }
+                  break;
+              }
+          }
+        },
         // updateConStatic: function (msg: webimmodel.Message, add: boolean, isChat:boolean) {
         //   var type = msg.conversationType , id = msg.targetId;
         //   var hasCon = false;
@@ -1578,6 +1612,8 @@ interface mainDataServer {
         updateConversationTitle(type: number, targetId: string, title: string): boolean
         updateConversationDetail(type: number, targetId: string, title: string, portrait: string): boolean
         updateConStatic(msg: webimmodel.Message, add: boolean, isChat:boolean): void
+        updateConStaticBeforeSend(msg: webimmodel.Message, add: boolean): void
+
         setDraft(type: string, id: string, msg: string): boolean
         clearMessagesUnreadStatus(type: string, id: string): boolean
         find(str: string, arr: webimmodel.Conversation[]): webimmodel.Conversation[]
