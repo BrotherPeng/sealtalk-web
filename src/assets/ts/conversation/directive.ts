@@ -638,9 +638,6 @@ conversationDire.directive("imageMessage", [function() {
     '<div class="Message-img">' +
     '<span id="{{\'rebox_\'+$id}}" class="Message-entry gallery" style="max-height:240px;max-width:240px;border-radius:5px;">' +
     '<a href="{{item.imageUri}}" style="max-height:240px;max-width:240px;display:inline-block;"></a>' +
-    // '<!-- <p>发给您一张示意图</p> -->' +
-    // // '<img ng-src="{{item.content||\'../../static/images/barBg.png\'}}" data-image="{{item.imageUri}}" alt=""/>' +
-    // '<a href="{{item.imageUri||\'assets/img/barBg.png\'}}"><img ng-src="{{item.content||\'../../static/images/barBg.png\'}}"  data-image="{{item.imageUri}}" alt=""/></a>' +
     '</span>' +
     // '<a href="{{item.imageUri}}" download>下载</a>' +
     '</div>' +
@@ -701,39 +698,23 @@ conversationDire.directive("imageMessage", [function() {
       var img = new Image();
       scope.itemid = scope.$parent.item.messageUId;
       img.src = scope.item.imageUri;
-      // setTimeout(function() {
-      //   $('#rebox_' + scope.$id).rebox({ selector: 'a' }).bind("rebox:open", function() {
-      //     //jQuery rebox 点击空白关闭
-      //     var rebox = <any>document.getElementsByClassName("rebox")[0];
-      //     rebox.onclick = function(e: any) {
-      //       if (e.target.tagName.toLowerCase() != "img") {
-      //         var rebox_close = <any>document.getElementsByClassName("rebox-close")[0];
-      //         rebox_close.click();
-      //         rebox = null; rebox_close = null;
-      //       }
-      //     }
-      //   });
-      // })
 
-
+      setTimeout(function(){
+        $('#rebox_' + scope.$id).rebox({ selector: 'a' }).bind("rebox:open", function() {
+          //jQuery rebox 点击空白关闭
+          var rebox = <any>document.getElementsByClassName("rebox")[0];
+          rebox.onclick = function(e: any) {
+            if (e.target.tagName.toLowerCase() != "img") {
+              var rebox_close = <any>document.getElementsByClassName("rebox-close")[0];
+              rebox_close.click();
+              rebox = null; rebox_close = null;
+            }
+          }
+        });
+      })
 
       img.onload = function() {
-        // scope.$apply(function() {
-        //   scope.item.content = scope.item.imageUri
-        // });
-        setTimeout(function(){
-          $('#rebox_' + scope.$id).rebox({ selector: 'a' }).bind("rebox:open", function() {
-            //jQuery rebox 点击空白关闭
-            var rebox = <any>document.getElementsByClassName("rebox")[0];
-            rebox.onclick = function(e: any) {
-              if (e.target.tagName.toLowerCase() != "img") {
-                var rebox_close = <any>document.getElementsByClassName("rebox-close")[0];
-                rebox_close.click();
-                rebox = null; rebox_close = null;
-              }
-            }
-          });
-        })
+
         var box = document.getElementById('rebox_' + scope.$id);
         var pos = getBackgrund(img.width, img.height);
         box.style.backgroundImage = 'url(' + scope.item.imageUri + ')';
