@@ -301,49 +301,27 @@ var RongIMLib;
             }
         };
         RongUploadLib.prototype.getThumbnail = function (obj, area, callback) {
-            var canvas = document.createElement("canvas"), context = canvas.getContext('2d'), me = this;
+            var canvas = document.createElement("canvas"),
+              context = canvas.getContext('2d'),me=this;
+
             var img = new Image();
-            img.onload = function () {
-                var target_w;
-                var target_h;
-                var imgarea = img.width * img.height;
-                var _y = 0, _x = 0, maxWidth = 240, maxHeight = 240;
-                if (imgarea > area) {
-                    var scale = Math.sqrt(imgarea / area);
-                    scale = Math.ceil(scale * 100) / 100;
-                    target_w = img.width / scale;
-                    target_h = img.height / scale;
-                }
-                else {
-                    target_w = img.width;
-                    target_h = img.height;
-                }
-                canvas.width = target_w;
-                canvas.height = target_h;
-                context.drawImage(img, 0, 0, target_w, target_h);
-                try {
-                    if (canvas.width > maxWidth || canvas.height > maxHeight) {
-                        if (target_w > maxWidth) {
-                            _x = (target_w - maxWidth) / 2;
-                            target_w = maxWidth;
-                        }
-                        if (target_h > maxHeight) {
-                            _y = (target_h - maxHeight) / 2;
-                            target_h = maxHeight;
-                        }
-                        var imgData = context.getImageData(_x, _y, target_w, target_h);
-                        context.createImageData(target_w, target_h);
-                        canvas.width = target_w;
-                        canvas.height = target_h;
-                        context.putImageData(imgData, 0, 0);
-                    }
-                    var _canvas = canvas.toDataURL("image/jpeg", 0.5);
-                    callback(obj, _canvas);
-                }
-                catch (e) {
-                    callback(obj, null);
-                }
-            };
+
+            img.onload = function() {
+              var pos = me.getBackgrund(img.width, img.height);
+
+              canvas.width = pos.w>240?240:pos.w;
+              canvas.height = pos.h>240?240:pos.h;
+
+              context.drawImage(img, pos.x, pos.y, pos.w, pos.h);
+
+              try {
+                var base64str = canvas.toDataURL("image/jpeg", 0.7);
+                callback(obj, base64str);
+              } catch (e) {
+                callback(obj, null);
+              }
+
+            }
             img.src = me.getFullPath(obj);
         };
         RongUploadLib.prototype.getFullPath = function (file) {
@@ -355,6 +333,41 @@ var RongIMLib;
                 return null;
             }
         };
+        RongUploadLib.prototype.getBackgrund = function(width, height) {
+
+          var isheight = width < height;
+          var scale = isheight ? height / width : width / height;
+          var zoom, x = 0, y = 0, w, h;
+          if (scale > 2.4) {
+            if (isheight) {
+              zoom = width / 100;
+              w = 100;
+              h = height / zoom;
+              y = (h - 240) / 2;
+            } else {
+              zoom = height / 100;
+              h = 100;
+              w = width / zoom;
+              x = (w - 240) / 2;
+            }
+          } else {
+            if (isheight) {
+              zoom = height / 240;
+              h = 240;
+              w = width / zoom;
+            } else {
+              zoom = width / 240;
+              w = 240;
+              h = height / zoom;
+            }
+          }
+          return {
+            w: w,
+            h: h,
+            x: -x,
+            y: -y
+          }
+        }
         return RongUploadLib;
     })();
     RongIMLib.RongUploadLib = RongUploadLib;
