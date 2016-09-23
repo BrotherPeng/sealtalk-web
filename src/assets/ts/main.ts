@@ -5,10 +5,10 @@
 var webimApp = angular.module("webim", ["ui.router", "ui.event", "uiSwitch", "ng.shims.placeholder",
     "webim.main.directive", "webim.main.controller", "webim.main.server",
     "webim.conversation.controller", "webim.conversation.directive",
-    "webim.addfirend", "webim.friendinfo", 
+    "webim.addfirend", "webim.friendinfo",
     "webim.creategroup", "webim.addgroup", "webim.groupaddmember", "webim.goupinfo",
     "webim.userinfo", "webim.blacklist", "webim.notification", "webim.usermodifypassword",
-    "webim.account", "webim.groupdelmember"], function() {
+    "webim.account", "webim.groupdelmember","treeControl"], function() {
     });
 
 webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvider",

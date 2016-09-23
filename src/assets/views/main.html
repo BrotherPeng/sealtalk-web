@@ -88,6 +88,12 @@
                           <!-- <frienditem ng-repeat="item in mainData.contactsList.friendList" item="item"></frienditem> -->
                       </div>
                   </div>
+                  <div class="groupArea">
+                      <div class="groupAreaHeader" ng-click="showgorganization=!showgorganization">公司通讯录<span class="caret" ng-class="{'open':!showgorganization}"></span></div>
+                      <div class="groupAreaBody" ng-show="!showgorganization">
+                        <organization></organization>
+                      </div>
+                  </div>
               </div>
               <div class="communicateList" ng-show="switchbtn.issearchList">
                 <div class="membersArea" ng-show="searchList.friendList.length">

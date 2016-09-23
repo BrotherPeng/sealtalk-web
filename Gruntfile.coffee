@@ -97,6 +97,14 @@ module.exports = (grunt) ->
             ]
             dest: './build/assets/js'
           }
+          {
+            expand:true
+            cwd:'./vendor/angular-tree-control/images'
+            src:[
+              './**/*.*'
+            ]
+            dest:'./build/assets/img'
+          }
         ]
       release:
         files: [
@@ -190,6 +198,7 @@ module.exports = (grunt) ->
               './bower_components/angular-ui-event/dist/event.min.js'
               './bower_components/angular-ui-switch/angular-ui-switch.min.js'
               './bower_components/angular-shims-placeholder/dist/angular-shims-placeholder.min.js'
+              './vendor/angular-tree-control/angular-tree-control.js'
             ]
             dest:'./build/assets/js/angular-widget.min.js'
           }
@@ -206,6 +215,7 @@ module.exports = (grunt) ->
               './bower_components/angular-ui-switch/angular-ui-switch.min.css'
               './vendor/jqueryrebox/jquery-rebox.css'
               './src/assets/css/main.css'
+              './vendor/angular-tree-control/css/tree-control.css'
             ]
             dest:'./build/assets/css/main.css'
           }
