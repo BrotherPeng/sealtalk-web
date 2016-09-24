@@ -1,0 +1,167 @@
+.r-group-new {
+  width: 90%;
+  height: 90%;
+  background: #fff;
+  border: 1px solid #e9e8e7;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 2px 4px #f5f4f2;
+  font-size: 12px;
+  position: relative;
+}
+.r-group-panel,
+.r-member-result {
+  width: 49%;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+}
+.r-member-result {
+  border-left: 1px solid #e9e8e7;
+}
+.r-group-search {
+  margin: 10px;
+}
+.r-group-search-keyword {
+  border: 1px solid #f5f4f2;
+  outline: none;
+  color: #d6d4d2;
+  font-size: 12px;
+  width: 100%;
+  height: 28px;
+  border-radius: 8px;
+  background: #f5f4f2 url(images/search.png) no-repeat 4px 9px;
+  text-indent: 2.2em;
+}
+.r-input-clear {
+  background: #e0deda url(images/search.png) no-repeat -3px -216px;
+  display: block;
+  width: 10px;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 30px;
+  float: right;
+  margin: -19px 10px 0 0;
+  position: relative;
+}
+.r-input-focus {
+  border-color: #fd8216;
+}
+.r-group-info {
+  margin: 10px;
+  overflow: auto;
+  height: 88%;
+}
+.r-member-title {
+  margin: 17px 10px 18px;
+  /*padding:17px 0 18px;*/
+
+}
+.r-member-selected {
+  margin: 10px 0 10px 15px;
+  padding-right: 10px;
+  height: 80%;
+  overflow: auto;
+}
+.r-members-item {
+  background: #fff;
+  margin-bottom: 10px;
+}
+.r-members-item:hover {
+  background: #f8f8f8;
+}
+.r-member-info img {
+  width: 25px;
+  height: 25px;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+.r-member-info span {
+  font-size: 14px;
+}
+.r-member-remove,
+.r-member-add {
+  float: right;
+  margin: -22px 0 0 0;
+  display: block;
+  height: 22px;
+  width: 22px;
+  line-height: 80px;
+  overflow: hidden;
+  background: url(images/search.png) no-repeat -1px -99px;
+}
+.r-member-remove:hover,
+.r-member-add:hover {
+  opacity: 0.7;
+}
+.r-btn {
+  display: inline-block;
+  width: 100px;
+  height: 30px;
+  border-radius: 10px;
+  border: 1px solid #e9e8e7;
+  font-size: 14px;
+  line-height: 30px;
+  color: #7a7673;
+  margin: 0 4px;
+}
+.r-btn-ok,
+.r-btn-ok:hover {
+  border: 1px solid #d25e00;
+  background: #fd8216;
+  color: #fff;
+}
+.r-btn-ok:hover {
+  opacity: 0.9;
+}
+.r-group-btns {
+  height: 40px;
+  text-align: center;
+}
+/*搜索结果*/
+.r-member-search {
+  position: absolute;
+  left: 10px;
+  width: 45.3%;
+  background: #fff;
+}
+.r-member-search .r-members-item:hover .r-member-add {
+  display: block;
+}
+.r-member-add {
+  margin-top: -24px;
+  display: none;
+  background-position: -2px -157px;
+}
+/*弹层*/
+.r-group-name-pop {
+  background: #fff;
+  width: 300px;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px #e9e8e7, -1px -1px 1px #e9e8e7, 1px 1px 1px #e9e8e7;
+  border: 1px solid #e9e8e7;
+}
+.r-group-name {
+  padding-top: 10px;
+  margin-bottom: 10px;
+}
+.r-group-name input {
+  width: 100%;
+  border: 1px solid #e9e8e7;
+  height: 28px;
+  font-size: 13px;
+  text-indent: 10px;
+  border-radius: 5px;
+}
+.r-group-name .r-input-focus {
+  border-color: #fd8216;
+}
+.r-group-name label {
+  color: #b3b1af;
+  font-size: 12px;
+  font-weight: 400;
+  text-indent: 10px;
+  line-height: 30px;
+}

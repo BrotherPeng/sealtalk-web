@@ -8,10 +8,10 @@ var IMGDOMAIN = "http://7xogjk.com1.z0.glb.clouddn.com/";
 var FILEDOMAIN = "http://o83059m7d.bkt.clouddn.com/";
 
 mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout", "$http",
-    "mainDataServer", "conversationServer", "mainServer", "RongIMSDKServer", "appconfig",
+    "mainDataServer", "conversationServer", "mainServer", "RongIMSDKServer", "appconfig",'searchData',
     function($scope: any, $state: angular.ui.IStateService, $window: angular.IWindowService, $timeout: angular.ITimeoutService,
         $http: angular.IHttpService,
-        mainDataServer: mainDataServer, conversationServer: conversationServer, mainServer: mainServer, RongIMSDKServer: RongIMSDKServer, appconfig: any) {
+        mainDataServer: mainDataServer, conversationServer: conversationServer, mainServer: mainServer, RongIMSDKServer: RongIMSDKServer, appconfig: any,searchData:any) {
         var isConnecting = false
         if (!mainDataServer.loginUser.id) {
             var userid = webimutil.CookieHelper.getCookie("loginuserid"),usertoken = webimutil.CookieHelper.getCookie("loginusertoken");
@@ -113,12 +113,15 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         });
         $scope.search = function(content: string) {
             if (content.trim()) {
-                var friendList = [].concat.apply([], mainDataServer.contactsList.subgroupList.map(function(item) { return item.list }));
+                // var friendList = [].concat.apply([], mainDataServer.contactsList.subgroupList.map(function(item) { return item.list }));
                 $scope.switchbtn.issearchList = true;
                 $scope.searchList = <any>{};
-                $scope.searchList.friendList = mainDataServer.contactsList.find(content, friendList) || [];
+                // $scope.searchList.friendList = mainDataServer.contactsList.find(content, friendList) || [];
 
-                $scope.searchList.groupList = mainDataServer.contactsList.find(content, mainDataServer.contactsList.groupList) || [];
+                // $scope.searchList.groupList = mainDataServer.contactsList.find(content, mainDataServer.contactsList.groupList) || [];
+                searchData.searchContact(content).then(function(search:any){
+                  $scope.searchList=search;
+                })
             } else {
                 $scope.switchbtn.issearchList = false;
             }

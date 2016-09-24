@@ -26,6 +26,7 @@
     "./src/assets/lib/RongIMLib.d.ts",
     "./src/assets/lib/window.d.ts",
     "./src/assets/ts/account/account.ts",
+    "./src/assets/ts/common.ts",
     "./src/assets/ts/conversation/controller.ts",
     "./src/assets/ts/conversation/directive.ts",
     "./src/assets/ts/conversation/server.ts",

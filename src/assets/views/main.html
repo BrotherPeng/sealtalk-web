@@ -95,22 +95,26 @@
                       </div>
                   </div>
               </div>
-              <div class="communicateList" ng-show="switchbtn.issearchList">
-                <div class="membersArea" ng-show="searchList.friendList.length">
+              <div class="communicateList" >
+                <div class="membersArea" ng-show="searchList.staffList.length">
                     <div class="membersAreaHeader">联系人</div>
                     <div class="membersAreaBody">
                         <div class="namesortWrap">
-                          <frienditem class="members_item "  ng-repeat="item in searchList.friendList" item="item"></frienditem>
+                          <!-- <frienditem class="members_item "  ng-repeat="item in searchList.friendList" item="item"></frienditem> -->
+                          <staffitem class="members_item "  ng-repeat="item in searchList.staffList" item="item"></staffitem>
                       </div>
                     </div>
                 </div>
-                <div class="groupArea" ng-show="searchList.groupList.length">
+                <div class="groupArea" >
                     <div class="groupAreaHeader">群组</div>
                     <div class="groupAreaBody">
                       <groupitem  ng-repeat="item in searchList.groupList" item="item" class="noticeBarList"></groupitem>
+                      <incloudmember ng-repeat="item in searchList.includeMember" item="item" class="noticeBarList"></incloudmember>
                     </div>
                     <!-- <groupitem  ng-repeat="item in searchList.groupList" item="item"></groupitem> -->
+
                 </div>
+
               </div>
           </div>
 

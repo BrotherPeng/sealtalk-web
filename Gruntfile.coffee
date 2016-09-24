@@ -56,6 +56,7 @@ module.exports = (grunt) ->
             src: [
               'img/**/*.*'
               'js/**/*.js'
+              'js/**/*.json'
               'views/**/*.html'
               'template/*.html'
             ]
@@ -276,7 +277,7 @@ module.exports = (grunt) ->
           sourceMap: true
           suppressImplicitAnyIndexErrors: false
           target: 'es5'
-        src: './src/assets/ts/**/*.ts'
+        src: ['./src/assets/ts/main.ts','./src/assets/ts/**/*.ts']
         dest:'./build/assets/js/main.min.js'
       release:
         options:

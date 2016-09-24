@@ -22,9 +22,11 @@ treecontrol ul {
 }
 
 treecontrol li {
-    position: relative;
-    padding: 0 0 0 20px;
-    line-height: 20px;
+  position: relative;
+  padding: 5px 5px 5px 20px;
+  line-height: 20px;
+  font-size: 14px;
+  font-family: "Helvetica Neue", Helvetica,"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
 }
 
 treecontrol li.tree-expanded i.tree-leaf-head, treecontrol li.tree-collapsed i.tree-leaf-head {display:none;}
@@ -66,7 +68,7 @@ treecontrol.tree-classic li .tree-selected {
 }
 
 treecontrol.tree-classic li .tree-unselectable {
-    color: #ddd;
+    /*color: #ddd;*/
 }
 
 treecontrol.tree-light li.tree-expanded i.tree-branch-head {
