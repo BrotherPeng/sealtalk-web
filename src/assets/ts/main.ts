@@ -8,7 +8,7 @@ var webimApp = angular.module("webim", ["ui.router", "ui.event", "uiSwitch", "ng
     "webim.addfirend", "webim.friendinfo",
     "webim.creategroup", "webim.addgroup", "webim.groupaddmember", "webim.goupinfo",
     "webim.userinfo", "webim.blacklist", "webim.notification", "webim.usermodifypassword",
-    "webim.account", "webim.groupdelmember","treeControl"], function() {
+    "webim.account", "webim.groupdelmember","treeControl","webim.organization"], function() {
     });
 
 webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvider",
@@ -265,7 +265,7 @@ function cancelScollStyle() {
             }
         }
     }
-    var listScroll = ["body", "#functionBox", "#chatArea", "#Messages", ".main", ".chatArea", ".communicateList", ".arobase"];
+    var listScroll = ["body", "#functionBox", "#chatArea", "#Messages", ".main", ".chatArea", ".communicateList", ".arobase",".r-member-selected"];
     var len = listScroll.length;
 
 

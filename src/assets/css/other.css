@@ -1,0 +1,29 @@
+.ngdialog.ngdialog-organizationgroup .ngdialog-content{
+  margin-top: 10%;
+  margin-left: 10%;
+}
+.r-group-new .searchArea div{
+  width: 98%;
+}
+.r-group-new {
+  height: 600px;
+}
+.r-group-new .searchArea div input{
+  border: 1px solid #f5f4f2;
+  outline: none;
+  color: #d6d4d2;
+  font-size: 12px;
+  width: 100%;
+  height: 28px;
+  border-radius: 8px;
+  background: #f5f4f2 url(images/search.png) no-repeat 4px 9px;
+  text-indent: 2.2em;
+}
+.r-input-clear {
+  margin-top: -30px;
+}
+.r-group-name-pop{
+    position: absolute;
+    right: 30%;
+    top: 30%;
+}

@@ -17,7 +17,7 @@ mainDire.directive("conversation", ["$state", "mainDataServer", function($state:
         '<i class="Presence Presence--stacked Presence--mainBox" ng-show="{{item.targetType==4}}"></i>' +
         '</div>' +
 
-'<div class="ext_info">' +
+        '<div class="ext_info">' +
         '<div class="ext">' +
         '<p class="attr clearfix timer">' +
         '<span class="pull-left">{{item.lastTime|showTime}}</span>' +
@@ -38,20 +38,20 @@ mainDire.directive("conversation", ["$state", "mainDataServer", function($state:
         '<span ng-bind-html="item.lastMsg|trustHtml" class="ng-binding"></span>' +
         '</p>' +
         '</div>' +
-'</div>' +
+        '</div>' +
         '</div>' +
         '</div>',
         link: function(scope: any, ele: angular.IRootElementService, attrs: any, ngModel: any) {
             // scope.isCurrentConversation = scope.item.targetType == mainDataServer.conversation.currentConversation.targetType && scope.item.targetId == mainDataServer.conversation.currentConversation.targetId;
             // scope.item.lastMsg = webimutil.Helper.escapeSymbol.replaceSymbol(scope.item.lastMsg);
-            if(!scope.item.targetId){
-              scope.item.imgSrc='assets/img/barBg.png';
+            if (!scope.item.targetId) {
+                scope.item.imgSrc = 'assets/img/barBg.png';
             }
-            else if (scope.item.targetType == webimmodel.conversationType.Discussion){
+            else if (scope.item.targetType == webimmodel.conversationType.Discussion) {
                 scope.item.imgSrc = 'assets/img/room_icon.png';
             }
-            else{
-              angular.element(ele[0].getElementsByClassName("portrait")[0]).css("background-color", webimutil.Helper.portraitColors[scope.item.targetId.charCodeAt(0) % webimutil.Helper.portraitColors.length]);
+            else {
+                angular.element(ele[0].getElementsByClassName("portrait")[0]).css("background-color", webimutil.Helper.portraitColors[scope.item.targetId.charCodeAt(0) % webimutil.Helper.portraitColors.length]);
             }
             ele.bind("click", function() {
                 scope.$parent.unSelect(scope.item.targetType + '_' + scope.item.targetId);
@@ -103,7 +103,7 @@ mainDire.directive("addbtn", [function() {
     }
 }])
 
-mainDire.directive("groupitem", ["$state", function($state: angular.ui.IStateService) {
+mainDire.directive("groupitem", ["$state", "organizationgroup", function($state: angular.ui.IStateService, organizationgroup: any) {
     return {
         restrict: "E",
         scope: { item: "=" },
@@ -134,7 +134,8 @@ mainDire.directive("groupitem", ["$state", function($state: angular.ui.IStateSer
                 // $state.go("main.groupinfo", { groupid: scope.item.id, conversationtype: "0" });
                 // scope.$parent.unSelectContact();
                 // angular.element(ele[0]).addClass('selected');
-                scope.$parent.selectGoGroup(scope.item.id, webimmodel.conversationType.Group);
+                // scope.$parent.selectGoGroup(scope.item.id, webimmodel.conversationType.Group);
+                organizationgroup.showPanle(scope.item.id);
             });
         }
     }
@@ -218,7 +219,7 @@ mainDire.directive("searchInput", ["$timeout", function($timeout: angular.ITimeo
             })
 
             scope.internalControl = scope.control || {};
-            scope.internalControl.clear = function () {
+            scope.internalControl.clear = function() {
                 scope.content = "";
             };
 
@@ -245,9 +246,9 @@ mainDire.directive("inputWrap", [function() {
             scope.maxlength = scope.maxlength || 64;
 
             var info = scope.$parent.getInfo();
-            if(info){
-              // angular.element(ele[0].getElementsByClassName("prompt-text")[0]).text(info);
-              scope.message = info;
+            if (info) {
+                // angular.element(ele[0].getElementsByClassName("prompt-text")[0]).text(info);
+                scope.message = info;
             }
 
             if (scope.loadedfocus) {
@@ -267,19 +268,19 @@ mainDire.directive("inputWrap", [function() {
                 scope.$apply();
             });
 
-            ele.find("textarea").bind('input propertychange', function () {
-              if (!scope.message || !scope.message.length) {
-                  scope.showplaceholder = true;
-              }
-              else{
-                 scope.showplaceholder = false;
-              }
-              scope.$apply();
+            ele.find("textarea").bind('input propertychange', function() {
+                if (!scope.message || !scope.message.length) {
+                    scope.showplaceholder = true;
+                }
+                else {
+                    scope.showplaceholder = false;
+                }
+                scope.$apply();
             });
 
             scope.message = scope.message || "";
-            if(scope.message){
-              scope.showplaceholder = false;
+            if (scope.message) {
+                scope.showplaceholder = false;
             }
             scope.$watch("message", function(newVal: any, oldVal: any) {
                 if (newVal.length > scope.maxlength) {

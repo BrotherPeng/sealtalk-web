@@ -41,6 +41,7 @@
     "./src/assets/ts/group/groupaddmember.ts",
     "./src/assets/ts/group/groupdelmember.ts",
     "./src/assets/ts/group/groupinfo.ts",
+    "./src/assets/ts/group/organizationgroup.ts",
     "./src/assets/ts/main.ts",
     "./src/assets/ts/main/controller.ts",
     "./src/assets/ts/main/directive.ts",

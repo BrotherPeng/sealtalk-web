@@ -39,11 +39,11 @@
           <div class="mainBox pull-left" ng-show="!showState.isPhone||!showState.isChat">
               <div id="search-friend">
                 <search-input search="search(content)"  control="searchControl" delay-time="0" show-text="搜索"></search-input>
-                <div class="searchAdd" addbtn>
-                  <ul class="addPanel" style="display:none">
+                <div class="searchAdd" ng-click="showgroup()">
+                  <!-- <ul class="addPanel" style="display:none">
                   <li id="createGroup"><a  ui-sref="main.creategroup">创建群组</a></li>
                   <li id="addFriends"><a  ui-sref="main.searchfriend">添加好友</a></li>
-                  </ul>
+                  </ul> -->
                 </div>
               </div>
 

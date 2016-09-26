@@ -31,6 +31,8 @@ module.exports = (grunt) ->
       server:
         options:
           keepalive: true
+          livereload: 35722
+          host:'web.sealtalk.im'
           port: 80
           base: 'build'
           open:true
@@ -57,6 +59,7 @@ module.exports = (grunt) ->
               'img/**/*.*'
               'js/**/*.js'
               'js/**/*.json'
+              'css/images/**'
               'views/**/*.html'
               'template/*.html'
             ]
@@ -200,6 +203,7 @@ module.exports = (grunt) ->
               './bower_components/angular-ui-switch/angular-ui-switch.min.js'
               './bower_components/angular-shims-placeholder/dist/angular-shims-placeholder.min.js'
               './vendor/angular-tree-control/angular-tree-control.js'
+              './vendor/ng-dialog/js/ngDialog.js'
             ]
             dest:'./build/assets/js/angular-widget.min.js'
           }
@@ -217,6 +221,9 @@ module.exports = (grunt) ->
               './vendor/jqueryrebox/jquery-rebox.css'
               './src/assets/css/main.css'
               './vendor/angular-tree-control/css/tree-control.css'
+              './vendor/ng-dialog/css/ngDialog.css'
+              './src/assets/css/58.css'
+              './src/assets/css/other.css'
             ]
             dest:'./build/assets/css/main.css'
           }
@@ -248,7 +255,7 @@ module.exports = (grunt) ->
     watch:
       options:
         spawn: false
-        livereload: true
+        livereload: 35722
       build:
         files: [
           './src/**/*.html'

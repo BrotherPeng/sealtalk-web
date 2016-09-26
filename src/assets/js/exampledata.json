@@ -48,29 +48,20 @@
         "data": [
           {
             "id": "675NdFjkx",
-            "oaName": "张三",
-            "realName": "张三",
+            "oaName": "杨川",
+            "realName": "杨川",
             "imgSrc":"http://7xogjk.com1.z0.glb.clouddn.com/675NdFjkx1466733699776768066",
             "deptPathName": "",
             "mobilePhone": "188888880",
             "chat": "1"
           },
           {
-            "id": "675NdFjkx",
-            "oaName": "李四",
-            "realName": "李四",
-            "imgSrc":"http://7xogjk.com1.z0.glb.clouddn.com/675NdFjkx1466733699776768066",
+            "id": "MfgILRowx",
+            "oaName": "郑毅",
+            "realName": "郑毅",
+            "imgSrc":"http://7xogjk.com1.z0.glb.clouddn.com/FjsNMjYoVKfGmA86SNwnggfKgE6_",
             "deptPathName": "",
             "mobilePhone": "188888881",
-            "chat": "1"
-          },
-          {
-            "id": "675NdFjkx",
-            "oaName": "王五",
-            "realName": "王五",
-            "imgSrc":"http://7xogjk.com1.z0.glb.clouddn.com/675NdFjkx1466733699776768066",
-            "deptPathName": "",
-            "mobilePhone": "188888882",
             "chat": "1"
           }
         ],
