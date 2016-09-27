@@ -2,6 +2,7 @@
   margin-top: 45px;
   margin-left: 80px;
   background-color: transparent;
+  max-width: 800px;
 }
 .r-group-new .searchArea div{
   width: 98%;

@@ -1,3 +1,6 @@
+if(navigator.userAgent.indexOf("MSIE 9")!=-1){
+  window.WEB_XHR_POLLING = true;
+}
 var Polling = {
         DeleteMsgInput:function(){
          var a = {};
