@@ -973,6 +973,9 @@ conversationDire.directive("fileMessage", [function() {
           scope.Cancel =  function(){
             RongIMLib.RongUploadLib.getInstance().cancel(scope.itemid);
             scope.item.state = 1;
+            if(scope.item.sentStatus == webimmodel.SentStatus.SENDING){
+              scope.item.sentStatus = webimmodel.SentStatus.FAILED; 
+            }
           }
           scope.Download =  function(){
           }
