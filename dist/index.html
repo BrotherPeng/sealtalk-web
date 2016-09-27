@@ -9,7 +9,7 @@
     <title>SealTalk</title>
 
     <link rel="shortcut icon" href="assets/img/SealTalk.ico"/>
-    <link rel="stylesheet" href="assets/css/main.e16d.css" charset="utf-8">
+    <link rel="stylesheet" href="assets/css/main.791d.css" charset="utf-8">
   </head>
   <body>
     <div ui-view>
@@ -17,15 +17,15 @@
     </div>
 
     <script type="text/javascript">
-      if(navigator.userAgent.indexOf("MSIE 9")!=-1){
-        window.WEB_XHR_POLLING = true;
+      window.__sealtalk_config={
+        serverUrl:"http://api.hitalk.im",
+        appkey:"e0x9wycfx7flq",
       }
     </script>
 
-    <script src="app.config.js"></script>
 
-    <script src="http://cdn.ronghub.com/RongIMLib-2.2.3.min.js"></script>
-    <!-- <script src="assets/js/RongIMLib.js"></script> -->
+    <!-- <script src="http://cdn.ronghub.com/RongIMLib-2.2.3.min.js"></script> -->
+    <script src="assets/js/RongIMLib.js"></script>
     <script src="http://cdn.ronghub.com/RongUploadLib-2.2.2.min.js"></script>
 
     <script src="http://cdn.ronghub.com/RongEmoji-2.2.2.min.js"></script>
