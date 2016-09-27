@@ -131,7 +131,7 @@ module webim {
 
       var defer = $q.defer();
 
-      //此处请求示例数据，正式请修改 url 和返回数据。
+      //此处请求示例数据，正式请修改 url 和返回数据。--获取组织结构
       $http({
         method: 'get',
         url: './assets/js/exampledata.json',
@@ -153,7 +153,7 @@ module webim {
     this.searchStaff = function(name: string) {
 
       var defer = $q.defer();
-
+      //此处修改为根据 名称查询人员的接口
       $http({
         method: 'get',
         url: './assets/js/exampledata.json',

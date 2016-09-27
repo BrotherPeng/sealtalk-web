@@ -11,6 +11,7 @@ module webim {
             if (this.enableCache && cacheData[str]) {
                 defer.resolve(cacheData[str]);
             } else {
+                //此处修改为根据 名称查询人员的接口
                 $http({
                     method: 'get',
                     url: './assets/js/exampledata.json',
@@ -46,6 +47,7 @@ module webim {
             if (this.enableCache && cacheData[str]) {
                 defer.resolve(cacheData[str]);
             } else {
+                //此处修改为根据 名称查询人员的接口
                 $http({
                     method: 'get',
                     url: './assets/js/exampledata.json',
