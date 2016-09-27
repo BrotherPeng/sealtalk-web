@@ -20,7 +20,7 @@
                 <img class="img" ng-show="user.portraitUri" ng-src="{{user.portraitUri||'assets/img/barBg.png'}}" alt="">
                 <div id="portrait" ng-show="!user.portraitUri" class="portrait">{{user.firstchar}}</div>
             </div>
-            <div class="info">
+            <div class="info" ng-show="isself">
                 <h3 class="userName clearfix" ng-show="!isEditable">
                     <span class="userName_text">{{user.displayName || user.nickName}}
                       <!-- {{user.mobile}} -->
@@ -32,17 +32,56 @@
                     <form name="modifyName">
                         <div class="clearfix">
                             <div class="col-xs-4" style="padding: 0px;">
-                                <input type="text" name="userName" class="form-control" id="editName" size="30" ng-minlength="1" ng-maxlength="32" ng-model="newName">
+                                <input type="text" name="userName" class="form-control" id="editName" size="30" ng-minlength="1" ng-maxlength="32" ng-model="newName" ng-blur="editSave()" ctrl-enter-keys fun="editSave()">
                             </div>
-                            <!-- <span class="error-block groupNaEr" ng-show="modifyName.userName.$dirty && modifyName.userName.$error.required">备注名不能为空</span> -->
+                            <!-- <span class="error-block groupNaEr" ng-show="modifyName.userName.$dirty && modifyName.userName.$error.required">用户名不能为空</span> -->
                             <span class="error-block groupNaEr" ng-show="modifyName.userName.$dirty && (modifyName.userName.$error.minlength||modifyName.userName.$error.maxlength)">昵称长度1-32</span>
                         </div>
                     </form>
                 </h3>
-                <!-- <p class="userId">ID : <span>{{user.id}}</span></p> -->
-                <!-- <p class="isBlack">已加入黑名单</p> -->
                 <p class="isBlack" ng-show="!isself">昵称：{{user.nickName}}</p>
                 <p class="person-tel">手机号：{{user.mobile}}</p>
+            </div>
+
+            <div class="info" ng-show="!isself">
+              <h3 class="userName clearfix">
+                  <span class="userName_text">{{user.nickName}}</span>
+              </h3>
+              <p class="person-tel">手机号：{{user.mobile}}</p>
+              <p class="note" ng-show="!isEditable">备注名：{{user.displayName || user.nickName}}<span class="edit-global-name-n" ng-show="isfriend" ng-click="edit()"></span></p>
+              <h3 class="clearfix modifybox" ng-show="isEditable">
+                  <form name="modifyName">
+                      <div class="clearfix">
+                          <label style="float:left;font-weight:400;">
+                              <span style="line-height: 30px;float: left;font-size: 12px;color: #95989a;">备注名：</span>
+                              <div class="col-xs-4" style="padding: 0px;width: 90px;">
+                                  <input type="text" name="userName" class="form-control" id="editName" size="30" ng-minlength="1" ng-maxlength="32" ng-model="newName" ng-blur="editSave()" ctrl-enter-keys fun="editSave()">
+                              </div>
+                          </label>
+
+                          <!-- <span class="error-block hide groupNaEr" ng-show="modifyName.userName.$dirty&amp;&amp;modifyName.userName.$error.required">用户名不能为空</span> -->
+                          <span class="error-block groupNaEr" ng-show="modifyName.userName.$dirty && (modifyName.userName.$error.minlength||modifyName.userName.$error.maxlength)">昵称长度1-32</span>
+                      </div>
+                  </form>
+              </h3>
+
+                <!-- <h3 class="userName clearfix" ng-show="!isEditable">
+                    <span class="userName_text">{{user.displayName || user.nickName}}
+                    </span>
+                    <span class="edit-global-name" ng-show="isself&&conversationtype==0 || isfriend" ng-click="edit()"></span>
+                </h3>
+                <h3 class="clearfix modifybox" ng-show="isEditable">
+                    <form name="modifyName">
+                        <div class="clearfix">
+                            <div class="col-xs-4" style="padding: 0px;">
+                                <input type="text" name="userName" class="form-control" id="editName" size="30" ng-minlength="1" ng-maxlength="32" ng-model="newName" ng-blur="editSave()" ctrl-enter-keys fun="editSave()">
+                            </div>
+                            <span class="error-block groupNaEr" ng-show="modifyName.userName.$dirty && (modifyName.userName.$error.minlength||modifyName.userName.$error.maxlength)">昵称长度1-32</span>
+                        </div>
+                    </form>
+                </h3>
+                <p class="isBlack" ng-show="!isself">昵称：{{user.nickName}}</p>
+                <p class="person-tel">手机号：{{user.mobile}}</p> -->
             </div>
         </div>
         <div class="userFunPannel clearfix" ng-show="!isself">

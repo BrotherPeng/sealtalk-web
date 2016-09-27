@@ -28,11 +28,12 @@ groupInfo.controller("groupinfoController", ["$scope", "$rootScope", "$state", "
             }));
             //更新会话列表
             mainDataServer.conversation.updateConversationDetail(webimmodel.conversationType.Group, groupid, rep.result.name, rep.result.portraitUri);
-            var item = mainDataServer.contactsList.getGroupById(groupid);
-            if (item) {
-               item.memberList.length = 0;
-            }
+
             mainServer.group.getGroupMember(groupid).success(function (rep2) {
+                var item = mainDataServer.contactsList.getGroupById(groupid);
+                if (item) {
+                   item.memberList.length = 0;
+                }
                 var members = rep2.result;
                 for (var j = 0, len = members.length; j < len; j++) {
                     var member = new webimmodel.Member({
