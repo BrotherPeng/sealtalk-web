@@ -50,6 +50,7 @@
     "./src/assets/ts/model/webimModel.ts",
     "./src/assets/ts/notification/notification.ts",
     "./src/assets/ts/organization.ts",
+    "./src/assets/ts/searchmessage.ts",
     "./src/assets/ts/user/blacklist.ts",
     "./src/assets/ts/user/modifypassword.ts",
     "./src/assets/ts/user/userinfo.ts",

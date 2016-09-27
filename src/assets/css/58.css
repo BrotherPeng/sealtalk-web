@@ -65,8 +65,8 @@
   overflow: auto;
 }
 .r-members-item {
-  background: #fff;
-  margin-bottom: 10px;
+  /*background: #fff;*/
+  margin-top: 10px;
 }
 .r-members-item:hover {
   background: #f8f8f8;
@@ -120,13 +120,13 @@
   text-align: center;
 }
 /*搜索结果*/
-.r-member-search {
+.r-group-panel .r-member-search {
   position: absolute;
   left: 10px;
   width: 45.3%;
   background: #fff;
 }
-.r-member-search .r-members-item:hover .r-member-add {
+.r-group-panel .r-member-search .r-members-item:hover .r-member-add {
   display: block;
 }
 .r-member-add {
@@ -164,4 +164,93 @@
   font-weight: 400;
   text-indent: 10px;
   line-height: 30px;
+}
+/*消息管理器*/
+.r-msg-panel {
+  width: 100%;
+  height: 100%;
+}
+.r-msg-friends,
+.r-msg-show {
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+}
+.r-msg-friends {
+  width: 100%;
+  font-size: 12px;
+}
+.r-msg-friends .r-member-search {
+  height: 89%;
+  overflow: auto;
+  margin-left: 0.8em;
+  padding-top: 0.8em;
+  padding-bottom: 5em;
+}
+.r-member-msg {
+  font-size: 12px;
+  line-height: 2;
+  padding-top: 5px;
+}
+.r-member-msg-content {
+  /*padding-top:5px;*/
+
+}
+.r-msg-show {
+  width: 69%;
+  border-left: 1px solid #e9e8e7;
+}
+.r-msg-list {
+  height: 90%;
+  overflow: auto;
+}
+.r-msg-item {
+  border-top: 1px solid #e9e8e7;
+  padding: 15px 10px;
+  font-size: 12px;
+}
+.r-msg-title {
+  color: #adadab;
+  line-height: 2;
+}
+.r-msg-title a {
+  color: #adadab;
+  margin-right: 0.5em;
+}
+.r-msg-content {
+  color: #5c5555;
+  line-height: 1.5;
+}
+.r-msg-content a {
+  color: #67ccfb;
+}
+.r-msg-content img {
+  max-width: 200px;
+  max-height: 200px;
+}
+.r-msg-keyword {
+  background-color: #fec08a;
+}
+.r-msg-page {
+  height: 30px;
+  padding: 20px;
+  border-top: 1px solid #e9e8e7;
+  text-align: right;
+  color: #d6d4d2;
+  font-size: 12px;
+}
+.r-msg-page a {
+  border: 1px solid #e9e8e7;
+  padding: 6px 10px;
+  margin: 0 5px;
+  border-radius: 5px;
+  line-height: 1;
+  font-family: "宋体", silom, arial;
+  color: #5c5555;
+}
+.r-msg-page .r-a-disabled {
+  opacity: 0.6;
+}
+.r-page-total {
+  margin-right: 2em;
 }

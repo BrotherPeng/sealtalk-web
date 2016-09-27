@@ -29,10 +29,10 @@ module webim {
 
             $scope.organizationList = [];
             $scope.groupMember = [];
-            var oldGroupMember: any[];
+            var oldGroupMember: any[];//原始成员值 差量查找
             $scope.searchList = [];
-            $scope.showCreateGroup = false;
-            $scope.searchControl = {};
+            $scope.showCreateGroup = false;//是否显示 创建群组
+            $scope.searchControl = {};//删除搜索内容
             $scope.isCreater = false;
             $scope.disableRemove = [];//非群组创建者不可以删除人员
 

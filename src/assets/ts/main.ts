@@ -217,6 +217,11 @@ webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvi
             templateUrl: "assets/views/discussioninfo.html",
             controller: "discussioninfoController"
         })
+        .state('main.searchmessage',{
+           url:"/searchmessage/:targetid/:conversationtype/:searchstr",
+           templateUrl:'assets/views/searchmessage.html',
+           controller:'searchmessageController'
+        })
 
     }]);
     // .run(function($rootScope: any, $state: angular.ui.IStateService, $stateParams: any) {
@@ -265,7 +270,7 @@ function cancelScollStyle() {
             }
         }
     }
-    var listScroll = ["body", "#functionBox", "#chatArea", "#Messages", ".main", ".chatArea", ".communicateList", ".arobase",".r-member-selected"];
+    var listScroll = ["body", "#functionBox", "#chatArea", "#Messages", ".main", ".chatArea", ".communicateList", ".arobase",".r-member-selected",".r-msg-list",".r-member-search"];
     var len = listScroll.length;
 
 

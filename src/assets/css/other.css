@@ -1,6 +1,7 @@
 .ngdialog.ngdialog-organizationgroup .ngdialog-content{
   margin-top: 10%;
   margin-left: 10%;
+  background-color: transparent;
 }
 .r-group-new .searchArea div{
   width: 98%;
@@ -26,4 +27,10 @@
     position: absolute;
     right: 30%;
     top: 30%;
+}
+.r-msg-show{
+  width: 100%;
+}
+.LeftNav-item.iconfont-add.searchmessage a{
+  background: url(images/time.png) 10px; background-size: 36px 34px;background-repeat: no-repeat;
 }

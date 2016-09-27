@@ -1670,6 +1670,8 @@ mainServer.factory("RongIMSDKServer", ["$q", function($q: angular.IQService) {
     RongIMSDKServer.RegisterMessage = function() {
         return RongIMLib.RongIMClient.RegisterMessage;
     }
+
+
     return RongIMSDKServer;
 }]);
 
