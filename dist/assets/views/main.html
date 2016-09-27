@@ -13,45 +13,46 @@
                           <!-- <i class="Presence Presence--stacked Presence--toolbar"></i> -->
                       </div>
                   </div>
-                <div class="LeftNav-item iconfont-single"  title="会话" ng-class="{cur:!switchbtn.isFriendList}" ng-click="switchbtn.isFriendList=false;switchbtn.issearchList=false">
+                <div class="LeftNav-item iconfont-single"  title="会话" ng-class="{cur:!switchbtn.isFriendList}" ng-click="switchbtn.isFriendList=false;switchbtn.issearchList=false;switchbtn.searchMessage=false;">
                     <div class="singleChat">
                         <a >single chat</a>
                         <i class="badge bg-tred" ng-show="mainData.conversation.totalUnreadCount>0">{{mainData.conversation.totalUnreadCount>99 ? "99+" : mainData.conversation.totalUnreadCount}}</i>
                     </div>
                 </div>
-                <div class="LeftNav-item iconfont-group"  title="联系人" ng-class="{cur:switchbtn.isFriendList}" ng-click="switchbtn.isFriendList=true;switchbtn.issearchList=false">
+                <div class="LeftNav-item iconfont-group"  title="联系人" ng-class="{cur:switchbtn.isFriendList}" ng-click="switchbtn.isFriendList=true;switchbtn.issearchList=false;switchbtn.searchMessage=false;">
                     <div class="groupChat">
-                        <a  >group chat</a>
+                        <a>group chat</a>
                         <i class="Presence Presence--stacked" ng-show="mainData.notification.hasNewNotification"></i>
                     </div>
+                </div>
+                <div class="LeftNav-item iconfont-add searchmessage" style="bottom: 80px;" ng-click="switchbtn.searchMessage=true;" ui-sref="main.searchmessage">
+                  <div>
+                    <a style="">消息管理器</a>
+                  </div>
                 </div>
                   <div class="LeftNav-item iconfont-add" ui-sref="main.userinfo">
                     <div>
                       <a >add</a>
-                      <!-- <ul class="addPanel" style="display:none">
-                          <li id="createGroup"><a  ui-sref="main.creategroup">创建群组</a></li>
-                          <li id="addFriends"><a  ui-sref="main.searchfriend">添加好友</a></li>
-                      </ul> -->
                     </div>
                   </div>
               </div>
           </div>
-          <div class="mainBox pull-left" ng-show="!showState.isPhone||!showState.isChat">
+          <div class="mainBox pull-left" ng-show="(!showState.isPhone||!showState.isChat)">
               <div id="search-friend">
                 <search-input search="search(content)"  control="searchControl" delay-time="0" show-text="搜索"></search-input>
-                <div class="searchAdd" addbtn>
-                  <ul class="addPanel" style="display:none">
+                <div class="searchAdd" ng-click="showgroup()">
+                  <!-- <ul class="addPanel" style="display:none">
                   <li id="createGroup"><a  ui-sref="main.creategroup">创建群组</a></li>
                   <li id="addFriends"><a  ui-sref="main.searchfriend">添加好友</a></li>
-                  </ul>
+                  </ul> -->
                 </div>
               </div>
 
-              <div id="chatArea" class="chatArea" ng-show="!switchbtn.isFriendList&&!switchbtn.issearchList">
+              <div id="chatArea" class="chatArea" ng-show="!switchbtn.isFriendList&&!switchbtn.issearchList&&!switchbtn.searchMessage">
                 <p class="withoutFriends" style="text-align:center;margin-top: 200px;" ng-show="!mainData.conversation.conversations||!mainData.conversation.conversations.length">您还没有添加会话</p>
                   <conversation ng-repeat="item in mainData.conversation.conversations" item='item'></conversation>
               </div>
-              <div class="communicateList" ng-show="switchbtn.isFriendList&&!switchbtn.issearchList">
+              <div class="communicateList" ng-show="switchbtn.isFriendList&&!switchbtn.issearchList&&!switchbtn.searchMessage">
                   <div class="noticeBar">
                       <div class="noticeBarHeader">新消息</div>
                       <div class="noticeBarBody">
@@ -88,25 +89,195 @@
                           <!-- <frienditem ng-repeat="item in mainData.contactsList.friendList" item="item"></frienditem> -->
                       </div>
                   </div>
+                  <div class="groupArea">
+                      <div class="groupAreaHeader" ng-click="showgorganization=!showgorganization">公司通讯录<span class="caret" ng-class="{'open':!showgorganization}"></span></div>
+                      <div class="groupAreaBody" ng-show="!showgorganization">
+                        <organization></organization>
+                      </div>
+                  </div>
               </div>
-              <div class="communicateList" ng-show="switchbtn.issearchList">
-                <div class="membersArea" ng-show="searchList.friendList.length">
+              <div class="communicateList" ng-show="searchList.staffList.length+searchList.groupList+searchList.includeMember">
+                <div class="membersArea" ng-show="searchList.staffList.length">
                     <div class="membersAreaHeader">联系人</div>
                     <div class="membersAreaBody">
                         <div class="namesortWrap">
-                          <frienditem class="members_item "  ng-repeat="item in searchList.friendList" item="item"></frienditem>
+                          <!-- <frienditem class="members_item "  ng-repeat="item in searchList.friendList" item="item"></frienditem> -->
+                          <staffitem class="members_item "  ng-repeat="item in searchList.staffList" item="item"></staffitem>
                       </div>
                     </div>
                 </div>
-                <div class="groupArea" ng-show="searchList.groupList.length">
+                <div class="groupArea" >
                     <div class="groupAreaHeader">群组</div>
                     <div class="groupAreaBody">
                       <groupitem  ng-repeat="item in searchList.groupList" item="item" class="noticeBarList"></groupitem>
+                      <incloudmember ng-repeat="item in searchList.includeMember" item="item" class="noticeBarList"></incloudmember>
                     </div>
                     <!-- <groupitem  ng-repeat="item in searchList.groupList" item="item"></groupitem> -->
+
                 </div>
+
               </div>
+            <!-- 搜索消息 -->
+            <!-- <div class="chatArea" ng-show="switchbtn.searchMessage">
+              <p class="withoutFriends" style="text-align:center;margin-top: 200px;" ng-show="!mainData.conversation.conversations||!mainData.conversation.conversations.length">您没有消息记录</p>
+                <conversation ng-repeat="item in mainData.conversation.conversations" item='item'></conversation>
+            </div> -->
+            <div class="r-msg-friends" ng-show="switchbtn.searchMessage">
+          		<!-- <div class="r-group-search">
+          			<input type="text" class="r-group-search-keyword r-input-focus" placeholder="搜索" />
+          			<a href="" class="r-input-clear">X</a>
+          		</div> -->
+          		<div class="r-member-search">
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          				<div class="r-member-msg">
+          					<div class="r-member-msg-content">
+          						账户中心分割线<em class="r-msg-keyword">发给</em>
+          					</div>
+          					<div class="r-member-msg-content">
+          						我一会<em class="r-msg-keyword">发给</em>不折行不折行...
+          					</div>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/UZRKT34kv1469589967577898926" alt="">
+          					<span>群组ABC</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+          					<span>王浅明</span>
+          				</div>
+          			</div>
+          			<div class="r-members-item">
+          				<div class="r-member-info">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          					<span>于洋</span>
+          				</div>
+          			</div>
+          		</div>
+          	</div>
           </div>
+
 
           <div  class="chatBox" ui-view ng-show="!showState.isPhone||showState.isChat">
             <div class="drag_area"></div>
