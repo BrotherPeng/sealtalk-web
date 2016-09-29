@@ -1671,6 +1671,10 @@ mainServer.factory("RongIMSDKServer", ["$q", function($q: angular.IQService) {
         return RongIMLib.RongIMClient.RegisterMessage;
     }
 
+    RongIMSDKServer.getAllConversations =function(){
+      
+    }
+
 
     return RongIMSDKServer;
 }]);

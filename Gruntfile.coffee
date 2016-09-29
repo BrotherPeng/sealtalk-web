@@ -122,7 +122,9 @@ module.exports = (grunt) ->
             src: [
               'img/**/*.*'
               'js/**/*.js'
-              'views/*.html'
+              'js/**/*.json'
+              'css/images/**'
+              'views/**/*.html'
               'template/*.html'
             ]
             dest: './dist/assets'
@@ -163,6 +165,14 @@ module.exports = (grunt) ->
             ]
             dest: './dist/assets/js'
           }
+          {
+            expand:true
+            cwd:'./vendor/angular-tree-control/images'
+            src:[
+              './**/*.*'
+            ]
+            dest:'./dist/assets/img'
+          }
         ]
 
     concat:
@@ -174,6 +184,8 @@ module.exports = (grunt) ->
               './bower_components/angular-ui-event/dist/event.min.js'
               './bower_components/angular-ui-switch/angular-ui-switch.min.js'
               './bower_components/angular-shims-placeholder/dist/angular-shims-placeholder.min.js'
+              './vendor/angular-tree-control/angular-tree-control.js'
+              './vendor/ng-dialog/js/ngDialog.js'
             ]
             dest:'./dist/assets/js/angular-widget.min.js'
           }
@@ -190,6 +202,10 @@ module.exports = (grunt) ->
               './bower_components/angular-ui-switch/angular-ui-switch.min.css'
               './vendor/jqueryrebox/jquery-rebox.css'
               './src/assets/css/main.css'
+              './vendor/angular-tree-control/css/tree-control.css'
+              './vendor/ng-dialog/css/ngDialog.css'
+              './src/assets/css/58.css'
+              './src/assets/css/other.css'
             ]
             dest:'./temp/main.css'
           }
@@ -294,7 +310,7 @@ module.exports = (grunt) ->
           sourceMap: false
           suppressImplicitAnyIndexErrors: false
           target: 'es5'
-        src: './src/assets/ts/**/*.ts'
+        src: ['./src/assets/ts/main.ts','./src/assets/ts/**/*.ts']
         dest: './temp/main.js'
 
     filerev:

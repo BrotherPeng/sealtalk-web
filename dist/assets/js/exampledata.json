@@ -1,0 +1,72 @@
+{
+  "organizationlist" :{
+        "data": {
+          "person": [
+            {
+              "id": "0",
+              "oaName": "张三",
+              "realName": "张三",
+              "mobilePhone": "18201252063",
+              "chat": "2"
+            },
+            {
+              "id": "1",
+              "oaName": "李四",
+              "realName": "李四",
+              "mobilePhone": "18201252063",
+              "chat": "1"
+            },
+            {
+              "id": "2",
+              "oaName": "王五",
+              "realName": "王五",
+              "mobilePhone": "18201252063",
+              "chat": "1"
+            }
+          ],
+          "department": [
+            {
+              "id": "1",
+              "deptName": "设计部"
+            },
+            {
+              "id": "2",
+              "deptName": "后勤部"
+            },
+            {
+              "id": "3",
+              "deptName": "会计部"
+            }
+          ]
+        },
+        "code": "1",
+        "msg": "操作成功",
+        "ctime": 1473842272273
+      }
+      ,
+    "searchorganization":{
+        "data": [
+          {
+            "id": "675NdFjkx",
+            "oaName": "杨川",
+            "realName": "杨川",
+            "imgSrc":"http://7xogjk.com1.z0.glb.clouddn.com/675NdFjkx1466733699776768066",
+            "deptPathName": "",
+            "mobilePhone": "188888880",
+            "chat": "1"
+          },
+          {
+            "id": "MfgILRowx",
+            "oaName": "郑毅",
+            "realName": "郑毅",
+            "imgSrc":"http://7xogjk.com1.z0.glb.clouddn.com/FjsNMjYoVKfGmA86SNwnggfKgE6_",
+            "deptPathName": "",
+            "mobilePhone": "188888881",
+            "chat": "1"
+          }
+        ],
+        "code": "1",
+        "msg": "操作成功",
+        "ctime": 1473842122761
+      }
+}
