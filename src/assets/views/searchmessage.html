@@ -1,17 +1,19 @@
 <div class="r-msg-show">
   <div class="r-msg-list">
-    <div class="r-msg-item">
-      <div class="r-msg-title">
-        <a href="">刘占</a>
-        <time>16/09/12 16:09</time>
-      </div>
-      <div class="r-msg-content">
-        1:账号中心重新设计<br>
-        2:相关进度<br>
-        3:我一会<em class="r-msg-keyword">发给</em>你<br>
+    <div  ng-repeat="message in messageList" ng-switch="message.panelType">
+      <div class="r-msg-item" ng-switch-when="1">
+        <div class="r-msg-title">
+          <a href="">{{message.senderUserName}}</a>
+          <time>{{message.sentTime | date:'yy/MM/dd hh:mm:ss'}}</time>
+        </div>
+        <div class="r-msg-content"  ng-switch="message.messageType">
+          <search-text-message message="message.content" searchstr='searchStr' ng-switch-when="TextMessage"></search-text-message>
+          <search-image-message message="message.content" ng-switch-when="ImageMessage"></search-image-message>
+        </div>
       </div>
     </div>
-    <div class="r-msg-item">
+
+    <!-- <div class="r-msg-item">
       <div class="r-msg-title">
         <a href="">刘占</a>
         <time>16/09/12 16:09</time>
@@ -48,23 +50,13 @@
       <div class="r-msg-content">
         <a href="http://www.rongcloud.cn/">http://www.rongcloud.cn/</a> @刘占 所有细节需要确认
       </div>
-    </div>
-    <div class="r-msg-item">
-      <div class="r-msg-title">
-        <a href="">刘占</a>
-        <time>16/09/12 16:09</time>
-      </div>
-      <div class="r-msg-content">
-        <img src="http://www.rongcloud.cn/images/newVersion/case-6-pic.jpg" alt="">
-      </div>
-    </div>
+    </div> -->
+
   </div>
   <div class="r-msg-page">
-    <span class="r-page-total">共3页</span>
-    <a href="" class="r-a-disabled">&lt;</a>
-    <a href="">&lt;</a>
-    <a href="">2</a>
-    <a href="">&gt;</a>
-    <a href="" class="r-a-disabled">&gt;</a>
+    <span class="r-page-total">共{{pageCount}}页</span>
+    <a href="" ng-class="{'r-a-disabled':currentPage==1}" ng-click="pre()">&lt;</a>
+    <a href="">{{currentPage}}</a>
+    <a href="" ng-class="{'r-a-disabled':currentPage==pageCount}" ng-click="next()">&gt;</a>
   </div>
 </div>

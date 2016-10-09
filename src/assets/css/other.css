@@ -32,6 +32,21 @@
 .r-msg-show{
   width: 100%;
 }
+.r-member-info{
+  cursor: pointer;
+}
 .LeftNav-item.iconfont-add.searchmessage a{
   background: url(images/time.png) 10px; background-size: 36px 34px;background-repeat: no-repeat;
+}
+.r-msg-content pre{
+  font-size: 14px;
+  line-height: 26px;
+  color: rgb(68, 68, 68);
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  font-family: "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+  white-space: pre-wrap;
 }

@@ -180,7 +180,8 @@ mainDire.directive("searchInput", ["$timeout", function($timeout: angular.ITimeo
             showText: "@",
             delayTime: "@",
             focus: "&",
-            control: '='
+            control: '=',
+            content:'='
         },
         template: '<form class="searchArea clearfix">' +
         '<div class="form-group">' +

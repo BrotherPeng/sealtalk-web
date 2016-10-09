@@ -115,16 +115,31 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         $scope.search = function(content: string) {
             if (content.trim()) {
                 // var friendList = [].concat.apply([], mainDataServer.contactsList.subgroupList.map(function(item) { return item.list }));
-                $scope.switchbtn.issearchList = true;
-                $scope.searchList = <any>{};
                 // $scope.searchList.friendList = mainDataServer.contactsList.find(content, friendList) || [];
-
                 // $scope.searchList.groupList = mainDataServer.contactsList.find(content, mainDataServer.contactsList.groupList) || [];
-                searchData.searchContact(content).then(function(search: any) {
-                    $scope.searchList = search;
-                })
+
+
+
+                $scope.searchList = <any>{};
+
+                if ($scope.switchbtn.searchMessage) {
+                    searchData.getConversationByContent(content).then(function(data: any) {
+                        $scope.searchList.conversations = [];
+                        for(var i=0,len=data.length;i<len;i++){
+                          var result= mainDataServer.conversation.parseConversation(data[i]);
+                          $scope.searchList.conversations.push(result.item);
+                        }
+                    })
+                } else {
+                    $scope.switchbtn.issearchList = true;
+                    searchData.searchContact(content).then(function(search: any) {
+                        $scope.searchList = search;
+                    })
+                }
+
             } else {
                 $scope.switchbtn.issearchList = false;
+                $scope.searchList.conversations=[];
             }
         }
 
@@ -1117,7 +1132,19 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         }
 
         $scope.showgroup = function() {
-          organizationgroup.showPanle()
+            organizationgroup.showPanle()
+        }
+
+        $scope.showMessageManage=function(){
+            RongIMSDKServer.getAllConversations().then(function(data: any) {
+              $scope.allconversations = [];
+              for(var i=0,len=data.length;i<len;i++){
+                if(data[i].conversationType==1||data[i].conversationType==3){
+                  var result=mainDataServer.conversation.parseConversation(data[i]);
+                  $scope.allconversations.push(result.item);
+                }
+              }
+            })
         }
 
 

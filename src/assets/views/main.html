@@ -25,7 +25,7 @@
                         <i class="Presence Presence--stacked" ng-show="mainData.notification.hasNewNotification"></i>
                     </div>
                 </div>
-                <div class="LeftNav-item iconfont-add searchmessage" style="bottom: 80px;" ng-click="switchbtn.searchMessage=true;" ui-sref="main.searchmessage">
+                <div class="LeftNav-item iconfont-add searchmessage" style="bottom: 80px;" ng-click="switchbtn.searchMessage=true;showMessageManage()" >
                   <div>
                     <a style="">消息管理器</a>
                   </div>
@@ -39,7 +39,7 @@
           </div>
           <div class="mainBox pull-left" ng-show="(!showState.isPhone||!showState.isChat)">
               <div id="search-friend">
-                <search-input search="search(content)"  control="searchControl" delay-time="0" show-text="搜索"></search-input>
+                <search-input search="search(content)" content="searchContent"  control="searchControl" delay-time="0" show-text="搜索"></search-input>
                 <div class="searchAdd" ng-click="showgroup()">
                   <!-- <ul class="addPanel" style="display:none">
                   <li id="createGroup"><a  ui-sref="main.creategroup">创建群组</a></li>
@@ -96,7 +96,7 @@
                       </div>
                   </div>
               </div>
-              <div class="communicateList" ng-show="searchList.staffList.length+searchList.groupList+searchList.includeMember">
+              <div class="communicateList" ng-show="switchbtn.issearchList">
                 <div class="membersArea" ng-show="searchList.staffList.length">
                     <div class="membersAreaHeader">联系人</div>
                     <div class="membersAreaBody">
@@ -127,8 +127,8 @@
           			<input type="text" class="r-group-search-keyword r-input-focus" placeholder="搜索" />
           			<a href="" class="r-input-clear">X</a>
           		</div> -->
-          		<div class="r-member-search">
-          			<div class="r-members-item">
+          		<div class="r-member-search" ng-show="!searchList.conversations.length">
+          			<!-- <div class="r-members-item">
           				<div class="r-member-info">
           					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
           					<span>王浅明</span>
@@ -141,140 +141,23 @@
           						我一会<em class="r-msg-keyword">发给</em>不折行不折行...
           					</div>
           				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/UZRKT34kv1469589967577898926" alt="">
-          					<span>群组ABC</span>
+          			</div> -->
+          			<div class="r-members-item" ng-repeat="item in allconversations">
+          				<div class="r-member-info" ui-sref="main.searchmessage({targetid:item.targetId,conversationtype:item.targetType,searchstr:''})">
+          					<img ng-src="{{item.imgSrc}}" src="http://7xogjk.com1.z0.glb.clouddn.com/UZRKT34kv1469589967577898926" alt="">
+          					<span>{{item.title}}</span>
           				</div>
           			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          					<span>王浅明</span>
-          				</div>
-          			</div>
-          			<div class="r-members-item">
-          				<div class="r-member-info">
-          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
-          					<span>于洋</span>
-          				</div>
-          			</div>
+
           		</div>
+              <div class="r-member-search" ng-show="searchList.conversations.length">
+                <div class="r-members-item" ng-repeat="item in searchList.conversations">
+          				<div class="r-member-info" ui-sref="main.searchmessage({targetid:item.targetId,conversationtype:item.targetType,searchstr:searchContent})">
+          					<img src="http://7xogjk.com1.z0.glb.clouddn.com/UZRKT34kv1469589967577898926" alt="">
+          					<span>{{item.title}}</span>
+          				</div>
+          			</div>
+              </div>
           	</div>
           </div>
 

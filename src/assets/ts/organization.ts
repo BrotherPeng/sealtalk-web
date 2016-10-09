@@ -150,25 +150,6 @@ module webim {
     }
 
 
-    this.searchStaff = function(name: string) {
-
-      var defer = $q.defer();
-      //此处修改为根据 名称查询人员的接口
-      $http({
-        method: 'get',
-        url: './assets/js/exampledata.json',
-        data: {
-          name: name
-        }
-      }).success(function(rep: any) {
-        defer.resolve(rep.searchorganization.data);
-      }).error(function(error) {
-        defer.reject(error);
-      })
-
-      return defer.promise;
-    }
-
   }])
 
 }
