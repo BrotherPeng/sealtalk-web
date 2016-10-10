@@ -1,6 +1,7 @@
 declare var Intense: any;
 
 declare module RongIMLib {
+    export var VCDataProvider :any
     class Expression {
         static retrievalEmoji(a: any, b: any): string
         static getEmojiObjByEnglishNameOrChineseName(obj: any): any

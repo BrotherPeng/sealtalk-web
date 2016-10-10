@@ -74,7 +74,7 @@
       "receivedTime": 1475131046415,
       "senderUserId": "TF8kRyOYu",
       "sentTime": 1475130572424,
-      "targetId": "H6SzV9OXf",
+      "targetId": "TF8kRyOYu",
       "messageType": "TextMessage",
       "messageUId": "5BN9-8HUH-04B3-DRLR",
       "offLineMessage": true
@@ -83,10 +83,10 @@
     "objectName": "RC:TxtMsg",
     "receivedStatus": 1,
     "sentTime": 1475130572424,
-    "targetId": "H6SzV9OXf",
+    "targetId": "TF8kRyOYu",
     "unreadMessageCount": 0
   }, {
-    "conversationType": 1,
+    "conversationType": 3,
     "latestMessage": {
       "content": {
         "messageName": "TextMessage",
@@ -98,9 +98,9 @@
       "messageId": "1_8275742",
       "receivedStatus": 1,
       "receivedTime": 1475131046415,
-      "senderUserId": "Ts6LljrFY",
+      "senderUserId": "z3m5C7qtY",
       "sentTime": 1475130572424,
-      "targetId": "Ts6LljrFY",
+      "targetId": "z3m5C7qtY",
       "messageType": "TextMessage",
       "messageUId": "5BN9-8HUH-04B3-DRLR",
       "offLineMessage": true
@@ -109,10 +109,10 @@
     "objectName": "RC:TxtMsg",
     "receivedStatus": 1,
     "sentTime": 1475130572424,
-    "targetId": "Ts6LljrFY",
+    "targetId": "z3m5C7qtY",
     "unreadMessageCount": 0
   }, {
-    "conversationType": 1,
+    "conversationType": 3,
     "latestMessage": {
       "content": {
         "messageName": "TextMessage",
@@ -126,7 +126,7 @@
       "receivedTime": 1475131046415,
       "senderUserId": "N5zNVXSAL",
       "sentTime": 1475130572424,
-      "targetId": "Ts6LljrFY",
+      "targetId": "TF8kRyOYu",
       "messageType": "TextMessage",
       "messageUId": "5BN9-8HUH-04B3-DRLR",
       "offLineMessage": true
@@ -135,7 +135,7 @@
     "objectName": "RC:TxtMsg",
     "receivedStatus": 1,
     "sentTime": 1475130572424,
-    "targetId": "TF8kRyOYu",
+    "targetId": "IO7qu0EoK",
     "unreadMessageCount": 0
   }],
   "message": [{

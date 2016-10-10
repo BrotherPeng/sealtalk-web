@@ -1351,7 +1351,11 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
 
   RongIMSDKServer.init = function(appkey: string) {
     // RongIMLib.RongIMClient.init(appkey, new RongIMLib.WebSQLDataProvider());
-    RongIMLib.RongIMClient.init(appkey);
+    if(window.Electron){
+      RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.RongIMClientC));
+    }else{
+      RongIMLib.RongIMClient.init(appkey,null,{navi:'119.254.111.49:9100'});
+    }
   }
 
   RongIMSDKServer.connect = function(token: string) {
@@ -1397,7 +1401,7 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
         }
         console.log("失败:" + info);
       }
-    });
+    },"675NdFjkx");
 
     return defer.promise;
   }
@@ -1691,27 +1695,52 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
       return defer.promise;
   }
 
-  RongIMSDKServer.getConversationByContent=function(){
+  RongIMSDKServer.getConversationByContent=function(str:string){
+    console.log(arguments);
     //此处替换为SDK的实际接口
     var defer = $q.defer();
-    $http({
-      url: './assets/js/exampledata.json',
-      method:'get',
-    }).success(function(rep:any){
-      defer.resolve(rep.conversation)
+    // $http({
+    //   url: './assets/js/exampledata.json',
+    //   method:'get',
+    // }).success(function(rep:any){
+    //   defer.resolve(rep.conversation)
+    // })
+
+    RongIMLib.RongIMClient.getInstance().searchConversationByContent(str,{
+      onSuccess:function(data:any){
+          defer.resolve(data)
+      },
+      onError:function(error:any){
+          defer.reject(error)
+      }
     })
+
     return defer.promise;
   }
 
   RongIMSDKServer.getMessagesFromConversation = function(targetId:string,targetType:any,str:string,timestamp:any,count:number){
+    console.log(arguments);
     //此处替换为SDK的实际接口
     var defer = $q.defer();
-    $http({
-      url: './assets/js/exampledata.json',
-      method:'get',
-    }).success(function(rep:any){
-      defer.resolve(rep.messagelist)
+    // $http({
+    //   url: './assets/js/exampledata.json',
+    //   method:'get',
+    // }).success(function(rep:any){
+    //   defer.resolve(rep.messagelist)
+    // })
+
+    RongIMLib.RongIMClient.getInstance().searchMessageByContent(targetType,targetId,str,timestamp,count,1,{
+      onSuccess:function(data:any,count:any){
+        defer.resolve({
+          message:data,
+          count:count
+        })
+      },
+      onError:function(error:any){
+        defer.reject(error);
+      }
     })
+
     return defer.promise;
   }
 

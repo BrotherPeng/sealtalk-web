@@ -23,7 +23,7 @@ module webim {
 
             $scope.pagesize = 20;
             $scope.currentPage = 1;
-            $scope.pageCount = 1;
+            $scope.pageCount = 0;
 
             getMoreMessage();
 
@@ -101,21 +101,19 @@ module webim {
             function getMoreMessage() {
                 if (searchStr) {
                     RongIMSDKServer.getMessagesFromConversation(targetId, conversationType, searchStr, lastTime, $scope.pagesize).then(function(data) {
-                        $scope.pageCount = 1;//根据返回总数计算；
+                        $scope.pageCount = 0;//根据返回总数计算；
 
                         $scope.messageList = convertHistoryList(data);
                     })
                 } else {
-                    console.log(+conversationType, targetId, lastTime, $scope.pagesize);
                     RongIMSDKServer.getHistoryMessages(+conversationType, targetId, lastTime, $scope.pagesize).then(function(data) {
-                        $scope.pageCount = 6;//根据返回总数计算；
+                        $scope.pageCount = 0;//根据返回总数计算；
 
                         hasmore = data.has;
                         var list = data.data;
                         var end = list.length - $scope.pagesize;
                         list.splice(0, end < 0 ? 0 : end);
                         $scope.messageList = convertHistoryList(list);
-                        console.log($scope.messageList);
                         lastTime = (list[0] || <RongIMLib.Message>{}).sentTime || 0;
 
                     }, function(err: any) {
@@ -173,7 +171,7 @@ module webim {
             link: function(scope: any, element: ng.IRootElementService) {
                 var content = '';
                 if (scope.searchstr) {
-                    content = scope.message.content.replace(scope.searchstr, '<em class="r-msg-keyword">$&</em>');
+                    content = scope.message.content.replace(new RegExp(scope.searchstr,'g'), '<em class="r-msg-keyword">$&</em>');
                 } else {
                     content = scope.message.content;
                 }

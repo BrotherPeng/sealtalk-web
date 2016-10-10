@@ -581,14 +581,14 @@ declare module RongIMLib {
          * @param  choicePolling 是否选择comet方式连接，默认为false
          * @param dataAccessProvider 必须是DataAccessProvider的实例
          */
-        static init(appKey: string, dataAccessProvider?: DataAccessProvider): void;
+        static init(appKey: string, dataAccessProvider?: DataAccessProvider,option?:any): void;
         /**
          * 连接服务器，在整个应用全局只需要调用一次，断线后 SDK 会自动重连。
          *
          * @param token     从服务端获取的用户身份令牌（Token）。
          * @param callback  连接回调，返回连接的成功或者失败状态。
          */
-        static connect(token: string, callback: ConnectCallback): RongIMClient;
+        static connect(token: string, callback: ConnectCallback,userid?:string): RongIMClient;
         static reconnect(callback: ConnectCallback): void;
         /**
          * 注册消息类型，用于注册用户自定义的消息。
@@ -609,6 +609,9 @@ declare module RongIMLib {
          * @param listener  接收消息的监听器。
          */
         static setOnReceiveMessageListener(listener: OnReceiveMessageListener): void;
+
+        searchConversationByContent(keyword:string, callback:any, conversationTypes?:any): void;
+        searchMessageByContent(conversationType:any, targetId:string, keyword:string, timestamp:string, count:any, total:any, callback:any):void;
         /**
          * 清理所有连接相关的变量
          */

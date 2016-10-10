@@ -75,7 +75,7 @@ module webim {
           defer.resolve(cacheData.conversationByContent[str]);
         } else {
           RongIMSDKServer.getConversationByContent(str).then(function(data){
-            data=data.splice(1,1);
+            data=data.splice(0,1);
             this.enableCache && (cacheData.conversationByContent[str] = data);
             defer.resolve(data);
           })
