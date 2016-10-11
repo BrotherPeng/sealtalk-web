@@ -562,8 +562,8 @@ conversationDire.directive("textMessage", [function() {
             message: "="
         },
         template: '<div class="" id="{{message.messageUId || message.messageId}}">' +
-            '<div class="{{msgStyle}} message_statue_position"></div>' +
-        '<div class="{{msgStyle}} message_statue_position"></div>' +
+        //     '<div class="{{msgStyle}} message_statue_position"></div>' +
+        // '<div class="{{msgStyle}} message_statue_position"></div>' +
         '<div class="Message-text">' +
         // '<pre class="at_all_people" ng-show="isAtAll">@所有人</pre>' +
         '<pre class="Message-entry" ng-bind-html="content|trustHtml">' +
@@ -974,7 +974,7 @@ conversationDire.directive("fileMessage", [function() {
             RongIMLib.RongUploadLib.getInstance().cancel(scope.itemid);
             scope.item.state = 1;
             if(scope.item.sentStatus == webimmodel.SentStatus.SENDING){
-              scope.item.sentStatus = webimmodel.SentStatus.FAILED; 
+              scope.item.sentStatus = webimmodel.SentStatus.FAILED;
             }
           }
           scope.Download =  function(){

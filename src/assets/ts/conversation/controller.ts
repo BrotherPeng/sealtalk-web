@@ -636,14 +636,14 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             webimutil.Helper.getFocus(obj);
 
             $scope.mainData.conversation.updateConStaticBeforeSend(appendMsg, true);
-            $('#' + targetType + '_' + targetId).find('.no-remind').siblings('span').removeClass().addClass("message_statue_sending");
+            // $('#' + targetType + '_' + targetId).find('.no-remind').siblings('span').removeClass().addClass("message_statue_sending");
 
             RongIMSDKServer.sendMessage(targetType, targetId, msg, atFlag && (targetType == webimmodel.conversationType.Group || targetType == webimmodel.conversationType.Discussion)).then(function(msg) {
                atArray = [];
-               $('#' + targetType + '_' + targetId).find('.no-remind').siblings('span').removeClass();
-               setTimeout(function () {
-                 $('#' + msg.messageUId).find('.message_statue_position').removeClass().addClass("message_statue_position");
-               }, 0);
+              //  $('#' + targetType + '_' + targetId).find('.no-remind').siblings('span').removeClass();
+              //  setTimeout(function () {
+              //    $('#' + msg.messageUId).find('.message_statue_position').removeClass().addClass("message_statue_position");
+              //  }, 0);
                conversationServer.updateSendStatus(targetId, targetType, appendMsg.messageId, webimmodel.SentStatus.FAILED);
                var _message = webimmodel.Message.convertMsg(msg);
                conversationServer.messageAddUserInfo(_message);
@@ -652,10 +652,10 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             }, function(error: any) {
 
               var content = '';
-              $('#' + targetType + '_' + targetId).find('.no-remind').siblings('span').removeClass().addClass("message_statue_unsend");
-              setTimeout(function () {
-                $('#' + appendMsg.messageId).find('.message_statue_position').removeClass().addClass("message_statue_position").addClass("message_statue_unsend");
-              }, 0);
+              // $('#' + targetType + '_' + targetId).find('.no-remind').siblings('span').removeClass().addClass("message_statue_unsend");
+              // setTimeout(function () {
+              //   $('#' + appendMsg.messageId).find('.message_statue_position').removeClass().addClass("message_statue_position").addClass("message_statue_unsend");
+              // }, 0);
               conversationServer.updateSendStatus(targetId, targetType, appendMsg.messageId, webimmodel.SentStatus.FAILED);
 
               switch (error.errorCode) {
