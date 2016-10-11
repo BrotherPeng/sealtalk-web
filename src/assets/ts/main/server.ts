@@ -1352,7 +1352,7 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
   RongIMSDKServer.init = function(appkey: string) {
     // RongIMLib.RongIMClient.init(appkey, new RongIMLib.WebSQLDataProvider());
     if(window.Electron){
-      RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.RongIMClientC));
+      RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon));
     }else{
       RongIMLib.RongIMClient.init(appkey,null,{navi:'119.254.111.49:9100'});
     }

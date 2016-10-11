@@ -930,12 +930,14 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                                         mainDataServer.notification.hasNewNotification = true;
                                     }
                                     mainDataServer.contactsList.removeGroup(groupid);
-                                    RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
-                                        refreshconversationList();
-                                    });
-                                    //退出会话状态
-                                    if ($state.is("main.chat") && $state.params["targetId"] == groupid && $state.params["targetType"] == webimmodel.conversationType.Group) {
-                                        $state.go("main");
+                                    if((window.Electron&&isself)||!window.Electron){
+                                      RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
+                                          refreshconversationList();
+                                      });
+                                      //退出会话状态
+                                      if ($state.is("main.chat") && $state.params["targetId"] == groupid && $state.params["targetType"] == webimmodel.conversationType.Group) {
+                                          $state.go("main");
+                                      }
                                     }
                                     break;
                                 default:

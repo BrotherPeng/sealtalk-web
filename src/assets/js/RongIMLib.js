@@ -7907,25 +7907,34 @@ var RongIMLib;
     var VCDataProvider = (function () {
         function VCDataProvider(addon) {
             this.userId = "";
+            this.useConsole = true;
             this.addon = addon;
+            this.addon.registerMessageType('RC:TypSts', 1);
+            this.addon.registerMessageType("RC:GrpNtf", 1);
+            this.addon.registerMessageType("RC:ReadNtf", 1);
         }
         VCDataProvider.prototype.init = function (appKey) {
+            this.useConsole && console.log("init");
             this.addon.initWithAppkey(appKey);
         };
         VCDataProvider.prototype.connect = function (token, callback, userId) {
+            this.useConsole && console.log("connect");
             this.userId = userId;
             this.connectCallback = callback;
             this.addon.connectWithToken(token, userId);
         };
         VCDataProvider.prototype.logout = function () {
+            this.useConsole && console.log("logout");
             this.disconnect();
         };
         VCDataProvider.prototype.disconnect = function () {
+            this.useConsole && console.log("disconnect");
             this.addon.disconnect(true);
         };
         VCDataProvider.prototype.setConnectionStatusListener = function (listener) {
             var me = this;
             me.connectListener = listener;
+            this.useConsole && console.log("setConnectionStatusListener");
             me.addon.setConnectionStatusListener(function (result) {
                 switch (result) {
                     case 10:
@@ -7945,12 +7954,14 @@ var RongIMLib;
         VCDataProvider.prototype.setOnReceiveMessageListener = function (listener) {
             var me = this;
             me.messageListener = listener;
+            this.useConsole && console.log("setOnReceiveMessageListener");
             me.addon.setOnReceiveMessageListener(function (result) {
                 listener.onReceived(me.buildMessage(result), 0);
             });
         };
         VCDataProvider.prototype.sendTypingStatusMessage = function (conversationType, targetId, messageName, sendCallback) {
             var me = this;
+            this.useConsole && console.log("sendTypingStatusMessage");
             if (messageName in RongIMLib.RongIMClient.MessageParams) {
                 me.sendMessage(conversationType, targetId, RongIMLib.TypingStatusMessage.obtain(RongIMLib.RongIMClient.MessageParams[messageName].objectName, ""), {
                     onSuccess: function () {
@@ -7968,10 +7979,12 @@ var RongIMLib;
         };
         VCDataProvider.prototype.sendTextMessage = function (conversationType, targetId, content, sendMessageCallback) {
             var msgContent = RongIMLib.TextMessage.obtain(content);
+            this.useConsole && console.log("sendTextMessage");
             this.sendMessage(conversationType, targetId, msgContent, sendMessageCallback);
         };
         VCDataProvider.prototype.getRemoteHistoryMessages = function (conversationType, targetId, timestamp, count, callback) {
             try {
+                this.useConsole && console.log("getRemoteHistoryMessages");
                 var ret = this.addon.getHistoryMessages(conversationType, targetId, timestamp ? timestamp : -1, count);
                 var list = ret ? JSON.parse(ret).list : [], msgs = [], me = this;
                 list.reverse();
@@ -7986,7 +7999,9 @@ var RongIMLib;
         };
         VCDataProvider.prototype.getRemoteConversationList = function (callback, conversationTypes, count) {
             try {
-                var result = this.addon.getConversationList();
+                this.useConsole && console.log("getRemoteConversationList");
+                var converTypes = conversationTypes || [1, 2, 3, 4, 5, 6, 7];
+                var result = this.addon.getConversationList(converTypes);
                 var list = JSON.parse(result).list, convers = [], me = this;
                 list.reverse();
                 for (var i = 0, len = list.length; i < len; i++) {
@@ -8000,6 +8015,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.removeConversation = function (conversationType, targetId, callback) {
             try {
+                this.useConsole && console.log("removeConversation");
                 this.addon.removeConversation(conversationType, targetId);
                 callback.onSuccess(true);
             }
@@ -8008,6 +8024,7 @@ var RongIMLib;
             }
         };
         VCDataProvider.prototype.joinChatRoom = function (chatRoomId, messageCount, callback) {
+            this.useConsole && console.log("joinChatRoom");
             this.addon.joinChatRoom(chatRoomId, messageCount, function () {
                 callback.onSuccess();
             }, function (error) {
@@ -8015,6 +8032,7 @@ var RongIMLib;
             });
         };
         VCDataProvider.prototype.quitChatRoom = function (chatRoomId, callback) {
+            this.useConsole && console.log("quitChatRoom");
             this.addon.quitChatRoom(chatRoomId, function () {
                 callback.onSuccess();
             }, function (error) {
@@ -8022,6 +8040,7 @@ var RongIMLib;
             });
         };
         VCDataProvider.prototype.addToBlacklist = function (userId, callback) {
+            this.useConsole && console.log("addToBlacklist");
             this.addon.addToBlacklist(userId, function () {
                 callback.onSuccess();
             }, function (error) {
@@ -8029,6 +8048,7 @@ var RongIMLib;
             });
         };
         VCDataProvider.prototype.getBlacklist = function (callback) {
+            this.useConsole && console.log("getBlacklist");
             this.addon.getBlacklist(function (blacklistors) {
                 callback.onSuccess(blacklistors);
             }, function (error) {
@@ -8036,6 +8056,7 @@ var RongIMLib;
             });
         };
         VCDataProvider.prototype.getBlacklistStatus = function (userId, callback) {
+            this.useConsole && console.log("getBlacklistStatus");
             this.addon.getBlacklistStatus(userId, function (result) {
                 callback.onSuccess(result);
             }, function (error) {
@@ -8043,6 +8064,7 @@ var RongIMLib;
             });
         };
         VCDataProvider.prototype.removeFromBlacklist = function (userId, callback) {
+            this.useConsole && console.log("removeFromBlacklist");
             this.addon.removeFromBlacklist(userId, function () {
                 callback.onSuccess();
             }, function (error) {
@@ -8050,6 +8072,7 @@ var RongIMLib;
             });
         };
         VCDataProvider.prototype.sendMessage = function (conversationType, targetId, messageContent, sendCallback, mentiondMsg, pushText, appData) {
+            this.useConsole && console.log("sendMessage");
             this.addon.sendMessage(conversationType, targetId, RongIMLib.RongIMClient.MessageParams[messageContent.messageName].objectName, messageContent.encode(), pushText, appData, function (progress) {
             }, function (message) {
                 sendCallback.onSuccess(JSON.parse(message));
@@ -8058,9 +8081,11 @@ var RongIMLib;
             });
         };
         VCDataProvider.prototype.registerMessageType = function (messageType, objectName, messageTag, messageContent) {
+            this.useConsole && console.log("registerMessageType");
             this.addon.registerMessageType(objectName, messageTag.getMessageTag());
         };
         VCDataProvider.prototype.addMessage = function (conversationType, targetId, message, callback) {
+            this.useConsole && console.log("addMessage");
             var msg = this.addon.insertMessage(conversationType, targetId, message.senderUserId, message.objectName, message.content.encode(), function () {
                 callback.onSuccess(me.buildMessage(msg));
             }, function () {
@@ -8071,6 +8096,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.removeLocalMessage = function (conversationType, targetId, timestamps, callback) {
             try {
+                this.useConsole && console.log("removeLocalMessage");
                 this.addon.deleteMessages(timestamps);
                 callback.onSuccess(true);
             }
@@ -8080,6 +8106,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.getMessage = function (messageId, callback) {
             try {
+                this.useConsole && console.log("getMessage");
                 var msg = this.addon.getMessage(messageId);
                 callback.onSuccess(msg);
             }
@@ -8089,6 +8116,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.clearMessages = function (conversationType, targetId, callback) {
             try {
+                this.useConsole && console.log("clearMessages");
                 this.addon.clearMessages(conversationType, targetId);
                 callback.onSuccess(true);
             }
@@ -8098,6 +8126,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.getConversation = function (conversationType, targetId, callback) {
             try {
+                this.useConsole && console.log("getConversation");
                 var ret = this.addon.getConversation(conversationType, targetId);
                 callback.onSuccess(this.buildConversation(ret));
             }
@@ -8106,10 +8135,12 @@ var RongIMLib;
             }
         };
         VCDataProvider.prototype.getConversationList = function (callback, conversationTypes, count) {
+            this.useConsole && console.log("getConversationList");
             this.getRemoteConversationList(callback, conversationTypes, count);
         };
         VCDataProvider.prototype.clearConversations = function (conversationTypes, callback) {
             try {
+                this.useConsole && console.log("clearConversations");
                 this.addon.clearConversations();
                 callback.onSuccess(true);
             }
@@ -8118,11 +8149,13 @@ var RongIMLib;
             }
         };
         VCDataProvider.prototype.getHistoryMessages = function (conversationType, targetId, timestamp, count, callback) {
+            this.useConsole && console.log("getHistoryMessages");
             this.getRemoteHistoryMessages(conversationType, targetId, timestamp, count, callback);
         };
         VCDataProvider.prototype.getTotalUnreadCount = function (callback, conversationTypes) {
             try {
                 var result;
+                this.useConsole && console.log("getTotalUnreadCount");
                 if (conversationTypes) {
                     result = this.addon.getTotalUnreadCount(conversationTypes);
                 }
@@ -8136,10 +8169,12 @@ var RongIMLib;
             }
         };
         VCDataProvider.prototype.getConversationUnreadCount = function (conversationTypes, callback) {
+            this.useConsole && console.log("getConversationUnreadCount");
             this.getTotalUnreadCount(callback, conversationTypes);
         };
         VCDataProvider.prototype.getUnreadCount = function (conversationType, targetId, callback) {
             try {
+                this.useConsole && console.log("getUnreadCount");
                 var result = this.addon.getUnreadCount(conversationType, targetId);
                 callback.onSuccess(result);
             }
@@ -8149,6 +8184,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.clearUnreadCount = function (conversationType, targetId, callback) {
             try {
+                this.useConsole && console.log("clearUnreadCount");
                 var result = this.addon.clearConversations(conversationType, targetId);
                 callback.onSuccess(true);
             }
@@ -8158,6 +8194,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.setConversationToTop = function (conversationType, targetId, callback) {
             try {
+                this.useConsole && console.log("setConversationToTop");
                 this.addon.setConversationToTop(conversationType, targetId, true);
                 callback.onSuccess(true);
             }
@@ -8167,6 +8204,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.setMessageReceivedStatus = function (messageId, receivedStatus, callback) {
             try {
+                this.useConsole && console.log("setMessageReceivedStatus");
                 this.addon.setMessageReceivedStatus(messageId, receivedStatus);
                 callback.onSuccess(true);
             }
@@ -8176,6 +8214,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.setMessageSentStatus = function (messageId, sentStatus, callback) {
             try {
+                this.useConsole && console.log("setMessageSentStatus");
                 this.addon.setMessageSentStatus(messageId, sentStatus);
                 callback.onSuccess(true);
             }
@@ -8184,15 +8223,17 @@ var RongIMLib;
             }
         };
         VCDataProvider.prototype.getFileToken = function (fileType, callback) {
+            this.useConsole && console.log("getFileToken");
             this.addon.getUploadToken(fileType, function (token) {
-                callback.onSuccess(token);
+                callback.onSuccess({ token: token });
             }, function (errorCode) {
                 callback.onError(errorCode);
             });
         };
         VCDataProvider.prototype.getFileUrl = function (fileType, fileName, oriName, callback) {
+            this.useConsole && console.log("getFileUrl");
             this.addon.getDownloadUrl(fileType, oriName, fileName, function (url) {
-                callback.onSuccess(url);
+                callback.onSuccess({ downloadUrl: url });
             }, function (errorCode) {
                 callback.onError(errorCode);
             });
@@ -8206,6 +8247,7 @@ var RongIMLib;
                 converTypes = conversationTypes;
             }
             try {
+                this.useConsole && console.log("searchConversationByContent");
                 var result = this.addon.searchConversationByContent(converTypes, keyword);
                 var list = JSON.parse(result).list, convers = [], me = this;
                 list.reverse();
@@ -8221,6 +8263,7 @@ var RongIMLib;
         VCDataProvider.prototype.searchMessageByContent = function (conversationType, targetId, keyword, timestamp, count, total, callback) {
             var me = this;
             try {
+                this.useConsole && console.log("searchMessageByContent");
                 this.addon.searchMessageByContent(conversationType, targetId, keyword, timestamp, count, total, function (ret, matched) {
                     var list = ret ? JSON.parse(ret).list : [], msgs = [];
                     list.reverse();
@@ -8235,6 +8278,7 @@ var RongIMLib;
             }
         };
         VCDataProvider.prototype.getChatRoomInfo = function (chatRoomId, count, order, callback) {
+            this.useConsole && console.log("getChatRoomInfo");
             this.addon.getChatroomInfo(chatRoomId, count, order, function (ret, count) {
                 var list = ret ? JSON.parse(ret).list : [], chatRoomInfo = { userInfos: [], userTotalNums: count };
                 if (list.length > 0) {
@@ -8278,9 +8322,10 @@ var RongIMLib;
             message.receivedStatus = ret.status;
             message.sentTime = ret.sentTime;
             message.objectName = ret.objectName;
-            message.content = JSON.parse(ret.content);
+            message.content = ret.content ? JSON.parse(ret.content) : ret.content;
             message.messageId = ret.messageId;
             message.messageUId = ret.messageUid;
+            message.messageType = typeMapping[ret.objectName];
             return message;
         };
         VCDataProvider.prototype.buildConversation = function (val) {
@@ -8289,9 +8334,9 @@ var RongIMLib;
             conver.conversationType = c.conversationType;
             conver.draft = c.draft;
             conver.isTop = c.isTop;
-            lastestMsg && (lastestMsg.content = JSON.parse(lastestMsg.content));
             conver.latestMessage = lastestMsg;
             conver.latestMessageId = lastestMsg.messageId;
+            conver.latestMessage.messageType = typeMapping[lastestMsg.objectName];
             conver.objectName = lastestMsg.objectName;
             conver.receivedStatus = RongIMLib.ReceivedStatus.READ;
             conver.sentTime = lastestMsg.sentTime;
@@ -9963,10 +10008,10 @@ var RongIMLib;
             me.xmlhttp.onreadystatechange = function () {
                 if (me.xmlhttp.readyState == 4) {
                     if (me.options.type) {
-                        callback(JSON.parse(me.xmlhttp.responseText.replace(/'/g, '"')));
+                        callback();
                     }
                     else {
-                        callback();
+                        callback(JSON.parse(me.xmlhttp.responseText.replace(/'/g, '"')));
                     }
                 }
             };
@@ -9974,14 +10019,14 @@ var RongIMLib;
             me.xmlhttp.withCredentials = false;
             if ("setRequestHeader" in me.xmlhttp) {
                 if (me.options.type) {
+                    me.xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
+                }
+                else {
                     me.xmlhttp.setRequestHeader("Content-type", "application/octet-stream");
                     me.xmlhttp.setRequestHeader('Authorization', "UpToken " + me.options.token);
                 }
-                else {
-                    me.xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-                }
             }
-            me.xmlhttp.send(me.options.type ? me.options.base64 : "appKey=" + me.options.appKey + "&deviceId=" + me.options.deviceId + "&timestamp=" + me.options.timestamp + "&deviceInfo=" + me.options.deviceInfo + "&privateInfo=" + JSON.stringify(me.options.privateInfo));
+            me.xmlhttp.send(me.options.type ? "appKey=" + me.options.appKey + "&deviceId=" + me.options.deviceId + "&timestamp=" + me.options.timestamp + "&deviceInfo=" + me.options.deviceInfo + "&privateInfo=" + JSON.stringify(me.options.privateInfo) : me.options.base64);
         };
         return RongAjax;
     }());

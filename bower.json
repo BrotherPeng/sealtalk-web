@@ -14,6 +14,7 @@
   "homepage": "http://rong.io",
   "dependencies": {
     "angular": "~1.4.5",
+    "jquery":"2.2.4",
     "angular-bootstrap": "~0.13.4",
     "angular-ui-event": "~1.0.0",
     "angular-ui-router": "~0.2.15",

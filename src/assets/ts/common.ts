@@ -1,6 +1,6 @@
 module webim {
-  angular.module('webim').service('searchData', ["$q", "$http", "mainDataServer", "RongIMSDKServer",
-    function($q: ng.IQService, $http: ng.IHttpService, mainDataServer: mainDataServer, RongIMSDKServer: RongIMSDKServer) {
+  angular.module('webim').service('searchData', ["$q", "$http", "mainDataServer", "RongIMSDKServer", "organizationServer",
+    function($q: ng.IQService, $http: ng.IHttpService, mainDataServer: mainDataServer, RongIMSDKServer: RongIMSDKServer,organizationServer:any) {
       var cacheData: any = {
         organization: {},
         contact: {},
@@ -16,11 +16,8 @@ module webim {
         if (this.enableCache && cacheData.contact[str]) {
           defer.resolve(cacheData.contact[str]);
         } else {
-          //此处修改为根据 名称查询人员的接口
-          $http({
-            method: 'get',
-            url: './assets/js/exampledata.json',
-          }).success(function(rep: any) {
+          organizationServer.search(str).then(function(data:any){
+
             var search: any = {};
 
             search.includeMember = [];
@@ -37,7 +34,7 @@ module webim {
               }
             });
             search.groupList = mainDataServer.contactsList.find(str, mainDataServer.contactsList.groupList) || [];
-            search.staffList = rep.searchorganization.data;
+            search.staffList = data;
             this.enableCache && (cacheData.contact[str] = search);
             defer.resolve(search);
           })
@@ -52,14 +49,10 @@ module webim {
         if (this.enableCache && cacheData.organization[str]) {
           defer.resolve(cacheData.organization[str]);
         } else {
-          //此处修改为根据 名称查询人员的接口
-          $http({
-            method: 'get',
-            url: './assets/js/exampledata.json',
-          }).success(function(rep: any) {
+          organizationServer.search(str).then(function(data:any){
             var search: any;
 
-            search = rep.searchorganization.data;
+            search = data;
             this.enableCache && (cacheData.organization[str] = search);
             defer.resolve(search);
           })

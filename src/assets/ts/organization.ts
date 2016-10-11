@@ -139,6 +139,7 @@ module webim {
           id: id
         }
       }).success(function(rep: any) {
+        //此处根据具体返回结构处理
         defer.resolve(rep.organizationlist.data);
       }).error(function(error) {
         defer.reject(error);
@@ -147,6 +148,26 @@ module webim {
 
       return defer.promise;
 
+    }
+
+    this.search = function(str:string){
+      var defer = $q.defer();
+      //此处请求示例数据，正式请修改 url 和返回数据。--获取组织结构
+      $http({
+        method: 'get',
+        url: './assets/js/exampledata.json',
+        data: {
+          str: str
+        }
+      }).success(function(rep: any) {
+        //此处根据具体返回结构处理
+        defer.resolve(rep.searchorganization.data);
+      }).error(function(error) {
+        defer.reject(error);
+      })
+
+
+      return defer.promise;
     }
 
 
