@@ -131,11 +131,11 @@ mainDire.directive("groupitem", ["$state", "organizationgroup", function($state:
             angular.element(ele[0].getElementsByClassName("portrait")[0]).css("background-color", webimutil.Helper.portraitColors[scope.item.id.charCodeAt(0) % webimutil.Helper.portraitColors.length]);
 
             ele.on("click", function() {
-                // $state.go("main.groupinfo", { groupid: scope.item.id, conversationtype: "0" });
-                // scope.$parent.unSelectContact();
-                // angular.element(ele[0]).addClass('selected');
-                // scope.$parent.selectGoGroup(scope.item.id, webimmodel.conversationType.Group);
-                organizationgroup.showPanle(scope.item.id);
+                $state.go("main.groupinfo", { groupid: scope.item.id, conversationtype: "0" });
+                scope.$parent.unSelectContact();
+                angular.element(ele[0]).addClass('selected');
+                scope.$parent.selectGoGroup(scope.item.id, webimmodel.conversationType.Group);
+                // organizationgroup.showPanle(scope.item.id);
             });
         }
     }

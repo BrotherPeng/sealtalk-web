@@ -34,7 +34,9 @@ module webim {
               }
             });
             search.groupList = mainDataServer.contactsList.find(str, mainDataServer.contactsList.groupList) || [];
-            search.staffList = data;
+            //无组织通讯录先屏蔽
+            // search.staffList = data;
+            search.friendList = mainDataServer.contactsList.find(str, [].concat.apply([], mainDataServer.contactsList.subgroupList.map(function(item) { return item.list })))
             this.enableCache && (cacheData.contact[str] = search);
             defer.resolve(search);
           })
@@ -68,7 +70,6 @@ module webim {
           defer.resolve(cacheData.conversationByContent[str]);
         } else {
           RongIMSDKServer.getConversationByContent(str).then(function(data){
-            data=data.splice(0,1);
             this.enableCache && (cacheData.conversationByContent[str] = data);
             defer.resolve(data);
           })

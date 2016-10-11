@@ -1352,13 +1352,13 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
   RongIMSDKServer.init = function(appkey: string) {
     // RongIMLib.RongIMClient.init(appkey, new RongIMLib.WebSQLDataProvider());
     if(window.Electron){
-      RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon));
+      RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon),{navi:"119.254.111.49:9100"});
     }else{
-      RongIMLib.RongIMClient.init(appkey,null,{navi:'119.254.111.49:9100'});
+      RongIMLib.RongIMClient.init(appkey,null,{navi:"119.254.111.49:9100"});
     }
   }
 
-  RongIMSDKServer.connect = function(token: string) {
+  RongIMSDKServer.connect = function(token: string,userid?:string) {
     var defer = $q.defer();
     RongIMLib.RongIMClient.connect(token, {
       onSuccess: function(data) {
@@ -1401,7 +1401,7 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
         }
         console.log("失败:" + info);
       }
-    },"675NdFjkx");
+    },userid);
 
     return defer.promise;
   }
@@ -1708,9 +1708,12 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
 
     RongIMLib.RongIMClient.getInstance().searchConversationByContent(str,{
       onSuccess:function(data:any){
-          defer.resolve(data)
+          console.log(data);
+          defer.resolve(data);
+
       },
       onError:function(error:any){
+          console.log(error);
           defer.reject(error)
       }
     })
@@ -1728,15 +1731,16 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
     // }).success(function(rep:any){
     //   defer.resolve(rep.messagelist)
     // })
-
-    RongIMLib.RongIMClient.getInstance().searchMessageByContent(targetType,targetId,str,timestamp,count,1,{
+    RongIMLib.RongIMClient.getInstance().searchMessageByContent(+targetType,targetId,str,timestamp,count,1,{
       onSuccess:function(data:any,count:any){
+        // console.log(data,count);
         defer.resolve({
           message:data,
           count:count
         })
       },
       onError:function(error:any){
+        console.log(error);
         defer.reject(error);
       }
     })
@@ -1750,7 +1754,7 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
 
 interface RongIMSDKServer {
   init(appkey: string): void
-  connect(token: string): angular.IPromise<string>
+  connect(token: string,userid?:string): angular.IPromise<string>
   setConnectionStatusListener(listener: any): void
   setOnReceiveMessageListener(listener: any): void
   removeConversation(type: number, targetId: string): angular.IPromise<boolean>

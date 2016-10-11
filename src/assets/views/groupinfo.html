@@ -29,7 +29,7 @@
                   <form name="modifyName">
                       <div class="clearfix">
                           <div class="col-xs-4" style="padding: 0px;">
-                              <input type="text" name="groupName" class="form-control" id="editName" size="30" required ng-minlength="1" ng-maxlength="32" ng-model="newName" ng-blur="editSave()" ctrl-enter-keys fun="editSave()">
+                              <input type="text" name="groupName" class="form-control" id="editName" size="30" required ng-minlength="1" ng-maxlength="32" ng-model="newName" ng-blur="editSave()" >
                           </div>
                           <span class="error-block groupNaEr" ng-show="modifyName.groupName.$dirty && modifyName.groupName.$error.required">群组名不能为空</span>
                           <span class="error-block groupNaEr" ng-show="modifyName.groupName.$dirty && (modifyName.groupName.$error.minlength||modifyName.groupName.$error.maxlength)">群组名长度1-32</span>

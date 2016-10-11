@@ -101,9 +101,14 @@ module webim {
             function getMoreMessage() {
                 if (searchStr) {
                     RongIMSDKServer.getMessagesFromConversation(targetId, conversationType, searchStr, lastTime, $scope.pagesize).then(function(data) {
-                        $scope.pageCount = 0;//根据返回总数计算；
+                        // $scope.pageCount = 0;//根据返回总数计算；
+                        $scope.pageCount=Math.ceil(data.count/$scope.pagesize)||0;
+                        console.log($scope.currentPage,$scope.pageCount)
+                        if($scope.currentPage==$scope.pageCount){
+                          hasmore=false;
+                        }
 
-                        $scope.messageList = convertHistoryList(data);
+                        $scope.messageList = convertHistoryList(data.message);
                     })
                 } else {
                     RongIMSDKServer.getHistoryMessages(+conversationType, targetId, lastTime, $scope.pagesize).then(function(data) {
@@ -140,8 +145,9 @@ module webim {
                 var currentPage = $scope.currentPage;
                 var pageCount = $scope.pageCount;
                 var pagesize = $scope.pagesize;
-
-                // if (currentPage < pageCount ) {
+                console.log(currentPage*pagesize<messageListCache.length);
+                console.log(hasmore);
+                //  if ((pageCount!==0 && currentPage < pageCount) ) {
                 if(currentPage*pagesize<messageListCache.length||hasmore){
                     currentPage++;
                     $scope.currentPage++;

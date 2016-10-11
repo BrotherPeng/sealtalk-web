@@ -7907,11 +7907,42 @@ var RongIMLib;
     var VCDataProvider = (function () {
         function VCDataProvider(addon) {
             this.userId = "";
-            this.useConsole = true;
+            this.useConsole = false;
             this.addon = addon;
-            this.addon.registerMessageType('RC:TypSts', 1);
-            this.addon.registerMessageType("RC:GrpNtf", 1);
-            this.addon.registerMessageType("RC:ReadNtf", 1);
+            // 0 不存不计数  1 只存不计数 3 存且计数
+            this.addon.registerMessageType("RC:VcMsg", 3);
+            this.addon.registerMessageType("RC:ImgTextMsg", 3);
+            this.addon.registerMessageType("RC:FileMsg", 3);
+            this.addon.registerMessageType("RC:LBSMsg", 3);
+            this.addon.registerMessageType("RC:InfoNtf", 0);
+            this.addon.registerMessageType("RC:ContactNtf", 0);
+            this.addon.registerMessageType("RC:ProfileNtf", 0);
+            this.addon.registerMessageType("RC:CmdNtf", 0);
+            this.addon.registerMessageType("RC:DizNtf", 0);
+            this.addon.registerMessageType("RC:CmdMsg", 0);
+            this.addon.registerMessageType("RC:TypSts", 0);
+            this.addon.registerMessageType("RC:CsChaR", 0);
+            this.addon.registerMessageType("RC:CsHsR", 0);
+            this.addon.registerMessageType("RC:CsEnd", 0);
+            this.addon.registerMessageType("RC:CsSp", 0);
+            this.addon.registerMessageType("RC:CsUpdate", 0);
+            this.addon.registerMessageType("RC:ReadNtf", 0);
+            this.addon.registerMessageType("RC:VCAccept", 0);
+            this.addon.registerMessageType("RC:VCRinging", 0);
+            this.addon.registerMessageType("RC:VCSummary", 0);
+            this.addon.registerMessageType("RC:VCHangup", 0);
+            this.addon.registerMessageType("RC:VCInvite", 0);
+            this.addon.registerMessageType("RC:VCModifyMedia", 0);
+            this.addon.registerMessageType("RC:VCModifyMem", 0);
+            this.addon.registerMessageType("RC:CsContact", 0);
+            this.addon.registerMessageType("RC:PSImgTxtMsg", 3);
+            this.addon.registerMessageType("RC:PSMultiImgTxtMsg", 3);
+            this.addon.registerMessageType("RC:GrpNtf", 0);
+            this.addon.registerMessageType("RC:PSCmd", 0);
+            this.addon.registerMessageType("RC:RcCmd", 0);
+            this.addon.registerMessageType("RC:SRSMsg", 0);
+            this.addon.registerMessageType("RC:RRReqMsg", 0);
+            this.addon.registerMessageType("RC:RRRspMsg", 0);
         }
         VCDataProvider.prototype.init = function (appKey) {
             this.useConsole && console.log("init");
@@ -8072,10 +8103,11 @@ var RongIMLib;
             });
         };
         VCDataProvider.prototype.sendMessage = function (conversationType, targetId, messageContent, sendCallback, mentiondMsg, pushText, appData) {
-            this.useConsole && console.log("sendMessage");
-            this.addon.sendMessage(conversationType, targetId, RongIMLib.RongIMClient.MessageParams[messageContent.messageName].objectName, messageContent.encode(), pushText, appData, function (progress) {
+            var me = this;
+            me.useConsole && console.log("sendMessage");
+            me.addon.sendMessage(conversationType, targetId, RongIMLib.RongIMClient.MessageParams[messageContent.messageName].objectName, messageContent.encode(), pushText, appData, function (progress) {
             }, function (message) {
-                sendCallback.onSuccess(JSON.parse(message));
+                sendCallback.onSuccess(me.buildMessage(message));
             }, function (message, code) {
                 sendCallback.onError(code, message);
             });
@@ -8185,7 +8217,7 @@ var RongIMLib;
         VCDataProvider.prototype.clearUnreadCount = function (conversationType, targetId, callback) {
             try {
                 this.useConsole && console.log("clearUnreadCount");
-                var result = this.addon.clearConversations(conversationType, targetId);
+                var result = this.addon.clearUnreadCount(conversationType, targetId);
                 callback.onSuccess(true);
             }
             catch (e) {
@@ -8232,7 +8264,7 @@ var RongIMLib;
         };
         VCDataProvider.prototype.getFileUrl = function (fileType, fileName, oriName, callback) {
             this.useConsole && console.log("getFileUrl");
-            this.addon.getDownloadUrl(fileType, oriName, fileName, function (url) {
+            this.addon.getDownloadUrl(fileType, fileName, oriName, function (url) {
                 callback.onSuccess({ downloadUrl: url });
             }, function (errorCode) {
                 callback.onError(errorCode);
@@ -8329,11 +8361,13 @@ var RongIMLib;
             return message;
         };
         VCDataProvider.prototype.buildConversation = function (val) {
-            var conver = new RongIMLib.Conversation(), c = JSON.parse(val), lastestMsg = c.lastestMsg ? JSON.parse(c.lastestMsg) : {};
+            var conver = new RongIMLib.Conversation(), c = JSON.parse(val), lastestMsg = c.lastestMsg ? this.buildMessage(c.lastestMsg) : {};
             conver.conversationTitle = c.title;
             conver.conversationType = c.conversationType;
             conver.draft = c.draft;
             conver.isTop = c.isTop;
+            lastestMsg.conversationType = c.conversationType;
+            lastestMsg.targetId = c.targetId;
             conver.latestMessage = lastestMsg;
             conver.latestMessageId = lastestMsg.messageId;
             conver.latestMessage.messageType = typeMapping[lastestMsg.objectName];

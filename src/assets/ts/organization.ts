@@ -100,7 +100,7 @@ module webim {
       '<div class="info">' +
       '<h3 class="nickname">' +
       '<span class="nickname_text">{{item.groupName}}</span><br>' +
-      '<span class="nickname_text" style="font-size: 12px;line-height: 12px; height: 12px;">包含：{{item.include}}</span>' +
+      '<span class="nickname_text containuser" style="">包含：{{item.include}}</span>' +
       '</h3>' +
       '</div>' +
 

@@ -1,72 +1,290 @@
 {
-  "organizationlist" :{
-        "data": {
-          "person": [
-            {
-              "id": "0",
-              "oaName": "张三",
-              "realName": "张三",
-              "mobilePhone": "18201252063",
-              "chat": "2"
-            },
-            {
-              "id": "1",
-              "oaName": "李四",
-              "realName": "李四",
-              "mobilePhone": "18201252063",
-              "chat": "1"
-            },
-            {
-              "id": "2",
-              "oaName": "王五",
-              "realName": "王五",
-              "mobilePhone": "18201252063",
-              "chat": "1"
-            }
-          ],
-          "department": [
-            {
-              "id": "1",
-              "deptName": "设计部"
-            },
-            {
-              "id": "2",
-              "deptName": "后勤部"
-            },
-            {
-              "id": "3",
-              "deptName": "会计部"
-            }
-          ]
-        },
-        "code": "1",
-        "msg": "操作成功",
-        "ctime": 1473842272273
-      }
-      ,
-    "searchorganization":{
-        "data": [
-          {
-            "id": "675NdFjkx",
-            "oaName": "杨川",
-            "realName": "杨川",
-            "imgSrc":"http://7xogjk.com1.z0.glb.clouddn.com/675NdFjkx1466733699776768066",
-            "deptPathName": "",
-            "mobilePhone": "188888880",
-            "chat": "1"
-          },
-          {
-            "id": "MfgILRowx",
-            "oaName": "郑毅",
-            "realName": "郑毅",
-            "imgSrc":"http://7xogjk.com1.z0.glb.clouddn.com/FjsNMjYoVKfGmA86SNwnggfKgE6_",
-            "deptPathName": "",
-            "mobilePhone": "188888881",
-            "chat": "1"
-          }
-        ],
-        "code": "1",
-        "msg": "操作成功",
-        "ctime": 1473842122761
-      }
+  "organizationlist": {
+    "data": {
+      "person": [{
+        "id": "0",
+        "oaName": "张三",
+        "realName": "张三",
+        "mobilePhone": "18201252063",
+        "chat": "2"
+      }, {
+        "id": "1",
+        "oaName": "李四",
+        "realName": "李四",
+        "mobilePhone": "18201252063",
+        "chat": "1"
+      }, {
+        "id": "2",
+        "oaName": "王五",
+        "realName": "王五",
+        "mobilePhone": "18201252063",
+        "chat": "1"
+      }],
+      "department": [{
+        "id": "1",
+        "deptName": "设计部"
+      }, {
+        "id": "2",
+        "deptName": "后勤部"
+      }, {
+        "id": "3",
+        "deptName": "会计部"
+      }]
+    },
+    "code": "1",
+    "msg": "操作成功",
+    "ctime": 1473842272273
+  },
+  "searchorganization": {
+    "data": [{
+      "id": "675NdFjkx",
+      "oaName": "杨川",
+      "realName": "杨川",
+      "imgSrc": "http://7xogjk.com1.z0.glb.clouddn.com/675NdFjkx1466733699776768066",
+      "deptPathName": "",
+      "mobilePhone": "188888880",
+      "chat": "1"
+    }, {
+      "id": "MfgILRowx",
+      "oaName": "郑毅",
+      "realName": "郑毅",
+      "imgSrc": "http://7xogjk.com1.z0.glb.clouddn.com/FjsNMjYoVKfGmA86SNwnggfKgE6_",
+      "deptPathName": "",
+      "mobilePhone": "188888881",
+      "chat": "1"
+    }],
+    "code": "1",
+    "msg": "操作成功",
+    "ctime": 1473842122761
+  }
+
+  ,
+  "conversation": [{
+    "conversationType": 1,
+    "latestMessage": {
+      "content": {
+        "messageName": "TextMessage",
+        "content": "客户回复了工单  56700【在个别电脑联系人列表显示不出来】- 苏瑞团队，请点击查看：http://admin-ticket.rongcloud.cn/ticket/reply/46700?&token=9YSAsufpGQ%2Fgc5N52ebZf8xjtpMpuobontUCfiNz"
+      },
+      "conversationType": 1,
+      "objectName": "RC:TxtMsg",
+      "messageDirection": 2,
+      "messageId": "1_8275742",
+      "receivedStatus": 1,
+      "receivedTime": 1475131046415,
+      "senderUserId": "TF8kRyOYu",
+      "sentTime": 1475130572424,
+      "targetId": "TF8kRyOYu",
+      "messageType": "TextMessage",
+      "messageUId": "5BN9-8HUH-04B3-DRLR",
+      "offLineMessage": true
+    },
+    "latestMessageId": "1_8275742",
+    "objectName": "RC:TxtMsg",
+    "receivedStatus": 1,
+    "sentTime": 1475130572424,
+    "targetId": "TF8kRyOYu",
+    "unreadMessageCount": 0
+  }, {
+    "conversationType": 3,
+    "latestMessage": {
+      "content": {
+        "messageName": "TextMessage",
+        "content": "客户回复了工单  56700【在个别电脑联系人列表显示不出来】- 苏瑞团队，请点击查看：http://admin-ticket.rongcloud.cn/ticket/reply/46700?&token=9YSAsufpGQ%2Fgc5N52ebZf8xjtpMpuobontUCfiNz"
+      },
+      "conversationType": 1,
+      "objectName": "RC:TxtMsg",
+      "messageDirection": 2,
+      "messageId": "1_8275742",
+      "receivedStatus": 1,
+      "receivedTime": 1475131046415,
+      "senderUserId": "z3m5C7qtY",
+      "sentTime": 1475130572424,
+      "targetId": "z3m5C7qtY",
+      "messageType": "TextMessage",
+      "messageUId": "5BN9-8HUH-04B3-DRLR",
+      "offLineMessage": true
+    },
+    "latestMessageId": "1_8275742",
+    "objectName": "RC:TxtMsg",
+    "receivedStatus": 1,
+    "sentTime": 1475130572424,
+    "targetId": "z3m5C7qtY",
+    "unreadMessageCount": 0
+  }, {
+    "conversationType": 3,
+    "latestMessage": {
+      "content": {
+        "messageName": "TextMessage",
+        "content": "客户回复了工单  56700【在个别电脑联系人列表显示不出来】- 苏瑞团队，请点击查看：http://admin-ticket.rongcloud.cn/ticket/reply/46700?&token=9YSAsufpGQ%2Fgc5N52ebZf8xjtpMpuobontUCfiNz"
+      },
+      "conversationType": 1,
+      "objectName": "RC:TxtMsg",
+      "messageDirection": 2,
+      "messageId": "1_8275742",
+      "receivedStatus": 1,
+      "receivedTime": 1475131046415,
+      "senderUserId": "N5zNVXSAL",
+      "sentTime": 1475130572424,
+      "targetId": "TF8kRyOYu",
+      "messageType": "TextMessage",
+      "messageUId": "5BN9-8HUH-04B3-DRLR",
+      "offLineMessage": true
+    },
+    "latestMessageId": "1_8275742",
+    "objectName": "RC:TxtMsg",
+    "receivedStatus": 1,
+    "sentTime": 1475130572424,
+    "targetId": "IO7qu0EoK",
+    "unreadMessageCount": 0
+  }],
+  "message": [{
+    "content": {
+      "messageName": "TextMessage",
+      "content": "ab",
+      "extra": ""
+    },
+    "conversationType": 1,
+    "objectName": "RC:TxtMsg",
+    "messageDirection": 1,
+    "messageId": "1_1725137",
+    "receivedStatus": 9,
+    "receivedTime": 1475135236271,
+    "senderUserId": "mFGfyNe51",
+    "sentTime": 1475135245052,
+    "targetId": "",
+    "messageType": "TextMessage",
+    "messageUId": "5BN9-QCAV-G7KM-OMBK",
+    "offLineMessage": false
+  }, {
+    "content": {
+      "messageName": "TextMessage",
+      "content": "ab",
+      "extra": ""
+    },
+    "conversationType": 1,
+    "objectName": "RC:TxtMsg",
+    "messageDirection": 1,
+    "messageId": "1_1725137",
+    "receivedStatus": 9,
+    "receivedTime": 1475135236271,
+    "senderUserId": "mFGfyNe51",
+    "sentTime": 1475135245052,
+    "targetId": "",
+    "messageType": "TextMessage",
+    "messageUId": "5BN9-QCAV-G7KM-OMBK",
+    "offLineMessage": false
+  }],
+  "messagelist": [{
+    "content": {
+      "messageName": "TextMessage",
+      "content": "呵呵哒",
+      "extra": ""
+    },
+    "conversationType": 1,
+    "objectName": "RC:TxtMsg",
+    "messageDirection": 1,
+    "messageId": "1_2959886",
+    "receivedStatus": 1,
+    "receivedTime": 1476006352607,
+    "senderUserId": "mFGfyNe51",
+    "sentTime": 1467871757996,
+    "targetId": "",
+    "messageType": "TextMessage",
+    "messageUId": "5AS7-UC6L-G5DR-BRFV",
+    "offLineMessage": true
+  }, {
+    "content": {
+      "messageName": "TextMessage",
+      "content": "去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去",
+      "extra": ""
+    },
+    "conversationType": 1,
+    "objectName": "RC:TxtMsg",
+    "messageDirection": 1,
+    "messageId": "1_10738838",
+    "receivedStatus": 1,
+    "receivedTime": 1476006352607,
+    "senderUserId": "mFGfyNe51",
+    "sentTime": 1467871779946,
+    "targetId": "",
+    "messageType": "TextMessage",
+    "messageUId": "5AS7-UESD-85DR-BRFV",
+    "offLineMessage": true
+  }, {
+    "content": {
+      "messageName": "ReadReceiptMessage",
+      "lastMessageSendTime": 1467871779946,
+      "messageUId": "5AS7-UESD-85DR-BRFV",
+      "type": 1
+    },
+    "conversationType": 1,
+    "objectName": "RC:ReadNtf",
+    "messageDirection": 1,
+    "messageId": "1_11353855",
+    "receivedStatus": 1,
+    "receivedTime": 1476006352608,
+    "senderUserId": "mFGfyNe51",
+    "sentTime": 1469434705790,
+    "targetId": "",
+    "messageType": "ReadReceiptMessage",
+    "messageUId": "5B22-8HNF-O5DR-BRFV",
+    "offLineMessage": true
+  }, {
+    "content": {
+      "messageName": "ReadReceiptMessage",
+      "lastMessageSendTime": 1467871779946,
+      "messageUId": "5AS7-UESD-85DR-BRFV",
+      "type": 1
+    },
+    "conversationType": 1,
+    "objectName": "RC:ReadNtf",
+    "messageDirection": 1,
+    "messageId": "1_13324920",
+    "receivedStatus": 1,
+    "receivedTime": 1476006352608,
+    "senderUserId": "mFGfyNe51",
+    "sentTime": 1469437208014,
+    "targetId": "",
+    "messageType": "ReadReceiptMessage",
+    "messageUId": "5B22-I35P-O5DR-BRFV",
+    "offLineMessage": true
+  }, {
+    "content": {
+      "messageName": "ReadReceiptMessage",
+      "lastMessageSendTime": 1467871779946,
+      "messageUId": "5AS7-UESD-85DR-BRFV",
+      "type": 1
+    },
+    "conversationType": 1,
+    "objectName": "RC:ReadNtf",
+    "messageDirection": 1,
+    "messageId": "1_2389518",
+    "receivedStatus": 1,
+    "receivedTime": 1476006352608,
+    "senderUserId": "mFGfyNe51",
+    "sentTime": 1469437593852,
+    "targetId": "",
+    "messageType": "ReadReceiptMessage",
+    "messageUId": "5B22-JI8V-G5DR-BRFV",
+    "offLineMessage": true
+  }, {
+    "content": {
+      "messageName": "TextMessage",
+      "content": "11111111111111111111",
+      "extra": ""
+    },
+    "conversationType": 1,
+    "objectName": "RC:TxtMsg",
+    "messageDirection": 2,
+    "messageId": "1_2446978",
+    "receivedStatus": 1,
+    "receivedTime": 1476006352608,
+    "senderUserId": "TF8kRyOYu",
+    "sentTime": 1471591050866,
+    "targetId": "TF8kRyOYu",
+    "messageType": "TextMessage",
+    "messageUId": "5BA3-ABEE-87KM-OMBK",
+    "offLineMessage": true
+  }]
 }

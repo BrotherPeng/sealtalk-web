@@ -118,11 +118,10 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                 // $scope.searchList.friendList = mainDataServer.contactsList.find(content, friendList) || [];
                 // $scope.searchList.groupList = mainDataServer.contactsList.find(content, mainDataServer.contactsList.groupList) || [];
 
-
-
                 $scope.searchList = <any>{};
 
                 if ($scope.switchbtn.searchMessage) {
+                    $scope.showsearchconversation=true;
                     searchData.getConversationByContent(content).then(function(data: any) {
                         $scope.searchList.conversations = [];
                         for(var i=0,len=data.length;i<len;i++){
@@ -139,6 +138,8 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
 
             } else {
                 $scope.switchbtn.issearchList = false;
+
+                $scope.showsearchconversation=false;
                 $scope.searchList.conversations=[];
             }
         }
@@ -339,7 +340,8 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         RongIMSDKServer.init(appconfig.getAppKey());
 
         if (mainDataServer.loginUser.token) {
-            RongIMSDKServer.connect(<string>mainDataServer.loginUser.token).then(function(userId) {
+            console.log(mainDataServer.loginUser.id)
+            RongIMSDKServer.connect(<string>mainDataServer.loginUser.token,mainDataServer.loginUser.id).then(function(userId) {
                 console.log("connect success1:" + userId);
                 RongIMSDKServer.getConversationList().then(function(list) {
                     mainDataServer.conversation.updateConversations();
