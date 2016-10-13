@@ -360,7 +360,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                     //token 错误。
                     mainServer.user.getToken().success(function(data: any) {
                         if (data.code == "200") {
-                            RongIMSDKServer.connect(<string>data.result.token).then(function(userId) {
+                            RongIMSDKServer.connect(<string>data.result.token,mainDataServer.loginUser.id).then(function(userId) {
                                 console.log("connect success2:" + userId);
                                 RongIMSDKServer.getConversationList().then(function(list) {
                                     mainDataServer.conversation.updateConversations();
@@ -390,7 +390,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         } else {
             mainServer.user.getToken().success(function(data: any) {
                 if (data.code == "200") {
-                    RongIMSDKServer.connect(<string>data.result.token).then(function(userId) {
+                    RongIMSDKServer.connect(<string>data.result.token,mainDataServer.loginUser.id).then(function(userId) {
                         console.log("connect success3:" + userId);
                         RongIMSDKServer.getConversationList().then(function(list) {
                             mainDataServer.conversation.updateConversations();

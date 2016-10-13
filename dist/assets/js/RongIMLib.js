@@ -3666,9 +3666,9 @@ var RongIMLib;
         };
         MessageHandler.prototype.onReceived = function (msg, pubAckItem, offlineMsg) {
             //实体对象
-            var entity,
+            var entity, 
             //解析完成的消息对象
-            message,
+            message, 
             //会话对象
             con;
             if (msg._name != "PublishMessage") {
@@ -5702,7 +5702,7 @@ var typeMapping = {
     "RC:SRSMsg": "SyncReadStatusMessage",
     "RC:RRReqMsg": "ReadReceiptRequestMessage",
     "RC:RRRspMsg": "ReadReceiptResponseMessage"
-},
+}, 
 //自定义消息类型
 registerMessageTypeMapping = {}, HistoryMsgType = {
     4: "qryCMsg",
@@ -7914,11 +7914,14 @@ var RongIMLib;
             this.addon.registerMessageType("RC:ImgTextMsg", 3);
             this.addon.registerMessageType("RC:FileMsg", 3);
             this.addon.registerMessageType("RC:LBSMsg", 3);
+            this.addon.registerMessageType("RC:PSImgTxtMsg", 3);
+            this.addon.registerMessageType("RC:PSMultiImgTxtMsg", 3);
+            this.addon.registerMessageType("RC:GrpNtf", 1);
+            this.addon.registerMessageType("RC:DizNtf", 0);
             this.addon.registerMessageType("RC:InfoNtf", 0);
             this.addon.registerMessageType("RC:ContactNtf", 0);
             this.addon.registerMessageType("RC:ProfileNtf", 0);
             this.addon.registerMessageType("RC:CmdNtf", 0);
-            this.addon.registerMessageType("RC:DizNtf", 0);
             this.addon.registerMessageType("RC:CmdMsg", 0);
             this.addon.registerMessageType("RC:TypSts", 0);
             this.addon.registerMessageType("RC:CsChaR", 0);
@@ -7926,6 +7929,7 @@ var RongIMLib;
             this.addon.registerMessageType("RC:CsEnd", 0);
             this.addon.registerMessageType("RC:CsSp", 0);
             this.addon.registerMessageType("RC:CsUpdate", 0);
+            this.addon.registerMessageType("RC:CsContact", 0);
             this.addon.registerMessageType("RC:ReadNtf", 0);
             this.addon.registerMessageType("RC:VCAccept", 0);
             this.addon.registerMessageType("RC:VCRinging", 0);
@@ -7934,10 +7938,6 @@ var RongIMLib;
             this.addon.registerMessageType("RC:VCInvite", 0);
             this.addon.registerMessageType("RC:VCModifyMedia", 0);
             this.addon.registerMessageType("RC:VCModifyMem", 0);
-            this.addon.registerMessageType("RC:CsContact", 0);
-            this.addon.registerMessageType("RC:PSImgTxtMsg", 3);
-            this.addon.registerMessageType("RC:PSMultiImgTxtMsg", 3);
-            this.addon.registerMessageType("RC:GrpNtf", 0);
             this.addon.registerMessageType("RC:PSCmd", 0);
             this.addon.registerMessageType("RC:RcCmd", 0);
             this.addon.registerMessageType("RC:SRSMsg", 0);
@@ -8227,6 +8227,10 @@ var RongIMLib;
         };
         VCDataProvider.prototype.getHistoryMessages = function (conversationType, targetId, timestamp, count, callback) {
             this.useConsole && console.log("getHistoryMessages");
+            if (count <= 0) {
+                callback.onError(RongIMLib.ErrorCode.TIMEOUT);
+                return;
+            }
             try {
                 var ret = this.addon.getHistoryMessages(conversationType, targetId, timestamp ? timestamp : 0, count);
                 var list = ret ? JSON.parse(ret).list : [], msgs = [], me = this;
@@ -8234,7 +8238,7 @@ var RongIMLib;
                 for (var i = 0, len = list.length; i < len; i++) {
                     msgs[i] = me.buildMessage(list[i].obj);
                 }
-                callback.onSuccess(msgs, len == count );
+                callback.onSuccess(msgs, len == count);
             }
             catch (e) {
                 callback.onError(RongIMLib.ErrorCode.TIMEOUT);

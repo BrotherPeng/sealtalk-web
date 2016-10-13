@@ -214,8 +214,8 @@ groupInfo.controller("groupbulletinController", ["$scope", "$state", "$statePara
         $scope.showDialog2 = false;
 
         $scope.groupbulletinbtn = function() {
-          $scope.showDialog1 = true;
-          picBackground.css('visibility','visible');
+
+
           if (!$scope.message) {
               webimutil.Helper.alertMessage.error("消息不可为空！", 2);
               return;
@@ -224,6 +224,8 @@ groupInfo.controller("groupbulletinController", ["$scope", "$state", "$statePara
               webimutil.Helper.alertMessage.error("群信息不可为空！", 2);
               return;
           }
+          picBackground.css('visibility','visible');
+          $scope.showDialog1 = true;
         };
         $scope.back = function() {
             $state.go("main.groupinfo", { groupid: groupid, conversationtype: targettype });

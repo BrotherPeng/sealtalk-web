@@ -107,7 +107,7 @@ module webim {
                         if($scope.currentPage==$scope.pageCount){
                           $scope.hasmoreMessage=false;
                         }
-
+                        lastTime = (data.message[0] || <RongIMLib.Message>{}).sentTime || 0;
                         $scope.messageList = convertHistoryList(data.message);
                     })
                 } else {
