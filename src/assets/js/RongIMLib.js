@@ -7964,6 +7964,26 @@ var RongIMLib;
         };
         VCDataProvider.prototype.setConnectionStatusListener = function (listener) {
             var me = this;
+            /**
+            ConnectionStatus_TokenIncorrect = 31004,
+            ConnectionStatus_Connected = 0,
+            ConnectionStatus_KickedOff = 6,	// 其他设备登录
+            ConnectionStatus_Connecting = 10,// 连接中
+            ConnectionStatus_SignUp = 12, // 未登录
+            ConnectionStatus_NetworkUnavailable = 1, // 连接断开
+            ConnectionStatus_ServerInvalid = 8, // 断开
+            ConnectionStatus_ValidateFailure = 9,//断开
+            ConnectionStatus_Unconnected = 11,//断开
+            ConnectionStatus_DisconnExecption = 31011 //断开
+            RC_NAVI_MALLOC_ERROR   = 30000,//断开
+            RC_NAVI_NET_UNAVAILABLE= 30002,//断开
+            RC_NAVI_SEND_FAIL      = 30004,//断开
+            RC_NAVI_REQ_TIMEOUT    = 30005,//断开
+            RC_NAVI_RECV_FAIL      = 30006,//断开
+            RC_NAVI_RESOURCE_ERROR = 30007,//断开
+            RC_NAVI_NODE_NOT_FOUND = 30008,//断开
+            RC_NAVI_DNS_ERROR      = 30009,//断开
+            */
             me.connectListener = listener;
             this.useConsole && console.log("setConnectionStatusListener");
             me.addon.setConnectionStatusListener(function (result) {
@@ -7971,13 +7991,32 @@ var RongIMLib;
                     case 10:
                         listener.onChanged(RongIMLib.ConnectionStatus.CONNECTING);
                         break;
+                    case 31004:
+                        me.connectCallback.onTokenIncorrect();
+                        break;
+                    case 1:
+                    case 8:
+                    case 9:
                     case 11:
-                        // 连接失败
-                        listener.onChanged(RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE);
+                    case 12:
+                    case 31011:
+                    case 30000:
+                    case 30002:
+                    case 30004:
+                    case 30005:
+                    case 30006:
+                    case 30007:
+                    case 30008:
+                    case 30009:
+                        listener.onChanged(RongIMLib.ConnectionStatus.DISCONNECTED);
                         break;
                     case 0:
+                    case 33005:
                         me.connectCallback.onSuccess(me.userId);
                         listener.onChanged(RongIMLib.ConnectionStatus.CONNECTED);
+                        break;
+                    case 6:
+                        listener.onChanged(RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT);
                         break;
                 }
             });
@@ -8016,13 +8055,16 @@ var RongIMLib;
         VCDataProvider.prototype.getRemoteHistoryMessages = function (conversationType, targetId, timestamp, count, callback) {
             try {
                 this.useConsole && console.log("getRemoteHistoryMessages");
-                var ret = this.addon.getHistoryMessages(conversationType, targetId, timestamp ? timestamp : -1, count);
-                var list = ret ? JSON.parse(ret).list : [], msgs = [], me = this;
-                list.reverse();
-                for (var i = 0, len = list.length; i < len; i++) {
-                    msgs[i] = me.buildMessage(list[i].obj);
-                }
-                callback.onSuccess(msgs);
+                this.addon.getRemoteHistoryMessages(conversationType, targetId, timestamp ? timestamp : 0, count, function (ret, hasMore) {
+                    var list = ret ? JSON.parse(ret).list : [], msgs = [], me = this;
+                    list.reverse();
+                    for (var i = 0, len = list.length; i < len; i++) {
+                        msgs[i] = me.buildMessage(list[i].obj);
+                    }
+                    callback.onSuccess(msgs, hasMore ? true : false);
+                }, function (errorCode) {
+                    callback.onError(errorCode);
+                });
             }
             catch (e) {
                 callback.onError(RongIMLib.ErrorCode.TIMEOUT);
@@ -8031,7 +8073,7 @@ var RongIMLib;
         VCDataProvider.prototype.getRemoteConversationList = function (callback, conversationTypes, count) {
             try {
                 this.useConsole && console.log("getRemoteConversationList");
-                var converTypes = conversationTypes || [1, 2, 3, 4, 5, 6, 7];
+                var converTypes = conversationTypes || [1, 2, 3, 4, 5, 6, 7, 8];
                 var result = this.addon.getConversationList(converTypes);
                 var list = JSON.parse(result).list, convers = [], me = this;
                 list.reverse();
@@ -8185,7 +8227,18 @@ var RongIMLib;
         };
         VCDataProvider.prototype.getHistoryMessages = function (conversationType, targetId, timestamp, count, callback) {
             this.useConsole && console.log("getHistoryMessages");
-            this.getRemoteHistoryMessages(conversationType, targetId, timestamp, count, callback);
+            try {
+                var ret = this.addon.getHistoryMessages(conversationType, targetId, timestamp ? timestamp : 0, count);
+                var list = ret ? JSON.parse(ret).list : [], msgs = [], me = this;
+                list.reverse();
+                for (var i = 0, len = list.length; i < len; i++) {
+                    msgs[i] = me.buildMessage(list[i].obj);
+                }
+                callback.onSuccess(msgs, len == count );
+            }
+            catch (e) {
+                callback.onError(RongIMLib.ErrorCode.TIMEOUT);
+            }
         };
         VCDataProvider.prototype.getTotalUnreadCount = function (callback, conversationTypes) {
             try {

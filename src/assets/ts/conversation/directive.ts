@@ -755,7 +755,6 @@ conversationDire.directive("imageMessage", [function() {
         box.style.width = pos.w + 'px';
         abox.style.height = pos.h + 'px';
         abox.style.width = pos.w + 'px';
-        console.log(pos);
       }
       function getBackgrund(width: number, height: number) {
 
