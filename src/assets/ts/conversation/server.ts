@@ -434,7 +434,7 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
                     case webimmodel.conversationType.System:
                         // user = mainDataServer.contactsList.getFriendById(item.senderUserId);
                         // if (user) {
-                            user = new webimmodel.Contact();
+                            user = new webimmodel.Contact(<any>{});
                             user.name = "系统消息";
                         // }
                         break;

@@ -125,8 +125,12 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                     searchData.getConversationByContent(content).then(function(data: any) {
                         $scope.searchList.conversations = [];
                         for(var i=0,len=data.length;i<len;i++){
-                          var result= mainDataServer.conversation.parseConversation(data[i]);
-                          $scope.searchList.conversations.push(result.item);
+                          //TODO:web 暂不处理其他类型会话
+                          var type=data[i].conversationType;
+                          if(type == 1||type == 3){
+                            var result= mainDataServer.conversation.parseConversation(data[i]);
+                            $scope.searchList.conversations.push(result.item);
+                          }
                         }
                     })
                 } else {

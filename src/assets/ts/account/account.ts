@@ -36,7 +36,6 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
             }
 
         }
-
         $scope.signin = function() {
             $scope.formSignin.submitted = true;
             webimutil.CookieHelper.removeCookie("loginuserid");//清除登录状态

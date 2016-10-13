@@ -755,6 +755,7 @@ conversationDire.directive("imageMessage", [function() {
         box.style.width = pos.w + 'px';
         abox.style.height = pos.h + 'px';
         abox.style.width = pos.w + 'px';
+        console.log(pos);
       }
       function getBackgrund(width: number, height: number) {
 
@@ -820,6 +821,12 @@ conversationDire.directive("imageMessage", [function() {
         box.style.backgroundSize = pos.w + 'px ' + pos.h + 'px';
         box.style.backgroundPosition = pos.x + 'px ' + pos.y + 'px';
 
+        var h = pos.h > 240 ? 240 : pos.h;
+        var w = pos.w > 240 ? 240 : pos.w;
+        box.style.height = h + 'px';
+        box.style.width = w + 'px';
+        abox.style.height = h + 'px';
+        abox.style.width = w + 'px';
       }
 
       $(ele).contextmenu(function(e: any) {

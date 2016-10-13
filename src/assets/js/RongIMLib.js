@@ -3666,9 +3666,9 @@ var RongIMLib;
         };
         MessageHandler.prototype.onReceived = function (msg, pubAckItem, offlineMsg) {
             //实体对象
-            var entity, 
+            var entity,
             //解析完成的消息对象
-            message, 
+            message,
             //会话对象
             con;
             if (msg._name != "PublishMessage") {
@@ -5702,7 +5702,7 @@ var typeMapping = {
     "RC:SRSMsg": "SyncReadStatusMessage",
     "RC:RRReqMsg": "ReadReceiptRequestMessage",
     "RC:RRRspMsg": "ReadReceiptResponseMessage"
-}, 
+},
 //自定义消息类型
 registerMessageTypeMapping = {}, HistoryMsgType = {
     4: "qryCMsg",
@@ -8038,6 +8038,7 @@ var RongIMLib;
                 for (var i = 0, len = list.length; i < len; i++) {
                     convers[i] = me.buildConversation(list[i].obj);
                 }
+                convers.reverse();
                 callback.onSuccess(convers);
             }
             catch (e) {
@@ -8105,12 +8106,14 @@ var RongIMLib;
         VCDataProvider.prototype.sendMessage = function (conversationType, targetId, messageContent, sendCallback, mentiondMsg, pushText, appData) {
             var me = this;
             me.useConsole && console.log("sendMessage");
-            me.addon.sendMessage(conversationType, targetId, RongIMLib.RongIMClient.MessageParams[messageContent.messageName].objectName, messageContent.encode(), pushText, appData, function (progress) {
+            var msg = me.addon.sendMessage(conversationType, targetId, RongIMLib.RongIMClient.MessageParams[messageContent.messageName].objectName, messageContent.encode(), pushText || "", appData || "", function (progress) {
             }, function (message) {
                 sendCallback.onSuccess(me.buildMessage(message));
             }, function (message, code) {
-                sendCallback.onError(code, message);
-            });
+                sendCallback.onError(code, me.buildMessage(message));
+            }, mentiondMsg ? ["metionedMsg"] : "");
+            var tempMessage = JSON.parse(msg);
+            RongIMLib.MessageIdHandler.messageId = tempMessage.messageId;
         };
         VCDataProvider.prototype.registerMessageType = function (messageType, objectName, messageTag, messageContent) {
             this.useConsole && console.log("registerMessageType");
@@ -8377,6 +8380,7 @@ var RongIMLib;
             conver.senderUserId = lastestMsg.senderUserId;
             conver.sentStatus = lastestMsg.status;
             conver.targetId = c.targetId;
+            conver.unreadMessageCount = c.unreadCount;
             return conver;
         };
         return VCDataProvider;

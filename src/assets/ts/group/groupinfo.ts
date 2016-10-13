@@ -55,6 +55,7 @@ groupInfo.controller("groupinfoController", ["$scope", "$rootScope", "$state", "
         if (!$scope.groupInfo) {
             webimutil.Helper.alertMessage.error("您不在此群组中", 2);
             // back();
+            window.history.back();
         }
 
         if ($scope.groupInfo.creater == mainDataServer.loginUser.id) {

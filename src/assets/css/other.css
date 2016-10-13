@@ -50,3 +50,6 @@
   font-family: "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
   white-space: pre-wrap;
 }
+.chat_item .ext_info .msg span{
+  vertical-align: middle;
+}

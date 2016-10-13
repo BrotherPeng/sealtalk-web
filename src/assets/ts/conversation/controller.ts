@@ -231,7 +231,10 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             $scope.currentConversation.draftMsg = RongIMSDKServer.getDraft(targetType, targetId);
 
         }, function() {
-
+            // c++ SDK 没有会话时返回错误
+            var conv = mainDataServer.conversation.createConversation(targetType, targetId);
+            mainDataServer.conversation.currentConversation = conv;
+            $scope.currentConversation = conv;
         });
 
         // RongIMSDKServer.clearMessagesUnreadStatus(targetType, targetId);

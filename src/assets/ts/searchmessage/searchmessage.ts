@@ -19,7 +19,7 @@ module webim {
             var messageListCache: any[] = [];
 
             var lastTime: any = 0;
-            var hasmore: boolean = true;
+            $scope.hasmoreMessage = true;
 
             $scope.pagesize = 20;
             $scope.currentPage = 1;
@@ -105,7 +105,7 @@ module webim {
                         $scope.pageCount=Math.ceil(data.count/$scope.pagesize)||0;
                         console.log($scope.currentPage,$scope.pageCount)
                         if($scope.currentPage==$scope.pageCount){
-                          hasmore=false;
+                          $scope.hasmoreMessage=false;
                         }
 
                         $scope.messageList = convertHistoryList(data.message);
@@ -114,7 +114,7 @@ module webim {
                     RongIMSDKServer.getHistoryMessages(+conversationType, targetId, lastTime, $scope.pagesize).then(function(data) {
                         $scope.pageCount = 0;//根据返回总数计算；
 
-                        hasmore = data.has;
+                        $scope.hasmoreMessage = data.has;
                         var list = data.data;
                         var end = list.length - $scope.pagesize;
                         list.splice(0, end < 0 ? 0 : end);
@@ -146,9 +146,9 @@ module webim {
                 var pageCount = $scope.pageCount;
                 var pagesize = $scope.pagesize;
                 console.log(currentPage*pagesize<messageListCache.length);
-                console.log(hasmore);
+                console.log($scope.hasmoreMessage);
                 //  if ((pageCount!==0 && currentPage < pageCount) ) {
-                if(currentPage*pagesize<messageListCache.length||hasmore){
+                if(currentPage*pagesize<messageListCache.length||$scope.hasmoreMessage){
                     currentPage++;
                     $scope.currentPage++;
 
@@ -194,6 +194,9 @@ module webim {
             },
             template: '<img ng-src="{{message.content}}"></img>',
             link: function(scope: any) {
+                if(!scope.message.content){
+                  scope.message.content = scope.message.imageUri;
+                }
             }
         }
     }])

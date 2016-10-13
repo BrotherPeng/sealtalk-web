@@ -1594,8 +1594,14 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
 
   RongIMSDKServer.getHistoryMessages = function(type: number, targetId: string, lastTime: number, num: number) {
     var defer = $q.defer();
+    console.log(arguments);
     RongIMLib.RongIMClient.getInstance().getHistoryMessages(type, targetId, lastTime, num, {
       onSuccess: function(data, has) {
+        //TODO: c++SDK问题
+        console.log(data);
+        if(has == undefined && data.length==num){
+          has=true;
+        }
         defer.resolve({
           data: data,
           has: has
