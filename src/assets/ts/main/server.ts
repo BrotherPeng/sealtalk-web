@@ -385,7 +385,9 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
                 conversationitem.atStr = atStr;
               }
               var member = mainDataServer.contactsList.getGroupMember(group.id, item.latestMessage.senderUserId);
-              if (member) {
+              if(item.latestMessage.senderUserId==mainDataServer.loginUser.id){
+                conversationitem.lastMsg = "你：" + conversationitem.lastMsg;
+              } else if (member) {
                 conversationitem.lastMsg = member.name + "：" + conversationitem.lastMsg;
               } else {
                 (function(id: string, conv: webimmodel.Conversation) {
@@ -610,8 +612,8 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
         mainDataServer.conversation.conversations = [];
         for (var i = 0, length = list.length; i < length; i++) {
           var result = mainDataServer.conversation.parseConversation(list[i]);
-          allUnreadCount = allUnreadCount - result.removeUnreadCount;
-          if (list[i].conversationType == RongIMLib.ConversationType.CUSTOMER_SERVICE || list[i].conversationType == RongIMLib.ConversationType.DISCUSSION || list[i].conversationType == RongIMLib.ConversationType.SYSTEM || list[i].conversationType == RongIMLib.ConversationType.CHATROOM) continue;
+          // allUnreadCount = allUnreadCount - result.removeUnreadCount;
+          if (list[i].conversationType == RongIMLib.ConversationType.CUSTOMER_SERVICE || list[i].conversationType == RongIMLib.ConversationType.DISCUSSION || list[i].conversationType == RongIMLib.ConversationType.SYSTEM || list[i].conversationType == RongIMLib.ConversationType.CHATROOM ||list[i].conversationType == RongIMLib.ConversationType.PUBLIC_SERVICE||list[i].conversationType == RongIMLib.ConversationType.APP_PUBLIC_SERVICE ) continue;
           mainDataServer.conversation.conversations.push(result.item);
         }
         mainDataServer.conversation.totalUnreadCount = allUnreadCount;
@@ -1351,11 +1353,20 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
 
   RongIMSDKServer.init = function(appkey: string) {
     // RongIMLib.RongIMClient.init(appkey, new RongIMLib.WebSQLDataProvider());
-    if(window.Electron){
-      RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon),{navi:"119.254.111.49:9100"});
+    if(window.__sealtalk_config.online){
+      if(window.Electron){
+        RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon));
+      }else{
+        RongIMLib.RongIMClient.init(appkey,null);
+      }
     }else{
-      RongIMLib.RongIMClient.init(appkey,null,{navi:"119.254.111.49:9100"});
+      if(window.Electron){
+        RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon),{navi:"119.254.111.49:9100"});
+      }else{
+        RongIMLib.RongIMClient.init(appkey,null,{navi:"119.254.111.49:9100"});
+      }
     }
+
   }
 
   RongIMSDKServer.connect = function(token: string,userid?:string) {
@@ -1528,7 +1539,7 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
       onError: function() {
         defer.reject();
       }
-    });
+    },[1,3]);
     return defer.promise;
   }
 

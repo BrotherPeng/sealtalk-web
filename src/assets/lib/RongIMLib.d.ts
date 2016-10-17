@@ -55,6 +55,7 @@ interface Window {
     getServerEndpoint: any;
     XDomainRequest: any;
     JSON: any;
+    __sealtalk_config:any
 }
 interface HTMLScriptElement {
     onreadystatechange: any;
@@ -739,7 +740,7 @@ declare module RongIMLib {
          * @param  {ConnectCallback} callback [返回值，参数回调]
          */
         hasRemoteUnreadMessages(token: string, callback: ResultCallback<Boolean>): void;
-        getTotalUnreadCount(callback: ResultCallback<number>): void;
+        getTotalUnreadCount(callback: ResultCallback<number>,arr?:number[]): void;
         /**
          * [getConversationUnreadCount 指定多种会话类型获取未读消息数]
          * @param  {ResultCallback<number>} callback             [返回值，参数回调。]
