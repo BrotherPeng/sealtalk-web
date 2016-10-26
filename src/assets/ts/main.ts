@@ -271,7 +271,7 @@ function cancelScollStyle() {
             }
         }
     }
-    var listScroll = ["body", "#functionBox", "#chatArea", "#Messages", ".main", ".chatArea", ".communicateList", ".arobase",".r-member-selected",".r-msg-list",".r-member-search"];
+    var listScroll = ["body", "#functionBox", "#chatArea", "#Messages", ".main", ".chatArea", ".communicateList", ".arobase",".r-member-selected",".r-msg-list",".r-member-search",".r-group-info"];
     var len = listScroll.length;
 
 

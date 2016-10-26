@@ -57,7 +57,7 @@ mainDire.directive("conversation", ["$state", "mainDataServer", function($state:
             }
             ele.bind("click", function() {
               var conversationItems = <any>document.querySelectorAll('#chatArea .chatList');
-              conversationItems.forEach(function(conversaiton:any){
+              $(conversationItems).each(function(index:any, conversaiton:any){
                   angular.element(conversaiton).removeClass('selected');
               });
               angular.element(ele[0]).children().addClass('selected');

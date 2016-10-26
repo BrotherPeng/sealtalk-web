@@ -367,6 +367,637 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
 
         RongIMSDKServer.init(appconfig.getAppKey());
 
+        var isReconnect = true;
+        RongIMSDKServer.setConnectionStatusListener({
+            onChanged: function(status: number) {
+                var myDate = new Date();
+                switch (status) {
+                    //链接成功
+                    case RongIMLib.ConnectionStatus.CONNECTED:
+                        console.log('链接成功', myDate.toLocaleString());
+                        mainDataServer.isConnected = true;
+                        showDisconnectErr(false);
+                        isConnecting = false;
+                        break;
+                    //正在链接
+                    case RongIMLib.ConnectionStatus.CONNECTING:
+                        console.log('正在链接');
+                        break;
+                    //重新链接
+                    case RongIMLib.ConnectionStatus.DISCONNECTED:
+                        console.log('断开连接');
+                        if (!$state.is("account.signin")) {
+                            $state.go("account.signin");
+                        }
+                        break;
+                    //其他设备登陆
+                    case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
+                        console.log('其他设备登录');
+                        if (!$state.is("account.signin")) {
+                            $state.go("account.signin");
+                            webimutil.Helper.alertMessage.error("您的账号在其他地方登录!");
+                            webimutil.NotificationHelper.showNotification({
+                                title: "SealTalk",
+                                icon: "assets/img/SealTalk.ico",
+                                body: "您的账号在其他地方登录!"
+                            })
+                            if (window.Electron) {
+                                window.Electron.kickedOff();
+                            }
+                        }
+                        break;
+                    //网络不可用
+                    case RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE:
+                        console.log('网络不可用', myDate.toLocaleString(), 'isConnecting:' + isConnecting);
+                        mainDataServer.isConnected = false;
+                        showDisconnectErr(true);
+                        // if(!isConnecting){
+                        isConnecting = true;
+                        checkNetwork({
+                            onSuccess: function() {
+                                reconnectServer();
+                            }
+                        })
+                        // }
+                        break;
+                }
+            }
+        })
+
+
+                var typingTimeID: any;
+                var timeOfflineMsg: any;
+                RongIMSDKServer.setOnReceiveMessageListener({
+                    onReceived: function(data: RongIMLib.Message) {
+                        if ($scope.mainData.loginUser.hasSound) {
+                            var eleplay = <any>document.getElementById("playsound");
+                            eleplay.play();
+                        }
+
+                        var msg = <any>webimmodel.Message.convertMsg(data);
+
+                        //同自己会话删除targetid为空
+                        // if (msg.targetId == "") {
+                        //     msg.targetId = mainDataServer.loginUser.id;
+                        //     RongIMSDKServer.removeConversation(webimmodel.conversationType.Private, "").then(function() {
+                        //         refreshconversationList();
+                        //     });
+                        //     return;
+                        // }
+                        //TODO 未来待修改
+                        if (msg.targetId == "") {
+                            msg.targetId = mainDataServer.loginUser.id;
+                        }
+
+                        // if ($state.is("main.chat") && !document.hidden) {
+                        if ($state.is("main.chat")) {
+                            RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
+                        }
+
+                        switch (data.messageType) {
+                            case webimmodel.MessageType.ContactNotificationMessage:
+                                RongIMSDKServer.clearUnreadCount(data.conversationType, data.targetId);
+                                if (data.hasReceivedByOtherClient) {
+                                    //已在其他端接收过，不做处理。
+                                    break;
+                                }
+                                var contact = <webimmodel.ContactNotificationMessage>msg.content;
+                                RongIMSDKServer.removeConversation(msg.conversationType, msg.targetId).then(function() {
+                                    refreshconversationList();
+                                });
+
+                                if (contact.operation == "Request") {
+                                    //好友请求
+                                    //添加到通知
+                                    //TODO:判断是否已经是好友防止离线消息补偿造成错误数据
+                                    var friend = mainDataServer.contactsList.getFriendById(contact.sourceUserId);
+                                    if (friend) {
+                                        return;
+                                    }
+                                    if (!$state.is("main.notification")) {
+                                        $scope.mainData.notification.hasNewNotification = true;
+                                    }
+                                    var item = new webimmodel.NotificationFriend({
+                                        id: contact.sourceUserId,
+                                        name: contact.senderUserName,
+                                        portraitUri: contact.senderUserImgSrc,
+                                        content: contact.content,
+                                        status: webimmodel.FriendStatus.Requested + "",
+                                        timestamp: (msg.sentTime && msg.sentTime.getTime())
+                                    });
+                                    if (!item.name) {
+                                        //没获取到名称去服务器获取
+                                        mainServer.user.getInfo(contact.sourceUserId).success(function(rep) {
+                                            item.name = rep.result.nickname;
+                                            item.portraitUri = rep.result.portraitUri;
+                                            item.firstchar = webimutil.ChineseCharacter.getPortraitChar(item.name);
+                                            mainDataServer.notification.addNotification(item);
+                                        }).error(function() {
+                                        })
+                                    } else {
+                                        mainDataServer.notification.addNotification(item);
+                                    }
+                                } else if (contact.operation == "AcceptResponse") {
+                                    //对方已同意
+                                    //好友列表里添加好友or同步好友列表
+                                    var friend = mainDataServer.contactsList.getFriendById(contact.sourceUserId);
+                                    if (!friend) {
+                                        mainServer.user.getInfo(contact.sourceUserId).success(function(rep) {
+                                            var res = rep.result;
+                                            mainDataServer.contactsList.addFriend(new webimmodel.Friend({
+                                                id: res.id,
+                                                name: res.nickname,
+                                                imgSrc: res.portraitUri
+                                            }));
+                                            refreshconversationList();
+                                        }).error(function() {
+                                            mainDataServer.contactsList.addFriend(new webimmodel.Friend({
+                                                id: contact.sourceUserId,
+                                                name: "网络原因暂未取到",
+                                                imgSrc: ""
+                                            }));
+                                            refreshconversationList();
+                                            // throw new Error("好友信息获取失败");
+                                        })
+                                    }
+                                }
+                                break;
+                            case webimmodel.MessageType.DiscussionNotificationMessage:
+                                // if (data.objectName == "RC:DizNtf" && !data.hasReceivedByOtherClient) {
+                                //     //群组信息更新，已经在其他端接收过不做处理。
+                                //     var discussionNotification = <any>data;
+                                //     switch (discussionNotification.content.type) {
+                                //         case 1:   //join
+                                //             var changemembers = discussionNotification.content.extension.split(",");
+                                //             var targetid = data.targetId;
+                                //             var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
+                                //             if (self == -1) {
+                                //                 for (var a = 0, len = changemembers.length; a < len; a++) {
+                                //                     mainServer.user.getInfo(changemembers[a]).success(function(rep) {
+                                //                         mainDataServer.contactsList.addDiscussionMember(targetid, new webimmodel.Member({
+                                //                             id: rep.result.id,
+                                //                             name: rep.result.nickname,
+                                //                             imgSrc: rep.result.portraitUri,
+                                //                             role: "1"
+                                //                         }));
+                                //                     }).error(function() {
+                                //
+                                //                     });
+                                //                 }
+                                //             } else {
+                                //               RongIMSDKServer.getDiscussion(targetid).then(function (rep) {
+                                //                   var discuss = rep.data;
+                                //                   var members = discuss.memberIdList;
+                                //                   // conv.title = discuss.name;
+                                //                   // conv.firstchar = webimutil.ChineseCharacter.getPortraitChar(discuss.name);
+                                //
+                                //                   var temporarynotifi = new webimmodel.WarningNoticeMessage("邀请进入讨论组" + '"' + discuss.name + '"');
+                                //                   mainDataServer.notification.addNotification(temporarynotifi);
+                                //                   if (!$state.is("main.notification")) {
+                                //                       mainDataServer.notification.hasNewNotification = true;
+                                //                   }
+                                //
+                                //                   mainDataServer.contactsList.addDiscussion(new webimmodel.Discussion({
+                                //                       id: discuss.id,
+                                //                       name: discuss.name,
+                                //                       imgSrc: '',
+                                //                       upperlimit: 500,
+                                //                       fact: 1,
+                                //                       creater: discuss.creatorId,
+                                //                       isOpen: true
+                                //                   }));
+                                //                   for (var j = 0, len = discuss.memberIdList.length; j < len; j++) {
+                                //                       mainServer.user.getInfo(discuss.memberIdList[j]).then(function (repmem) {
+                                //                           var member = new webimmodel.Member({
+                                //                               id: repmem.data.result.id,
+                                //                               name: repmem.data.result.nickname,
+                                //                               imgSrc: repmem.data.result.portraitUri,
+                                //                               role: "1"
+                                //                           });
+                                //                           mainDataServer.contactsList.addDiscussionMember(discuss.id, member);
+                                //                       });
+                                //                   }
+                                //
+                                //                   refreshconversationList();
+                                //               }, function () {
+                                //                   // conv.title = "未知讨论组";
+                                //               });
+                                //             }
+                                //             break;
+                                //         case 2:   //quit
+                                //             var changemembers = discussionNotification.content.extension.split(",");
+                                //             var targetid = data.targetId;
+                                //             var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
+                                //             if (self == -1) {
+                                //                 mainDataServer.contactsList.removeDiscussionMember(targetid, changemembers[0]);
+                                //             } else {
+                                //                 mainDataServer.contactsList.removeDiscussion(targetid);
+                                //
+                                //                 RongIMSDKServer.removeConversation(webimmodel.conversationType.Discussion, targetid).then(function() {
+                                //                     refreshconversationList();
+                                //                 });
+                                //             }
+                                //             break;
+                                //         case 4:  //kick
+                                //             var changemembers = discussionNotification.content.extension.split(",");
+                                //             var targetid = data.targetId;
+                                //             var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
+                                //             if (self == -1) {
+                                //                 for (var a = 0, len = changemembers.length; a < len; a++) {
+                                //                     mainDataServer.contactsList.removeDiscussionMember(targetid, changemembers[a]);
+                                //                 }
+                                //             } else {
+                                //                 var temporarynotifi = new webimmodel.WarningNoticeMessage("讨论组" + '"' + mainDataServer.contactsList.getDiscussionById(targetid).name + '"' + '已将您踢出');
+                                //                 mainDataServer.notification.addNotification(temporarynotifi);
+                                //                 if (!$state.is("main.notification")) {
+                                //                     mainDataServer.notification.hasNewNotification = true;
+                                //                 }
+                                //                 mainDataServer.contactsList.removeDiscussion(targetid);
+                                //                 RongIMSDKServer.removeConversation(webimmodel.conversationType.Discussion, targetid).then(function() {
+                                //                     refreshconversationList();
+                                //                 });
+                                //                 //退出会话状态
+                                //                 if ($state.is("main.chat") && $state.params["targetId"] == targetid && $state.params["targetType"] == webimmodel.conversationType.Discussion) {
+                                //                     $state.go("main");
+                                //                 }
+                                //             }
+                                //             break;
+                                //         case 3:  // rename
+                                //             console.log("TODO:暂不做修改讨论组名称");
+                                //             // var temporarynotifi = new webimmodel.WarningNoticeMessage("讨论组已更名为" + '"' + mainDataServer.contactsList.getDiscussionById(targetid).name + '"');
+                                //             // mainDataServer.notification.addNotification(temporarynotifi);
+                                //             // if (!$state.is("main.notification")) {
+                                //             //     mainDataServer.notification.hasNewNotification = true;
+                                //             // }
+                                //             break;
+                                //         default:
+                                //             console.log("不支持操作类型" + discussionNotification.content.type);
+                                //     }
+                                //     conversationServer.asyncConverDiscussionNotifition(data, msg);
+                                //     addmessage(msg);
+                                // }
+                                break;
+                            case webimmodel.MessageType.VoiceMessage:
+                                msg.isUnReade = true;
+                            case webimmodel.MessageType.TextMessage:
+                            case webimmodel.MessageType.LocationMessage:
+                            case webimmodel.MessageType.ImageMessage:
+                            case webimmodel.MessageType.RichContentMessage:
+                            case webimmodel.MessageType.FileMessage:
+                                //隐藏正在输入状态
+                                if ($state.is("main.chat") && !document.hidden && msg.conversationType == webimmodel.conversationType.Private && msg.senderUserId == mainDataServer.conversation.currentConversation.targetId) {
+                                    mainDataServer.isTyping = false;
+                                }
+                                if ($state.is("main.chat") && !document.hidden && msg.senderUserId != mainDataServer.loginUser.id && msg.conversationType == webimmodel.conversationType.Private) {
+                                    if (data.offLineMessage) {
+                                        mainDataServer.conversation.lastOfflineMsg = data;
+                                        if (!timeOfflineMsg && mainDataServer.conversation.lastOfflineMsg) {
+                                            timeOfflineMsg = setTimeout(function() {
+                                                conversationServer.sendReadReceiptMessage(mainDataServer.conversation.currentConversation.targetId, mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.lastOfflineMsg.messageUId, mainDataServer.conversation.lastOfflineMsg.sentTime);
+                                                timeOfflineMsg = null;
+                                            }, 1000);
+                                        }
+                                    }
+                                    else {
+                                        conversationServer.sendReadReceiptMessage(mainDataServer.conversation.currentConversation.targetId, mainDataServer.conversation.currentConversation.targetType, data.messageUId, data.sentTime);
+                                    }
+                                }
+
+                                // if ($state.is("main.chat") && !document.hidden && msg.senderUserId != mainDataServer.loginUser.id && msg.conversationType == webimmodel.conversationType.Group){
+                                //   conversationServer.sendSyncReadStatusMessage(mainDataServer.conversation.currentConversation.targetId, mainDataServer.conversation.currentConversation.targetType, data.sentTime);
+                                // }
+                                addmessage(msg);
+                                //TODO 判断是@消息时添加
+                                if (msg.mentionedInfo) {
+                                    var isAtMe = false;
+                                    if (msg.mentionedInfo.type == webimmodel.AtTarget.All) {
+                                        isAtMe = true;
+                                    }
+                                    if (msg.mentionedInfo.type == webimmodel.AtTarget.Part) {
+                                        for (var j = 0; j < msg.mentionedInfo.userIdList.length; j++) {
+                                            if (msg.mentionedInfo.userIdList[j] == mainDataServer.loginUser.id) {
+                                                isAtMe = true;
+                                            }
+                                        }
+                                    }
+                                    if (isAtMe) {
+                                        conversationServer.addAtMessage(msg.targetId, msg.conversationType, msg);
+                                    }
+                                }
+
+                                var isself = mainDataServer.loginUser.id == msg.senderUserId;
+                                if (isself || $state.is("main.chat") && !document.hidden && msg.conversationType == mainDataServer.conversation.currentConversation.targetType && msg.senderUserId == mainDataServer.conversation.currentConversation.targetId) {
+                                    RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
+                                    var curCon = mainDataServer.conversation.getConversation(msg.conversationType, msg.targetId);
+                                    if (curCon) {
+                                        curCon.atStr = '';
+                                        mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
+                                        curCon.unReadNum = 0;
+                                    }
+                                }
+                                else {
+                                    if (msg.senderUserName) {
+                                        webimutil.NotificationHelper.showNotification({
+                                            title: msg.senderUserName,
+                                            icon: "assets/img/SealTalk.ico",
+                                            body: webimmodel.Message.messageToNotification(data, mainDataServer.loginUser.id, true), data: { targetId: msg.targetId, targetType: msg.conversationType }
+                                        });
+                                    }
+                                    else {
+                                        mainServer.user.getInfo(msg.senderUserId).then(function(rep) {
+                                            msg.senderUserName = rep.data.result.nickname;
+                                            webimutil.NotificationHelper.showNotification({
+                                                title: msg.senderUserName + "(非好友)",
+                                                icon: "assets/img/SealTalk.ico",
+                                                body: webimmodel.Message.messageToNotification(data, mainDataServer.loginUser.id, true), data: { targetId: msg.targetId, targetType: msg.conversationType }
+                                            });
+                                        });
+                                    }
+                                }
+                                break;
+                            case webimmodel.MessageType.GroupNotificationMessage:
+                                if (data.objectName == "RC:GrpNtf" && !data.hasReceivedByOtherClient) {
+                                    //群组信息更新，已经在其他端接收过不做处理。
+                                    var groupNotification = <any>data.content;
+                                    var isself = false;
+                                    if (groupNotification.operatorUserId == mainDataServer.loginUser.id) {
+                                        isself = true;
+                                    }
+                                    switch (groupNotification.operation) {
+                                        case "Add":
+                                            var changemembers = groupNotification.data.data.targetUserIds.join().split(",");
+                                            var groupid = data.targetId;
+                                            var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
+                                            if (self == -1) {
+                                                for (var a = 0, len = changemembers.length; a < len; a++) {
+                                                    mainServer.user.getInfo(changemembers[a]).success(function(rep) {
+                                                        mainDataServer.contactsList.addGroupMember(groupid, new webimmodel.Member({
+                                                            id: rep.result.id,
+                                                            name: rep.result.nickname,
+                                                            imgSrc: rep.result.portraitUri,
+                                                            role: "1"
+                                                        }));
+                                                    }).error(function() {
+
+                                                    });
+                                                }
+                                            } else {
+                                                mainServer.group.getById(groupid).success(function(rep) {
+
+                                                    var temporarynotifi = new webimmodel.WarningNoticeMessage(groupNotification.data.data.operatorNickname + "邀请你加入了群组");
+                                                    mainDataServer.notification.addNotification(temporarynotifi);
+                                                    if (!$state.is("main.notification")) {
+                                                        mainDataServer.notification.hasNewNotification = true;
+                                                    }
+
+                                                    mainDataServer.contactsList.addGroup(new webimmodel.Group({
+                                                        id: rep.result.id,
+                                                        name: rep.result.name,
+                                                        imgSrc: rep.result.portraitUri,
+                                                        upperlimit: 500,
+                                                        fact: 1,
+                                                        creater: rep.result.creatorId
+                                                    }));
+                                                    mainServer.group.getGroupMember(groupid).success(function(rep) {
+                                                        var members = rep.result;
+                                                        for (var j = 0, len = members.length; j < len; j++) {
+                                                            var member = new webimmodel.Member({
+                                                                id: members[j].user.id,
+                                                                name: members[j].user.nickname,
+                                                                imgSrc: members[j].user.portraitUri,
+                                                                role: members[j].role,
+                                                                displayName: members[j].displayName
+                                                            });
+                                                            mainDataServer.contactsList.addGroupMember(groupid, member);
+                                                        }
+                                                    });
+                                                    refreshconversationList();
+                                                }).error(function() {
+
+                                                })
+                                            }
+                                            break;
+                                        case "Quit":
+                                            var changemembers = groupNotification.data.data.targetUserIds.join().split(",");
+                                            var groupid = data.targetId;
+                                            var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
+                                            if (self == -1) {
+                                                mainDataServer.contactsList.removeGroupMember(groupid, changemembers[0]);
+                                            } else {
+                                                mainDataServer.contactsList.removeGroup(groupid);
+
+                                                RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
+                                                    refreshconversationList();
+                                                });
+                                            }
+                                            break;
+                                        case "Kicked":
+                                            var changemembers = groupNotification.data.data.targetUserIds.join().split(",");
+                                            var groupid = data.targetId;
+                                            var groupname = mainDataServer.contactsList.getGroupById(groupid) ? mainDataServer.contactsList.getGroupById(groupid).name : groupid;
+                                            var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
+                                            if (self == -1) {
+                                                for (var a = 0, len = changemembers.length; a < len; a++) {
+                                                    mainDataServer.contactsList.removeGroupMember(groupid, changemembers[a]);
+                                                }
+                                            } else {
+                                                var temporarynotifi = new webimmodel.WarningNoticeMessage(groupNotification.data.data.operatorNickname + '将你移出了群组');
+                                                mainDataServer.notification.addNotification(temporarynotifi);
+                                                if (!$state.is("main.notification")) {
+                                                    mainDataServer.notification.hasNewNotification = true;
+                                                }
+                                                mainDataServer.contactsList.removeGroup(groupid);
+                                                RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
+                                                    refreshconversationList();
+                                                });
+                                                //退出会话状态
+                                                if ($state.is("main.chat") && $state.params["targetId"] == groupid && $state.params["targetType"] == webimmodel.conversationType.Group) {
+                                                    $state.go("main");
+                                                }
+                                            }
+                                            break;
+                                        case "Rename":
+                                            // console.log("TODO:暂不做修改群组名称");
+
+                                            var groupid = data.targetId;
+                                            var groupname = mainDataServer.contactsList.getGroupById(groupid) ? mainDataServer.contactsList.getGroupById(groupid).name : groupid;
+                                            var operator = isself ? "你" : groupNotification.data.data.operatorNickname;
+                                            var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + ' 修改群名称为' + groupNotification.data.data.targetGroupName);
+                                            mainDataServer.notification.addNotification(temporarynotifi);
+                                            if (!$state.is("main.notification")) {
+                                                mainDataServer.notification.hasNewNotification = true;
+                                            }
+                                            var group = new webimmodel.Group({
+                                                id: groupid,
+                                                name: groupNotification.data.data.targetGroupName,
+                                                imgSrc: undefined,
+                                                upperlimit: undefined,
+                                                fact: undefined,
+                                                creater: mainDataServer.loginUser.id
+                                            });
+
+                                            mainDataServer.contactsList.updateGroupInfoById(groupid, group);
+                                            mainDataServer.conversation.updateConversationTitle(webimmodel.conversationType.Group, groupid, groupNotification.data.data.targetGroupName);
+                                            break;
+                                        case "Create":
+                                            var groupid = data.targetId;
+                                            mainServer.group.getById(groupid).success(function(rep) {
+                                                var operator = isself ? "你" : groupNotification.data.data.operatorNickname;
+                                                var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + "创建了群组");
+                                                mainDataServer.notification.addNotification(temporarynotifi);
+                                                if (!$state.is("main.notification")) {
+                                                    mainDataServer.notification.hasNewNotification = true;
+                                                }
+                                                mainDataServer.contactsList.addGroup(new webimmodel.Group({
+                                                    id: rep.result.id,
+                                                    name: rep.result.name,
+                                                    imgSrc: rep.result.portraitUri,
+                                                    upperlimit: 500,
+                                                    fact: 1,
+                                                    creater: rep.result.creatorId
+                                                }));
+                                                mainServer.group.getGroupMember(groupid).success(function(rep) {
+                                                    var members = rep.result;
+                                                    for (var j = 0, len = members.length; j < len; j++) {
+                                                        var member = new webimmodel.Member({
+                                                            id: members[j].user.id,
+                                                            name: members[j].user.nickname,
+                                                            imgSrc: members[j].user.portraitUri,
+                                                            role: members[j].role,
+                                                            displayName: members[j].displayName
+                                                        });
+                                                        mainDataServer.contactsList.addGroupMember(groupid, member);
+                                                    }
+                                                });
+                                                refreshconversationList();
+                                            }).error(function() {
+                                            });
+                                            break;
+                                        case "Dismiss":
+                                            var groupid = data.targetId;
+                                            var groupname = mainDataServer.contactsList.getGroupById(groupid) ? mainDataServer.contactsList.getGroupById(groupid).name : groupid;
+                                            var operator = isself ? "你" : groupNotification.data.data.operatorNickname;
+                                            var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + "解散了群组");
+                                            mainDataServer.notification.addNotification(temporarynotifi);
+                                            if (!$state.is("main.notification")) {
+                                                mainDataServer.notification.hasNewNotification = true;
+                                            }
+                                            mainDataServer.contactsList.removeGroup(groupid);
+                                            if ((window.Electron && isself) || !window.Electron) {
+                                                RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
+                                                    refreshconversationList();
+                                                });
+                                                //退出会话状态
+                                                if ($state.is("main.chat") && $state.params["targetId"] == groupid && $state.params["targetType"] == webimmodel.conversationType.Group) {
+                                                    $state.go("main");
+                                                }
+                                            }
+                                            break;
+                                        default:
+                                            console.log("不支持操作类型" + groupNotification.operation);
+                                    }
+                                    conversationServer.asyncConverGroupNotifition(data, msg);
+                                    addmessage(msg);
+                                }
+                                break;
+                            case webimmodel.MessageType.InformationNotificationMessage:
+                                addmessage(msg);
+                                break;
+                            case webimmodel.MessageType.ReadReceiptMessage:
+                                //清除会话已读状态,改变消息总数
+                                if (msg.objectName == 'RC:ReadNtf' && msg.senderUserId == mainDataServer.loginUser.id) {
+                                    RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
+                                    var curCon = mainDataServer.conversation.getConversation(msg.conversationType, msg.targetId);
+                                    if (curCon) {
+                                        curCon.atStr = '';
+                                        mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
+                                        curCon.unReadNum = 0;
+                                    }
+                                    //去除消息的未读状态
+                                }
+                                break;
+                            case webimmodel.MessageType.RecallCommandMessage:
+                                if (msg.objectName == 'RC:RcCmd') {
+                                    // var withDrawMsg = <any>data.content;
+                                    // conversationServer.addWithDrawMessageCache(msg.senderUserId, msg.conversationType, withDrawMsg.messageUId);
+                                    // conversationServer.delWithDrawMessage(msg.senderUserId, msg.conversationType, withDrawMsg.messageUId);
+                                    // if(msg.senderUserId == mainDataServer.loginUser.id){
+                                    //   msg.content = '你' + msg.content;
+                                    // }
+                                    // else{
+                                    //   conversationServer.messageAddUserInfo(msg);
+                                    //   msg.content = msg.senderUserName + msg.content;
+                                    // }
+                                    // addmessage(msg);
+                                }
+                                break;
+                            case webimmodel.MessageType.TypingStatusMessage:
+                                //判断如果为当前输入页面用户
+                                if ($state.is("main.chat") && !document.hidden && msg.conversationType == webimmodel.conversationType.Private && msg.senderUserId == mainDataServer.conversation.currentConversation.targetId) {
+                                    mainDataServer.isTyping = true;
+                                    if (typingTimeID) { clearTimeout(typingTimeID); }
+                                    typingTimeID = setTimeout(function() {
+                                        mainDataServer.isTyping = false;
+                                        $scope.$apply();
+                                    }, 6000);
+                                }
+
+                                break;
+                            case webimmodel.MessageType.InviteMessage:
+                            case webimmodel.MessageType.HungupMessage:
+                                //判断如果为当前输入页面用户
+                                // msg.content = msg.senderUserName + msg.content;
+                                addmessage(msg);
+                                break;
+                            case webimmodel.MessageType.ReadReceiptRequestMessage:
+                                if ($state.is("main.chat") && !document.hidden && msg.conversationType == webimmodel.conversationType.Group && msg.targetId == mainDataServer.conversation.currentConversation.targetId) {
+                                    RongIMSDKServer.sendReceiptResponse(msg.conversationType, msg.targetId).then(function() {
+                                        console.log('sendReadReceiptResponseMessage success');
+                                    }, function(error) {
+                                        console.log('sendReadReceiptResponseMessage error', error.errorCode);
+                                    });
+                                }
+                                break;
+                            case webimmodel.MessageType.ReadReceiptResponseMessage:
+                                // var ids = msg.content.receiptMessageDic[RongIMLib.Bridge._client.userId];
+                                var receiptResponseItem = <any>data.content;
+                                var ids = receiptResponseItem.receiptMessageDic[mainDataServer.loginUser.id];
+                                if (!ids) {
+                                    return;
+                                }
+                                for (var i = 0, len = ids.length; i < len; i++) {
+                                    // console.log(ids[i], msg.receiptResponse[ids[i]]);
+                                    var itemById = conversationServer.getMessageById(msg.targetId, msg.conversationType, ids[i]);
+                                    if (itemById && msg.receiptResponse && msg.receiptResponse[ids[i]]) {
+                                        itemById.receiptResponse = msg.receiptResponse;
+                                        // $('#' + ids[i]).find('span.receiptResponse').text(msg.receiptResponse[ids[i]] + '人已读');
+                                    }
+
+                                    //遍历,更新缓存中消息的receiptResponse
+                                }
+                                break;
+                            case webimmodel.MessageType.SyncReadStatusMessage:
+                                conversationServer.clearAtMessage(msg.targetId, msg.conversationType);
+                                RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
+                                var curCon = mainDataServer.conversation.getConversation(msg.conversationType, msg.targetId);
+                                if (curCon) {
+                                    curCon.atStr = '';
+                                    mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
+                                    curCon.unReadNum = 0;
+                                }
+                                break;
+                            default:
+                                console.log(data.messageType + "：未处理")
+                                break;
+                        }
+
+                        // $scope.mainData.conversation.updateConversations();
+                        $scope.mainData.conversation.updateConStatic(msg, true, $state.is("main.chat") && !document.hidden);
+                        $scope.$apply();
+
+                    }
+                })
+
         if (mainDataServer.loginUser.token) {
             console.log(mainDataServer.loginUser.id)
             RongIMSDKServer.connect(<string>mainDataServer.loginUser.token, mainDataServer.loginUser.id).then(function(userId) {
@@ -440,640 +1071,13 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
 
 
 
-        var isReconnect = true;
-        RongIMSDKServer.setConnectionStatusListener({
-            onChanged: function(status: number) {
-                var myDate = new Date();
-                switch (status) {
-                    //链接成功
-                    case RongIMLib.ConnectionStatus.CONNECTED:
-                        console.log('链接成功', myDate.toLocaleString());
-                        mainDataServer.isConnected = true;
-                        showDisconnectErr(false);
-                        isConnecting = false;
-                        break;
-                    //正在链接
-                    case RongIMLib.ConnectionStatus.CONNECTING:
-                        console.log('正在链接');
-                        break;
-                    //重新链接
-                    case RongIMLib.ConnectionStatus.DISCONNECTED:
-                        console.log('断开连接');
-                        if (!$state.is("account.signin")) {
-                            $state.go("account.signin");
-                        }
-                        break;
-                    //其他设备登陆
-                    case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
-                        console.log('其他设备登录');
-                        if (!$state.is("account.signin")) {
-                            $state.go("account.signin");
-                            webimutil.Helper.alertMessage.error("您的账号在其他地方登录!");
-                            webimutil.NotificationHelper.showNotification({
-                                title: "SealTalk",
-                                icon: "assets/img/SealTalk.ico",
-                                body: "您的账号在其他地方登录!"
-                            })
-                            if (window.Electron) {
-                                window.Electron.kickedOff();
-                            }
-                        }
-                        break;
-                    //网络不可用
-                    case RongIMLib.ConnectionStatus.NETWORK_UNAVAILABLE:
-                        console.log('网络不可用', myDate.toLocaleString(), 'isConnecting:' + isConnecting);
-                        mainDataServer.isConnected = false;
-                        showDisconnectErr(true);
-                        // if(!isConnecting){
-                        isConnecting = true;
-                        checkNetwork({
-                            onSuccess: function() {
-                                reconnectServer();
-                            }
-                        })
-                        // }
-                        break;
-                }
-            }
-        })
+
 
         webimutil.NotificationHelper.onclick = function(n) {
             if (n.data)
                 $state.go("main.chat", { targetId: n.data.targetId, targetType: n.data.targetType });
         }
 
-        var typingTimeID: any;
-        var timeOfflineMsg: any;
-        RongIMSDKServer.setOnReceiveMessageListener({
-            onReceived: function(data: RongIMLib.Message) {
-                if ($scope.mainData.loginUser.hasSound) {
-                    var eleplay = <any>document.getElementById("playsound");
-                    eleplay.play();
-                }
-
-                var msg = <any>webimmodel.Message.convertMsg(data);
-
-                //同自己会话删除targetid为空
-                // if (msg.targetId == "") {
-                //     msg.targetId = mainDataServer.loginUser.id;
-                //     RongIMSDKServer.removeConversation(webimmodel.conversationType.Private, "").then(function() {
-                //         refreshconversationList();
-                //     });
-                //     return;
-                // }
-                //TODO 未来待修改
-                if (msg.targetId == "") {
-                    msg.targetId = mainDataServer.loginUser.id;
-                }
-
-                // if ($state.is("main.chat") && !document.hidden) {
-                if ($state.is("main.chat")) {
-                    RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
-                }
-
-                switch (data.messageType) {
-                    case webimmodel.MessageType.ContactNotificationMessage:
-                        RongIMSDKServer.clearUnreadCount(data.conversationType, data.targetId);
-                        if (data.hasReceivedByOtherClient) {
-                            //已在其他端接收过，不做处理。
-                            break;
-                        }
-                        var contact = <webimmodel.ContactNotificationMessage>msg.content;
-                        RongIMSDKServer.removeConversation(msg.conversationType, msg.targetId).then(function() {
-                            refreshconversationList();
-                        });
-
-                        if (contact.operation == "Request") {
-                            //好友请求
-                            //添加到通知
-                            //TODO:判断是否已经是好友防止离线消息补偿造成错误数据
-                            var friend = mainDataServer.contactsList.getFriendById(contact.sourceUserId);
-                            if (friend) {
-                                return;
-                            }
-                            if (!$state.is("main.notification")) {
-                                $scope.mainData.notification.hasNewNotification = true;
-                            }
-                            var item = new webimmodel.NotificationFriend({
-                                id: contact.sourceUserId,
-                                name: contact.senderUserName,
-                                portraitUri: contact.senderUserImgSrc,
-                                content: contact.content,
-                                status: webimmodel.FriendStatus.Requested + "",
-                                timestamp: (msg.sentTime && msg.sentTime.getTime())
-                            });
-                            if (!item.name) {
-                                //没获取到名称去服务器获取
-                                mainServer.user.getInfo(contact.sourceUserId).success(function(rep) {
-                                    item.name = rep.result.nickname;
-                                    item.portraitUri = rep.result.portraitUri;
-                                    item.firstchar = webimutil.ChineseCharacter.getPortraitChar(item.name);
-                                    mainDataServer.notification.addNotification(item);
-                                }).error(function() {
-                                })
-                            } else {
-                                mainDataServer.notification.addNotification(item);
-                            }
-                        } else if (contact.operation == "AcceptResponse") {
-                            //对方已同意
-                            //好友列表里添加好友or同步好友列表
-                            var friend = mainDataServer.contactsList.getFriendById(contact.sourceUserId);
-                            if (!friend) {
-                                mainServer.user.getInfo(contact.sourceUserId).success(function(rep) {
-                                    var res = rep.result;
-                                    mainDataServer.contactsList.addFriend(new webimmodel.Friend({
-                                        id: res.id,
-                                        name: res.nickname,
-                                        imgSrc: res.portraitUri
-                                    }));
-                                    refreshconversationList();
-                                }).error(function() {
-                                    mainDataServer.contactsList.addFriend(new webimmodel.Friend({
-                                        id: contact.sourceUserId,
-                                        name: "网络原因暂未取到",
-                                        imgSrc: ""
-                                    }));
-                                    refreshconversationList();
-                                    // throw new Error("好友信息获取失败");
-                                })
-                            }
-                        }
-                        break;
-                    case webimmodel.MessageType.DiscussionNotificationMessage:
-                        // if (data.objectName == "RC:DizNtf" && !data.hasReceivedByOtherClient) {
-                        //     //群组信息更新，已经在其他端接收过不做处理。
-                        //     var discussionNotification = <any>data;
-                        //     switch (discussionNotification.content.type) {
-                        //         case 1:   //join
-                        //             var changemembers = discussionNotification.content.extension.split(",");
-                        //             var targetid = data.targetId;
-                        //             var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
-                        //             if (self == -1) {
-                        //                 for (var a = 0, len = changemembers.length; a < len; a++) {
-                        //                     mainServer.user.getInfo(changemembers[a]).success(function(rep) {
-                        //                         mainDataServer.contactsList.addDiscussionMember(targetid, new webimmodel.Member({
-                        //                             id: rep.result.id,
-                        //                             name: rep.result.nickname,
-                        //                             imgSrc: rep.result.portraitUri,
-                        //                             role: "1"
-                        //                         }));
-                        //                     }).error(function() {
-                        //
-                        //                     });
-                        //                 }
-                        //             } else {
-                        //               RongIMSDKServer.getDiscussion(targetid).then(function (rep) {
-                        //                   var discuss = rep.data;
-                        //                   var members = discuss.memberIdList;
-                        //                   // conv.title = discuss.name;
-                        //                   // conv.firstchar = webimutil.ChineseCharacter.getPortraitChar(discuss.name);
-                        //
-                        //                   var temporarynotifi = new webimmodel.WarningNoticeMessage("邀请进入讨论组" + '"' + discuss.name + '"');
-                        //                   mainDataServer.notification.addNotification(temporarynotifi);
-                        //                   if (!$state.is("main.notification")) {
-                        //                       mainDataServer.notification.hasNewNotification = true;
-                        //                   }
-                        //
-                        //                   mainDataServer.contactsList.addDiscussion(new webimmodel.Discussion({
-                        //                       id: discuss.id,
-                        //                       name: discuss.name,
-                        //                       imgSrc: '',
-                        //                       upperlimit: 500,
-                        //                       fact: 1,
-                        //                       creater: discuss.creatorId,
-                        //                       isOpen: true
-                        //                   }));
-                        //                   for (var j = 0, len = discuss.memberIdList.length; j < len; j++) {
-                        //                       mainServer.user.getInfo(discuss.memberIdList[j]).then(function (repmem) {
-                        //                           var member = new webimmodel.Member({
-                        //                               id: repmem.data.result.id,
-                        //                               name: repmem.data.result.nickname,
-                        //                               imgSrc: repmem.data.result.portraitUri,
-                        //                               role: "1"
-                        //                           });
-                        //                           mainDataServer.contactsList.addDiscussionMember(discuss.id, member);
-                        //                       });
-                        //                   }
-                        //
-                        //                   refreshconversationList();
-                        //               }, function () {
-                        //                   // conv.title = "未知讨论组";
-                        //               });
-                        //             }
-                        //             break;
-                        //         case 2:   //quit
-                        //             var changemembers = discussionNotification.content.extension.split(",");
-                        //             var targetid = data.targetId;
-                        //             var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
-                        //             if (self == -1) {
-                        //                 mainDataServer.contactsList.removeDiscussionMember(targetid, changemembers[0]);
-                        //             } else {
-                        //                 mainDataServer.contactsList.removeDiscussion(targetid);
-                        //
-                        //                 RongIMSDKServer.removeConversation(webimmodel.conversationType.Discussion, targetid).then(function() {
-                        //                     refreshconversationList();
-                        //                 });
-                        //             }
-                        //             break;
-                        //         case 4:  //kick
-                        //             var changemembers = discussionNotification.content.extension.split(",");
-                        //             var targetid = data.targetId;
-                        //             var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
-                        //             if (self == -1) {
-                        //                 for (var a = 0, len = changemembers.length; a < len; a++) {
-                        //                     mainDataServer.contactsList.removeDiscussionMember(targetid, changemembers[a]);
-                        //                 }
-                        //             } else {
-                        //                 var temporarynotifi = new webimmodel.WarningNoticeMessage("讨论组" + '"' + mainDataServer.contactsList.getDiscussionById(targetid).name + '"' + '已将您踢出');
-                        //                 mainDataServer.notification.addNotification(temporarynotifi);
-                        //                 if (!$state.is("main.notification")) {
-                        //                     mainDataServer.notification.hasNewNotification = true;
-                        //                 }
-                        //                 mainDataServer.contactsList.removeDiscussion(targetid);
-                        //                 RongIMSDKServer.removeConversation(webimmodel.conversationType.Discussion, targetid).then(function() {
-                        //                     refreshconversationList();
-                        //                 });
-                        //                 //退出会话状态
-                        //                 if ($state.is("main.chat") && $state.params["targetId"] == targetid && $state.params["targetType"] == webimmodel.conversationType.Discussion) {
-                        //                     $state.go("main");
-                        //                 }
-                        //             }
-                        //             break;
-                        //         case 3:  // rename
-                        //             console.log("TODO:暂不做修改讨论组名称");
-                        //             // var temporarynotifi = new webimmodel.WarningNoticeMessage("讨论组已更名为" + '"' + mainDataServer.contactsList.getDiscussionById(targetid).name + '"');
-                        //             // mainDataServer.notification.addNotification(temporarynotifi);
-                        //             // if (!$state.is("main.notification")) {
-                        //             //     mainDataServer.notification.hasNewNotification = true;
-                        //             // }
-                        //             break;
-                        //         default:
-                        //             console.log("不支持操作类型" + discussionNotification.content.type);
-                        //     }
-                        //     conversationServer.asyncConverDiscussionNotifition(data, msg);
-                        //     addmessage(msg);
-                        // }
-                        break;
-                    case webimmodel.MessageType.VoiceMessage:
-                        msg.isUnReade = true;
-                    case webimmodel.MessageType.TextMessage:
-                    case webimmodel.MessageType.LocationMessage:
-                    case webimmodel.MessageType.ImageMessage:
-                    case webimmodel.MessageType.RichContentMessage:
-                    case webimmodel.MessageType.FileMessage:
-                        //隐藏正在输入状态
-                        if ($state.is("main.chat") && !document.hidden && msg.conversationType == webimmodel.conversationType.Private && msg.senderUserId == mainDataServer.conversation.currentConversation.targetId) {
-                            mainDataServer.isTyping = false;
-                        }
-                        if ($state.is("main.chat") && !document.hidden && msg.senderUserId != mainDataServer.loginUser.id && msg.conversationType == webimmodel.conversationType.Private) {
-                            if (data.offLineMessage) {
-                                mainDataServer.conversation.lastOfflineMsg = data;
-                                if (!timeOfflineMsg && mainDataServer.conversation.lastOfflineMsg) {
-                                    timeOfflineMsg = setTimeout(function() {
-                                        conversationServer.sendReadReceiptMessage(mainDataServer.conversation.currentConversation.targetId, mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.lastOfflineMsg.messageUId, mainDataServer.conversation.lastOfflineMsg.sentTime);
-                                        timeOfflineMsg = null;
-                                    }, 1000);
-                                }
-                            }
-                            else {
-                                conversationServer.sendReadReceiptMessage(mainDataServer.conversation.currentConversation.targetId, mainDataServer.conversation.currentConversation.targetType, data.messageUId, data.sentTime);
-                            }
-                        }
-
-                        // if ($state.is("main.chat") && !document.hidden && msg.senderUserId != mainDataServer.loginUser.id && msg.conversationType == webimmodel.conversationType.Group){
-                        //   conversationServer.sendSyncReadStatusMessage(mainDataServer.conversation.currentConversation.targetId, mainDataServer.conversation.currentConversation.targetType, data.sentTime);
-                        // }
-                        addmessage(msg);
-                        //TODO 判断是@消息时添加
-                        if (msg.mentionedInfo) {
-                            var isAtMe = false;
-                            if (msg.mentionedInfo.type == webimmodel.AtTarget.All) {
-                                isAtMe = true;
-                            }
-                            if (msg.mentionedInfo.type == webimmodel.AtTarget.Part) {
-                                for (var j = 0; j < msg.mentionedInfo.userIdList.length; j++) {
-                                    if (msg.mentionedInfo.userIdList[j] == mainDataServer.loginUser.id) {
-                                        isAtMe = true;
-                                    }
-                                }
-                            }
-                            if (isAtMe) {
-                                conversationServer.addAtMessage(msg.targetId, msg.conversationType, msg);
-                            }
-                        }
-
-                        var isself = mainDataServer.loginUser.id == msg.senderUserId;
-                        if (isself || $state.is("main.chat") && !document.hidden && msg.conversationType == mainDataServer.conversation.currentConversation.targetType && msg.senderUserId == mainDataServer.conversation.currentConversation.targetId) {
-                            RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
-                            var curCon = mainDataServer.conversation.getConversation(msg.conversationType, msg.targetId);
-                            if (curCon) {
-                                curCon.atStr = '';
-                                mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
-                                curCon.unReadNum = 0;
-                            }
-                        }
-                        else {
-                            if (msg.senderUserName) {
-                                webimutil.NotificationHelper.showNotification({
-                                    title: msg.senderUserName,
-                                    icon: "assets/img/SealTalk.ico",
-                                    body: webimmodel.Message.messageToNotification(data, mainDataServer.loginUser.id, true), data: { targetId: msg.targetId, targetType: msg.conversationType }
-                                });
-                            }
-                            else {
-                                mainServer.user.getInfo(msg.senderUserId).then(function(rep) {
-                                    msg.senderUserName = rep.data.result.nickname;
-                                    webimutil.NotificationHelper.showNotification({
-                                        title: msg.senderUserName + "(非好友)",
-                                        icon: "assets/img/SealTalk.ico",
-                                        body: webimmodel.Message.messageToNotification(data, mainDataServer.loginUser.id, true), data: { targetId: msg.targetId, targetType: msg.conversationType }
-                                    });
-                                });
-                            }
-                        }
-                        break;
-                    case webimmodel.MessageType.GroupNotificationMessage:
-                        if (data.objectName == "RC:GrpNtf" && !data.hasReceivedByOtherClient) {
-                            //群组信息更新，已经在其他端接收过不做处理。
-                            var groupNotification = <any>data.content;
-                            var isself = false;
-                            if (groupNotification.operatorUserId == mainDataServer.loginUser.id) {
-                                isself = true;
-                            }
-                            switch (groupNotification.operation) {
-                                case "Add":
-                                    var changemembers = groupNotification.data.data.targetUserIds.join().split(",");
-                                    var groupid = data.targetId;
-                                    var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
-                                    if (self == -1) {
-                                        for (var a = 0, len = changemembers.length; a < len; a++) {
-                                            mainServer.user.getInfo(changemembers[a]).success(function(rep) {
-                                                mainDataServer.contactsList.addGroupMember(groupid, new webimmodel.Member({
-                                                    id: rep.result.id,
-                                                    name: rep.result.nickname,
-                                                    imgSrc: rep.result.portraitUri,
-                                                    role: "1"
-                                                }));
-                                            }).error(function() {
-
-                                            });
-                                        }
-                                    } else {
-                                        mainServer.group.getById(groupid).success(function(rep) {
-
-                                            var temporarynotifi = new webimmodel.WarningNoticeMessage(groupNotification.data.data.operatorNickname + "邀请你加入了群组");
-                                            mainDataServer.notification.addNotification(temporarynotifi);
-                                            if (!$state.is("main.notification")) {
-                                                mainDataServer.notification.hasNewNotification = true;
-                                            }
-
-                                            mainDataServer.contactsList.addGroup(new webimmodel.Group({
-                                                id: rep.result.id,
-                                                name: rep.result.name,
-                                                imgSrc: rep.result.portraitUri,
-                                                upperlimit: 500,
-                                                fact: 1,
-                                                creater: rep.result.creatorId
-                                            }));
-                                            mainServer.group.getGroupMember(groupid).success(function(rep) {
-                                                var members = rep.result;
-                                                for (var j = 0, len = members.length; j < len; j++) {
-                                                    var member = new webimmodel.Member({
-                                                        id: members[j].user.id,
-                                                        name: members[j].user.nickname,
-                                                        imgSrc: members[j].user.portraitUri,
-                                                        role: members[j].role,
-                                                        displayName: members[j].displayName
-                                                    });
-                                                    mainDataServer.contactsList.addGroupMember(groupid, member);
-                                                }
-                                            });
-                                            refreshconversationList();
-                                        }).error(function() {
-
-                                        })
-                                    }
-                                    break;
-                                case "Quit":
-                                    var changemembers = groupNotification.data.data.targetUserIds.join().split(",");
-                                    var groupid = data.targetId;
-                                    var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
-                                    if (self == -1) {
-                                        mainDataServer.contactsList.removeGroupMember(groupid, changemembers[0]);
-                                    } else {
-                                        mainDataServer.contactsList.removeGroup(groupid);
-
-                                        RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
-                                            refreshconversationList();
-                                        });
-                                    }
-                                    break;
-                                case "Kicked":
-                                    var changemembers = groupNotification.data.data.targetUserIds.join().split(",");
-                                    var groupid = data.targetId;
-                                    var groupname = mainDataServer.contactsList.getGroupById(groupid) ? mainDataServer.contactsList.getGroupById(groupid).name : groupid;
-                                    var self = changemembers.indexOf(mainDataServer.loginUser.id + "");
-                                    if (self == -1) {
-                                        for (var a = 0, len = changemembers.length; a < len; a++) {
-                                            mainDataServer.contactsList.removeGroupMember(groupid, changemembers[a]);
-                                        }
-                                    } else {
-                                        var temporarynotifi = new webimmodel.WarningNoticeMessage(groupNotification.data.data.operatorNickname + '将你移出了群组');
-                                        mainDataServer.notification.addNotification(temporarynotifi);
-                                        if (!$state.is("main.notification")) {
-                                            mainDataServer.notification.hasNewNotification = true;
-                                        }
-                                        mainDataServer.contactsList.removeGroup(groupid);
-                                        RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
-                                            refreshconversationList();
-                                        });
-                                        //退出会话状态
-                                        if ($state.is("main.chat") && $state.params["targetId"] == groupid && $state.params["targetType"] == webimmodel.conversationType.Group) {
-                                            $state.go("main");
-                                        }
-                                    }
-                                    break;
-                                case "Rename":
-                                    // console.log("TODO:暂不做修改群组名称");
-
-                                    var groupid = data.targetId;
-                                    var groupname = mainDataServer.contactsList.getGroupById(groupid) ? mainDataServer.contactsList.getGroupById(groupid).name : groupid;
-                                    var operator = isself ? "你" : groupNotification.data.data.operatorNickname;
-                                    var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + ' 修改群名称为' + groupNotification.data.data.targetGroupName);
-                                    mainDataServer.notification.addNotification(temporarynotifi);
-                                    if (!$state.is("main.notification")) {
-                                        mainDataServer.notification.hasNewNotification = true;
-                                    }
-                                    var group = new webimmodel.Group({
-                                        id: groupid,
-                                        name: groupNotification.data.data.targetGroupName,
-                                        imgSrc: undefined,
-                                        upperlimit: undefined,
-                                        fact: undefined,
-                                        creater: mainDataServer.loginUser.id
-                                    });
-
-                                    mainDataServer.contactsList.updateGroupInfoById(groupid, group);
-                                    mainDataServer.conversation.updateConversationTitle(webimmodel.conversationType.Group, groupid, groupNotification.data.data.targetGroupName);
-                                    break;
-                                case "Create":
-                                    var groupid = data.targetId;
-                                    mainServer.group.getById(groupid).success(function(rep) {
-                                        var operator = isself ? "你" : groupNotification.data.data.operatorNickname;
-                                        var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + "创建了群组");
-                                        mainDataServer.notification.addNotification(temporarynotifi);
-                                        if (!$state.is("main.notification")) {
-                                            mainDataServer.notification.hasNewNotification = true;
-                                        }
-                                        mainDataServer.contactsList.addGroup(new webimmodel.Group({
-                                            id: rep.result.id,
-                                            name: rep.result.name,
-                                            imgSrc: rep.result.portraitUri,
-                                            upperlimit: 500,
-                                            fact: 1,
-                                            creater: rep.result.creatorId
-                                        }));
-                                        mainServer.group.getGroupMember(groupid).success(function(rep) {
-                                            var members = rep.result;
-                                            for (var j = 0, len = members.length; j < len; j++) {
-                                                var member = new webimmodel.Member({
-                                                    id: members[j].user.id,
-                                                    name: members[j].user.nickname,
-                                                    imgSrc: members[j].user.portraitUri,
-                                                    role: members[j].role,
-                                                    displayName: members[j].displayName
-                                                });
-                                                mainDataServer.contactsList.addGroupMember(groupid, member);
-                                            }
-                                        });
-                                        refreshconversationList();
-                                    }).error(function() {
-                                    });
-                                    break;
-                                case "Dismiss":
-                                    var groupid = data.targetId;
-                                    var groupname = mainDataServer.contactsList.getGroupById(groupid) ? mainDataServer.contactsList.getGroupById(groupid).name : groupid;
-                                    var operator = isself ? "你" : groupNotification.data.data.operatorNickname;
-                                    var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + "解散了群组");
-                                    mainDataServer.notification.addNotification(temporarynotifi);
-                                    if (!$state.is("main.notification")) {
-                                        mainDataServer.notification.hasNewNotification = true;
-                                    }
-                                    mainDataServer.contactsList.removeGroup(groupid);
-                                    if ((window.Electron && isself) || !window.Electron) {
-                                        RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
-                                            refreshconversationList();
-                                        });
-                                        //退出会话状态
-                                        if ($state.is("main.chat") && $state.params["targetId"] == groupid && $state.params["targetType"] == webimmodel.conversationType.Group) {
-                                            $state.go("main");
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    console.log("不支持操作类型" + groupNotification.operation);
-                            }
-                            conversationServer.asyncConverGroupNotifition(data, msg);
-                            addmessage(msg);
-                        }
-                        break;
-                    case webimmodel.MessageType.InformationNotificationMessage:
-                        addmessage(msg);
-                        break;
-                    case webimmodel.MessageType.ReadReceiptMessage:
-                        //清除会话已读状态,改变消息总数
-                        if (msg.objectName == 'RC:ReadNtf' && msg.senderUserId == mainDataServer.loginUser.id) {
-                            RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
-                            var curCon = mainDataServer.conversation.getConversation(msg.conversationType, msg.targetId);
-                            if (curCon) {
-                                curCon.atStr = '';
-                                mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
-                                curCon.unReadNum = 0;
-                            }
-                            //去除消息的未读状态
-                        }
-                        break;
-                    case webimmodel.MessageType.RecallCommandMessage:
-                        if (msg.objectName == 'RC:RcCmd') {
-                            // var withDrawMsg = <any>data.content;
-                            // conversationServer.addWithDrawMessageCache(msg.senderUserId, msg.conversationType, withDrawMsg.messageUId);
-                            // conversationServer.delWithDrawMessage(msg.senderUserId, msg.conversationType, withDrawMsg.messageUId);
-                            // if(msg.senderUserId == mainDataServer.loginUser.id){
-                            //   msg.content = '你' + msg.content;
-                            // }
-                            // else{
-                            //   conversationServer.messageAddUserInfo(msg);
-                            //   msg.content = msg.senderUserName + msg.content;
-                            // }
-                            // addmessage(msg);
-                        }
-                        break;
-                    case webimmodel.MessageType.TypingStatusMessage:
-                        //判断如果为当前输入页面用户
-                        if ($state.is("main.chat") && !document.hidden && msg.conversationType == webimmodel.conversationType.Private && msg.senderUserId == mainDataServer.conversation.currentConversation.targetId) {
-                            mainDataServer.isTyping = true;
-                            if (typingTimeID) { clearTimeout(typingTimeID); }
-                            typingTimeID = setTimeout(function() {
-                                mainDataServer.isTyping = false;
-                                $scope.$apply();
-                            }, 6000);
-                        }
-
-                        break;
-                    case webimmodel.MessageType.InviteMessage:
-                    case webimmodel.MessageType.HungupMessage:
-                        //判断如果为当前输入页面用户
-                        // msg.content = msg.senderUserName + msg.content;
-                        addmessage(msg);
-                        break;
-                    case webimmodel.MessageType.ReadReceiptRequestMessage:
-                        if ($state.is("main.chat") && !document.hidden && msg.conversationType == webimmodel.conversationType.Group && msg.targetId == mainDataServer.conversation.currentConversation.targetId) {
-                            RongIMSDKServer.sendReceiptResponse(msg.conversationType, msg.targetId).then(function() {
-                                console.log('sendReadReceiptResponseMessage success');
-                            }, function(error) {
-                                console.log('sendReadReceiptResponseMessage error', error.errorCode);
-                            });
-                        }
-                        break;
-                    case webimmodel.MessageType.ReadReceiptResponseMessage:
-                        // var ids = msg.content.receiptMessageDic[RongIMLib.Bridge._client.userId];
-                        var receiptResponseItem = <any>data.content;
-                        var ids = receiptResponseItem.receiptMessageDic[mainDataServer.loginUser.id];
-                        if (!ids) {
-                            return;
-                        }
-                        for (var i = 0, len = ids.length; i < len; i++) {
-                            // console.log(ids[i], msg.receiptResponse[ids[i]]);
-                            var itemById = conversationServer.getMessageById(msg.targetId, msg.conversationType, ids[i]);
-                            if (itemById && msg.receiptResponse && msg.receiptResponse[ids[i]]) {
-                                itemById.receiptResponse = msg.receiptResponse;
-                                // $('#' + ids[i]).find('span.receiptResponse').text(msg.receiptResponse[ids[i]] + '人已读');
-                            }
-
-                            //遍历,更新缓存中消息的receiptResponse
-                        }
-                        break;
-                    case webimmodel.MessageType.SyncReadStatusMessage:
-                        conversationServer.clearAtMessage(msg.targetId, msg.conversationType);
-                        RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
-                        var curCon = mainDataServer.conversation.getConversation(msg.conversationType, msg.targetId);
-                        if (curCon) {
-                            curCon.atStr = '';
-                            mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
-                            curCon.unReadNum = 0;
-                        }
-                        break;
-                    default:
-                        console.log(data.messageType + "：未处理")
-                        break;
-                }
-
-                // $scope.mainData.conversation.updateConversations();
-                $scope.mainData.conversation.updateConStatic(msg, true, $state.is("main.chat") && !document.hidden);
-                $scope.$apply();
-
-            }
-        })
 
         function addmessage(msg: webimmodel.Message) {
             var hislist = conversationServer.historyMessagesCache[msg.conversationType + "_" + msg.targetId] = conversationServer.historyMessagesCache[msg.conversationType + "_" + msg.targetId] || []

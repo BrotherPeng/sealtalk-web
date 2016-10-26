@@ -41,7 +41,8 @@
                 <search-input search="search(content)" content="searchContent"  control="searchControl" delay-time="0" show-text="搜索"></search-input>
                 <div class="searchAdd" addbtn>
                   <ul class="addPanel" style="display:none">
-                  <li id="createGroup"><a  ui-sref="main.creategroup">创建群组</a></li>
+                  <!-- <li id="createGroup"><a  ui-sref="main.creategroup" >创建群组</a></li> -->
+                  <li id="createGroup"><a ng-click="showgroup()">创建群组</a></li>
                   <li id="addFriends"><a  ui-sref="main.searchfriend">添加好友</a></li>
                   </ul>
                 </div>
@@ -90,12 +91,12 @@
                           <!-- <frienditem ng-repeat="item in mainData.contactsList.friendList" item="item"></frienditem> -->
                       </div>
                   </div>
-                  <!-- <div class="groupArea">
+                  <div class="groupArea">
                       <div class="groupAreaHeader" ng-click="showgorganization=!showgorganization">公司通讯录<span class="caret" ng-class="{'open':!showgorganization}"></span></div>
                       <div class="groupAreaBody" ng-show="!showgorganization">
                         <organization></organization>
                       </div>
-                  </div> -->
+                  </div>
               </div>
               <div class="communicateList" ng-show="switchbtn.issearchList">
                 <div class="membersArea" ng-show="searchList.friendList.length">
@@ -106,14 +107,14 @@
                       </div>
                     </div>
                 </div>
-                <!-- <div class="membersArea" ng-show="searchList.staffList.length">
+                <div class="membersArea" ng-show="searchList.staffList.length">
                     <div class="membersAreaHeader">公司通讯录</div>
                     <div class="membersAreaBody">
                         <div class="namesortWrap">
                           <staffitem class="members_item "  ng-repeat="item in searchList.staffList" item="item"></staffitem>
                       </div>
                     </div>
-                </div> -->
+                </div>
                 <div class="groupArea" >
                     <div class="groupAreaHeader">群组</div>
                     <div class="groupAreaBody">
