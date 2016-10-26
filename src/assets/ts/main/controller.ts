@@ -58,17 +58,32 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         preloadimages(['../assets/img/message_state.png ']);
 
         $scope.mainData = <mainDataServer>mainDataServer;
-        $scope.$on('refreshSelectCon', function(event: any, data: string) {
-            $scope.unSelect(data);
-        });
+        // 已优化 58同城
+        // $scope.$on('refreshSelectCon', function(event: any, data: string) {
+        //     $scope.unSelect(data);
+        // });
         //按钮、面板显示控制
-        $scope.showState = {
-            isPhone: false,
-            isChat: false
-        }
+        // $scope.showState = {
+        //     isPhone: false,
+        //     isChat: false
+        // }
+        var isPhone = false;
+        var isChat = false;
+        $scope.isShowChat = !isPhone || isChat;
+
         $scope.switchbtn = {
             isFriendList: false,
             issearchList: false
+        }
+        $scope.showChat = function(){
+            $scope.switchbtn.isFriendList=false;
+            $scope.switchbtn.issearchList=false;
+            $scope.switchbtn.searchMessage=false;
+        };
+        $scope.showContact = function(){
+            $scope.switchbtn.isFriendList=true;
+            $scope.switchbtn.issearchList=false;
+            $scope.switchbtn.searchMessage=false;
         }
         $scope.curCon = "";
 
@@ -76,14 +91,14 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
             $('div.communicateList').find('div.members_item').removeClass("selected");
             $('div.communicateList').find('div.notice_item').removeClass("selected");
         };
-
-        $scope.unSelect = function(curConVal: string) {
-            if ($scope.curCon) {
-                $('#' + $scope.curCon).removeClass("selected");
-            }
-            $('#' + curConVal).addClass("selected");
-            $scope.curCon = curConVal;
-        };
+        // for 58同城
+        // $scope.unSelect = function(curConVal: string) {
+        //     if ($scope.curCon) {
+        //         $('#' + $scope.curCon).removeClass("selected");
+        //     }
+        //     $('#' + curConVal).addClass("selected");
+        //     $scope.curCon = curConVal;
+        // };
 
         $scope.selectGo = function(id: string, type: webimmodel.conversationType) {
             if ($scope.switchbtn.isFriendList) {
@@ -121,16 +136,17 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                 $scope.searchList = <any>{};
 
                 if ($scope.switchbtn.searchMessage) {
-                    $scope.showsearchconversation=true;
+                    $scope.showsearchconversation = true;
                     searchData.getConversationByContent(content).then(function(data: any) {
                         $scope.searchList.conversations = [];
-                        for(var i=0,len=data.length;i<len;i++){
-                          //TODO:web 暂不处理其他类型会话
-                          var type=data[i].conversationType;
-                          if(type == 1||type == 3){
-                            var result= mainDataServer.conversation.parseConversation(data[i]);
-                            $scope.searchList.conversations.push(result.item);
-                          }
+                        for (var i = 0, len = data.length; i < len; i++) {
+                            //TODO:web 暂不处理其他类型会话
+                            var type = data[i].conversationType;
+                            if (type == 1 || type == 3) {
+                                var result = mainDataServer.conversation.parseConversation(data[i]);
+                                result.imgSrc = result.imgSrc || 'assets/css/images/user.png';
+                                $scope.searchList.conversations.push(result.item);
+                            }
                         }
                     })
                 } else {
@@ -143,8 +159,8 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
             } else {
                 $scope.switchbtn.issearchList = false;
 
-                $scope.showsearchconversation=false;
-                $scope.searchList.conversations=[];
+                $scope.showsearchconversation = false;
+                $scope.searchList.conversations = [];
             }
         }
 
@@ -187,31 +203,39 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         });
 
         //窗口获得焦点时清除当前未读消息
-        window.onfocus = function() {
-            // if ($state.is("main.chat")) {
-            //     RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
-            //     mainDataServer.conversation.updateConversations();
-            // }
-        }
+        // window.onfocus = function() {
+        //     // if ($state.is("main.chat")) {
+        //     //     RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
+        //     //     mainDataServer.conversation.updateConversations();
+        //     // }
+        // }
 
 
         //页面加载时、控制页面的一些样式
         $scope.$on("$viewContentLoaded", function() {
             if ($state.is("main")) {
-                $scope.showState.isChat = false;
+                isChat = false;
+                $scope.isShowChat = !isPhone || isChat;
+                $scope.isShowLeft = !isPhone || !isChat;
             } else {
-                $scope.showState.isChat = true;
+                isChat = true;
+                $scope.isShowChat = !isPhone || isChat;
+                $scope.isShowLeft = !isPhone || !isChat;
             }
 
             function pageLayout() {
                 if (document.documentElement.clientWidth < 600) {
-                    $scope.showState.isPhone = true;
+                    isPhone = true;
+                    $scope.isShowChat = !isPhone || isChat;
+                    $scope.isShowLeft = !isPhone || !isChat;
                     var ele = <any>document.querySelector(".mainBox");
                     if (ele) {
                         ele.style.width = document.documentElement.clientWidth - parseFloat(getComputedStyle(document.querySelector(".toolbar")).width) + "px";
                     }
                 } else {
-                    $scope.showState.isPhone = false;
+                  isPhone = false;
+                  $scope.isShowChat = !isPhone || isChat;
+                  $scope.isShowLeft = !isPhone || !isChat;
                     // var ele = <any>document.querySelector(".mainBox");
                     // if (ele) {
                     //     ele.style.width = '314px';
@@ -345,7 +369,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
 
         if (mainDataServer.loginUser.token) {
             console.log(mainDataServer.loginUser.id)
-            RongIMSDKServer.connect(<string>mainDataServer.loginUser.token,mainDataServer.loginUser.id).then(function(userId) {
+            RongIMSDKServer.connect(<string>mainDataServer.loginUser.token, mainDataServer.loginUser.id).then(function(userId) {
                 console.log("connect success1:" + userId);
                 RongIMSDKServer.getConversationList().then(function(list) {
                     mainDataServer.conversation.updateConversations();
@@ -360,7 +384,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                     //token 错误。
                     mainServer.user.getToken().success(function(data: any) {
                         if (data.code == "200") {
-                            RongIMSDKServer.connect(<string>data.result.token,mainDataServer.loginUser.id).then(function(userId) {
+                            RongIMSDKServer.connect(<string>data.result.token, mainDataServer.loginUser.id).then(function(userId) {
                                 console.log("connect success2:" + userId);
                                 RongIMSDKServer.getConversationList().then(function(list) {
                                     mainDataServer.conversation.updateConversations();
@@ -390,7 +414,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         } else {
             mainServer.user.getToken().success(function(data: any) {
                 if (data.code == "200") {
-                    RongIMSDKServer.connect(<string>data.result.token,mainDataServer.loginUser.id).then(function(userId) {
+                    RongIMSDKServer.connect(<string>data.result.token, mainDataServer.loginUser.id).then(function(userId) {
                         console.log("connect success3:" + userId);
                         RongIMSDKServer.getConversationList().then(function(list) {
                             mainDataServer.conversation.updateConversations();
@@ -936,14 +960,14 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                                         mainDataServer.notification.hasNewNotification = true;
                                     }
                                     mainDataServer.contactsList.removeGroup(groupid);
-                                    if((window.Electron&&isself)||!window.Electron){
-                                      RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
-                                          refreshconversationList();
-                                      });
-                                      //退出会话状态
-                                      if ($state.is("main.chat") && $state.params["targetId"] == groupid && $state.params["targetType"] == webimmodel.conversationType.Group) {
-                                          $state.go("main");
-                                      }
+                                    if ((window.Electron && isself) || !window.Electron) {
+                                        RongIMSDKServer.removeConversation(webimmodel.conversationType.Group, groupid).then(function() {
+                                            refreshconversationList();
+                                        });
+                                        //退出会话状态
+                                        if ($state.is("main.chat") && $state.params["targetId"] == groupid && $state.params["targetType"] == webimmodel.conversationType.Group) {
+                                            $state.go("main");
+                                        }
                                     }
                                     break;
                                 default:
@@ -1143,15 +1167,18 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
             organizationgroup.showPanle()
         }
 
-        $scope.showMessageManage=function(){
+        $scope.showMessageManage = function() {
+            $scope.switchbtn.searchMessage = true;
+            $scope.showsearchconversation = false;
             RongIMSDKServer.getAllConversations().then(function(data: any) {
-              $scope.allconversations = [];
-              for(var i=0,len=data.length;i<len;i++){
-                if(data[i].conversationType==1||data[i].conversationType==3){
-                  var result=mainDataServer.conversation.parseConversation(data[i]);
-                  $scope.allconversations.push(result.item);
+                $scope.allconversations = [];
+                for (var i = 0, len = data.length; i < len; i++) {
+                    if (data[i].conversationType == 1 || data[i].conversationType == 3) {
+                        var result = mainDataServer.conversation.parseConversation(data[i]);
+                        result.imgSrc = result.imgSrc || 'assets/css/images/user.png';
+                        $scope.allconversations.push(result.item);
+                    }
                 }
-              }
             })
         }
 

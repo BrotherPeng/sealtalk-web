@@ -18,6 +18,14 @@ function adjustScrollbars() {
 conversationCtr.controller("conversationController", ["$scope", "$state", "mainDataServer", "conversationServer", "mainServer", "RongIMSDKServer", "$http", "$timeout", "$location", "$anchorScroll",
     function($scope: any, $state: angular.ui.IStateService, mainDataServer: mainDataServer, conversationServer: conversationServer, mainServer: mainServer, RongIMSDKServer: RongIMSDKServer, $http: angular.IHttpService, $timeout: angular.ITimeoutService, $location: angular.ILocationService, $anchorScroll: angular.IAnchorScrollService) {
 
+        // if (mainDataServer.scopeCache){
+        //
+        //     mainDataServer.scopeCache.$destroy();
+        // }
+        // console.log(mainDataServer.scopeCache);
+        // mainDataServer.scopeCache = $scope;
+        // mainDataServer.scopeCache=$scope;
+
         var targetId = $state.params["targetId"];
         var targetType = Number($state.params["targetType"]);
         var currentCon = new webimmodel.Conversation();
@@ -34,7 +42,8 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         var isAtScroll = false;
         var rawGroutList: webimmodel.Member[];
         var lastMsgUid: string = null;
-        $scope.$emit("refreshSelectCon", targetType + '_' + targetId);
+        // 左侧会话列表选中状态 已废弃 -58
+        // $scope.$emit("refreshSelectCon", targetType + '_' + targetId);
         $scope.cursorPos = -1;
         $scope.searchStr = '';
         $scope.lastSearchStr = '';
@@ -57,9 +66,22 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
 
           $scope.showGroupList = webimutil.Helper.cloneObject(rawGroutList);
         }
-        if (groupid != "0") {
-          initAtList();
-        }
+
+        $timeout(function(){
+          if (groupid != "0") {
+
+            initAtList();
+
+            $scope.$watch('searchStr', function (newVal: string, oldVal: string) {
+                if (newVal === oldVal)
+                    return;
+                $scope.searchfriend(newVal);
+            });
+          }
+        },300);
+
+
+
 
         $scope.initAtDiv = function () {
           var _atObj = $("#atList");
@@ -163,13 +185,6 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
               obj.addClass('selected');
             })
         }
-        if (groupid) {
-          $scope.$watch('searchStr', function (newVal: string, oldVal: string) {
-              if (newVal === oldVal)
-                  return;
-              $scope.searchfriend(newVal);
-          });
-        }
 
         $scope.setFocus = function(el: any, pos: number) {
             el.focus();
@@ -247,7 +262,9 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         conversationServer.historyMessagesCache[targetType + "_" + targetId] = conversationServer.historyMessagesCache[targetType + "_" + targetId] || [];
 
         $scope.conversationServer = conversationServer;
-        updateTargetDetail();
+
+        // 更新用户昵称异步更新会话内容信息 -58
+        // updateTargetDetail();
 
         var currenthis = conversationServer.historyMessagesCache[targetType + "_" + targetId];
         if (currenthis.length == 0) {
@@ -748,13 +765,14 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
            }
         }
 
-        $scope.$watch("currentConversation.draftMsg", function(newVal: string, oldVal: string) {
-            if (newVal === oldVal)
-                return;
-
-            RongIMSDKServer.setDraft(+$scope.currentConversation.targetType, $scope.currentConversation.targetId, newVal)
-            mainDataServer.conversation.setDraft($scope.currentConversation.targetType, $scope.currentConversation.targetId, newVal);
-        })
+        // 确认 58 是否有此处逻辑
+        // $scope.$watch("currentConversation.draftMsg", function(newVal: string, oldVal: string) {
+        //     if (newVal === oldVal)
+        //         return;
+        //
+        //     RongIMSDKServer.setDraft(+$scope.currentConversation.targetType, $scope.currentConversation.targetId, newVal)
+        //     mainDataServer.conversation.setDraft($scope.currentConversation.targetType, $scope.currentConversation.targetId, newVal);
+        // })
 
         $scope.getHistoryMessage = function() {
             conversationServer.historyMessagesCache[targetType + "_" + targetId] = [];
@@ -975,10 +993,10 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             }
         }
 
-        setTimeout(function() {
-            var obj = document.getElementById("message-content");
-            webimutil.Helper.getFocus(obj);
-        });
+        // setTimeout(function() {
+        //     var obj = document.getElementById("message-content");
+        //     webimutil.Helper.getFocus(obj);
+        // });
 
         function handlePaste(e: any) {
             var reg = new RegExp('^data:image/[^;]+;base64,');
@@ -1012,8 +1030,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             //   obj.innerHTML = obj.innerHTML + strText;
             // }
         }
-        document.getElementById("message-content").
-            addEventListener("paste", handlePaste);
+        document.getElementById("message-content").addEventListener("paste", handlePaste);
         // element.bind("paste", function(e: any) {
         //     handlePaste(e);
         // });

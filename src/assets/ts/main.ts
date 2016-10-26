@@ -30,6 +30,7 @@ webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvi
         });
 
         $httpProvider.defaults.withCredentials = true;
+        var timeout:any = null;
 
 
         $urlRouterProvider.when("/main", ["$state", "mainDataServer", "mainServer", function($state: angular.ui.IStateService, mainDataServer: mainDataServer, mainServer: mainServer) {

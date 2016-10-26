@@ -24,7 +24,7 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
 
         conversationServer.historyMessagesCache = {};//清空历史消息
         mainDataServer.conversation.conversations = [];//清空会话列表
-
+        window.Electron.updateBadgeNumber(0);
         if (RongIMLib.RongIMClient && RongIMLib.RongIMClient.getInstance) {
             try {
                 RongIMSDKServer.logout();
@@ -66,7 +66,6 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
                 });
             }
         }
-
     }])
 
 account.controller("signupController", ["$scope", "$interval", "$state", "mainServer",

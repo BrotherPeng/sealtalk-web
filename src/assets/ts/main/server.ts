@@ -1799,6 +1799,7 @@ interface RongIMSDKServer {
 }
 
 interface mainDataServer {
+  scopeCache:any
   loginUser: webimmodel.UserInfo
   isConnected: boolean
   isTyping: boolean

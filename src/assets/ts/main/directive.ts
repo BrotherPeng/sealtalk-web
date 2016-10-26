@@ -3,28 +3,29 @@
 var mainDire = angular.module("webim.main.directive", ["webim.main.server"]);
 
 mainDire.directive("conversation", ["$state", "mainDataServer", function($state: angular.ui.IStateService, mainDataServer: mainDataServer) {
+    var timeout:any=null;
     return {
         restrict: "E",
         scope: {
             item: "="
         },
-        template: '<div class="chatList" ng-class="{selected:isCurrentConversation}" id="{{item.targetType}}_{{item.targetId}}">' +
+        template: '<div class="chatList" ng-class="{selected:isCurrentConversation}" id="{{::item.targetType}}_{{::item.targetId}}">' +
         '<div class="chat_item online slide-left">' +
 
         '<div class="photo">' +
-        '<img class="img" ng-show="item.imgSrc" ng-src="{{item.imgSrc||\'assets/img/barBg.png\'}}" alt="">' +
-        '<div class="portrait" ng-show="!item.imgSrc">{{item.firstchar}}</div>' +
-        '<i class="Presence Presence--stacked Presence--mainBox" ng-show="{{item.targetType==4}}"></i>' +
+        '<img class="img" ng-show="::item.imgSrc" ng-src="{{::item.imgSrc}}" alt="">' +
+        '<div class="portrait" ng-hide="::item.imgSrc">{{::item.firstchar}}</div>' +
+        '<i class="Presence Presence--stacked Presence--mainBox" ng-show="{{::item.targetType==4}}"></i>' +
         '</div>' +
 
         '<div class="ext_info">' +
         '<div class="ext">' +
         '<p class="attr clearfix timer">' +
-        '<span class="pull-left">{{item.lastTime|showTime}}</span>' +
+        '<span class="pull-left">{{::item.lastTime|showTime}}</span>' +
         '</p>' +
         '<p class="attr clearfix">' +
-        '<span class="badge" ng-if="item.unReadNum>0">{{item.unReadNum>99?"99+":item.unReadNum}}</span>' +
-        '<i class="no-remind" ng-show="false"></i>' +
+        '<span class="badge" ng-if="item.unReadNum">{{item.unReadNum>99?"99+":item.unReadNum}}</span>' +
+        // '<i class="no-remind" ng-show="false"></i>' +
         '<span></span>' +
         '</p>' +
         '</div>' +
@@ -42,6 +43,7 @@ mainDire.directive("conversation", ["$state", "mainDataServer", function($state:
         '</div>' +
         '</div>',
         link: function(scope: any, ele: angular.IRootElementService, attrs: any, ngModel: any) {
+            // 确认 58 是否已注释
             // scope.isCurrentConversation = scope.item.targetType == mainDataServer.conversation.currentConversation.targetType && scope.item.targetId == mainDataServer.conversation.currentConversation.targetId;
             // scope.item.lastMsg = webimutil.Helper.escapeSymbol.replaceSymbol(scope.item.lastMsg);
             if (!scope.item.targetId) {
@@ -54,21 +56,38 @@ mainDire.directive("conversation", ["$state", "mainDataServer", function($state:
                 angular.element(ele[0].getElementsByClassName("portrait")[0]).css("background-color", webimutil.Helper.portraitColors[scope.item.targetId.charCodeAt(0) % webimutil.Helper.portraitColors.length]);
             }
             ele.bind("click", function() {
-                scope.$parent.unSelect(scope.item.targetType + '_' + scope.item.targetId);
-                scope.$parent.$apply();
+              var conversationItems = <any>document.querySelectorAll('#chatArea .chatList');
+              conversationItems.forEach(function(conversaiton:any){
+                  angular.element(conversaiton).removeClass('selected');
+              });
+              angular.element(ele[0]).children().addClass('selected');
+
+              if(timeout){
+                clearTimeout(timeout);
+              }
+              timeout = setTimeout(function(){
+                // 由于性能需要取消双向绑定
+                // scope.$parent.unSelect(scope.item.targetType + '_' + scope.item.targetId);
+                // scope.$parent.$apply();
+
                 mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - scope.item.unReadNum;
                 scope.item.unReadNum = 0;
                 scope.item.atStr = '';
-                if (scope.item.targetType == webimmodel.conversationType.System) {
-                    $state.go("main.notification");
-                    return;
-                }
+
+                // 此处会话列表中已过滤
+                // if (scope.item.targetType == webimmodel.conversationType.System) {
+                //     $state.go("main.notification");
+                //     return;
+                // }
 
                 if ($state.is("main") || $state.is("main.none")) {
                     $state.go("main.chat", { targetId: scope.item.targetId, targetType: scope.item.targetType });
                 } else {
                     $state.go("main.chat", { targetId: scope.item.targetId, targetType: scope.item.targetType }, { location: "replace" });
                 }
+              },50);
+
+
 
             })
         }
@@ -111,12 +130,12 @@ mainDire.directive("groupitem", ["$state", "organizationgroup", function($state:
         // '<div class="noticeBarList">' +
         '<div class="notice_item ">' +
         '<div class="photo">' +
-        '<img class="img" ng-show="item.imgSrc" ng-src="{{item.imgSrc||\'assets/img/barBg.png\'}}" alt="">' +
-        '<div class="portrait" ng-show="!item.imgSrc">{{item.firstchar}}</div>' +
+        '<img class="img" ng-show="item.imgSrc" ng-src="{{::item.imgSrc}}" alt="">' +
+        '<div class="portrait" ng-hide="::item.imgSrc">{{::item.firstchar}}</div>' +
         '</div>' +
         '<div class="info">' +
         '<h3 class="nickname">' +
-        '<span class="nickname_text">{{item.name}}</span>' +
+        '<span class="nickname_text">{{::item.name}}</span>' +
         '</h3>' +
         '</div>' +
 
@@ -148,12 +167,12 @@ mainDire.directive("frienditem", ["$state", function($state: angular.ui.IStateSe
         replace: true,
         template: '<div class="members_item " >' +
         '<div class="photo">' +
-        '<img class="img" ng-show="item.imgSrc" ng-src="{{item.imgSrc||\'assets/img/barBg.png\'}}" alt="">' +
-        '<div class="portrait" ng-show="!item.imgSrc">{{item.firstchar}}</div>' +
+        '<img class="img" ng-show="item.imgSrc" ng-src="{{::item.imgSrc}}" alt="">' +
+        '<div class="portrait" ng-hide="::item.imgSrc">{{::item.firstchar}}</div>' +
         '</div>' +
         '<div class="info">' +
         '<h3 class="nickname">' +
-        '<span class="nickname_text">{{item.displayName||item.name}}</span>' +
+        '<span class="nickname_text">{{::item.displayName||item.name}}</span>' +
         '</h3>' +
         '</div>' +
         '<div class="botDivider"></div>' +
@@ -185,8 +204,8 @@ mainDire.directive("searchInput", ["$timeout", function($timeout: angular.ITimeo
         },
         template: '<form class="searchArea clearfix">' +
         '<div class="form-group">' +
-        '<input type="text" class="form-control" id="{{id}}" ng-model="content" placeholder="{{showText||\'搜索\'}}">' +        // '<i class="clearInputBtn" ng-show="content.length>0" ng-click="clear()"></i>' +
-        '<label class="" for="{{id}}"></label>' +
+        '<input type="text" class="form-control" id="{{::id}}" ng-model="content" placeholder="{{::showText||\'搜索\'}}">' +        // '<i class="clearInputBtn" ng-show="content.length>0" ng-click="clear()"></i>' +
+        '<label class="" for="{{::id}}"></label>' +
         '</div>' +
         '</form>',
         link: function(scope: any, ele: angular.IRootElementService, attr: any) {

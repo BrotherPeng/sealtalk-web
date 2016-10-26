@@ -64,12 +64,12 @@ module webim {
       replace: true,
       template: '<div class="members_item " >' +
       '<div class="photo">' +
-      '<img class="img" ng-show="item.imgSrc" ng-src="{{item.imgSrc||\'assets/img/barBg.png\'}}" alt="">' +
-      '<div class="portrait" ng-show="!item.imgSrc">{{item.firstchar}}</div>' +
+      '<img class="img" ng-show="::item.imgSrc" ng-src="{{::item.imgSrc}}" alt="">' +
+      '<div class="portrait" ng-hide="::item.imgSrc">{{::item.firstchar}}</div>' +
       '</div>' +
       '<div class="info">' +
       '<h3 class="nickname">' +
-      '<span class="nickname_text">{{item.oaName||item.realName}}</span>' +
+      '<span class="nickname_text">{{::item.oaName||item.realName}}</span>' +
       '</h3>' +
       '</div>' +
       '<div class="botDivider"></div>' +

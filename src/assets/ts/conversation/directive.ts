@@ -474,8 +474,7 @@ conversationDire.directive("emoji", [function() {
     return {
         restrict: "E",
         scope: {
-            item: "=",
-            content: "="
+            item: "="
         },
         template: '<div style="display:inline-block"></div>',
         replace: true,
@@ -561,12 +560,12 @@ conversationDire.directive("textMessage", [function() {
             item: "=",
             message: "="
         },
-        template: '<div class="" id="{{message.messageUId || message.messageId}}">' +
+        template: '<div class="" id="{{::message.messageUId || message.messageId}}">' +
         //     '<div class="{{msgStyle}} message_statue_position"></div>' +
         // '<div class="{{msgStyle}} message_statue_position"></div>' +
         '<div class="Message-text">' +
         // '<pre class="at_all_people" ng-show="isAtAll">@所有人</pre>' +
-        '<pre class="Message-entry" ng-bind-html="content|trustHtml">' +
+        '<pre class="Message-entry" ng-bind-html="::content|trustHtml">' +
         // '<i class="at_function" ng-show="isAtPart">@****</i>' +
         '</pre>' +
         '<br></span></div>' +
