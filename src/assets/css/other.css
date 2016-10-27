@@ -53,3 +53,24 @@
 .chat_item .ext_info .msg span{
   vertical-align: middle;
 }
+.r-group-head {
+  display: inline-block;
+  width: 80px;
+  padding: 5px;
+  margin: 2px;
+  background-color: #E9F0F8;
+  cursor: pointer;
+}
+.r-group-info{
+  height: 480px;
+}
+.r-group-friend{
+  padding: 3px;
+  margin: 2px;
+  cursor: pointer;
+}
+.r-group-friend-portrait{
+  height: 14px;
+  width: 14px;
+  vertical-align: middle;
+}

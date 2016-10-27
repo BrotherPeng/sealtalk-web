@@ -240,16 +240,17 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                 mainDataServer.conversation.currentConversation = conv;
                 $scope.currentConversation = conv;
             } else {
-                mainDataServer.conversation.currentConversation = mainDataServer.conversation.getConversation(targetType, targetId);
+                mainDataServer.conversation.currentConversation = mainDataServer.conversation.getConversation(targetType, targetId)||mainDataServer.conversation.createConversation(targetType, targetId);
                 $scope.currentConversation = mainDataServer.conversation.currentConversation;
             }
-            $scope.currentConversation.draftMsg = RongIMSDKServer.getDraft(targetType, targetId);
+            $scope.currentConversation.draftMsg = RongIMSDKServer.getDraft(targetType, targetId)||'';
 
         }, function() {
             // c++ SDK 没有会话时返回错误
             var conv = mainDataServer.conversation.createConversation(targetType, targetId);
             mainDataServer.conversation.currentConversation = conv;
             $scope.currentConversation = conv;
+            $scope.currentConversation.draftMsg = RongIMSDKServer.getDraft(targetType, targetId)||'';
         });
 
         // RongIMSDKServer.clearMessagesUnreadStatus(targetType, targetId);

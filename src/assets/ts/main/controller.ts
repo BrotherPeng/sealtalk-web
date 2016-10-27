@@ -368,6 +368,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         RongIMSDKServer.init(appconfig.getAppKey());
 
         var isReconnect = true;
+        var isOtherLogin = false;
         RongIMSDKServer.setConnectionStatusListener({
             onChanged: function(status: number) {
                 var myDate = new Date();
@@ -386,14 +387,21 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                     //重新链接
                     case RongIMLib.ConnectionStatus.DISCONNECTED:
                         console.log('断开连接');
-                        if (!$state.is("account.signin")) {
+                        if(window.Electron){
+                          mainDataServer.isConnected = false;
+                          showDisconnectErr(true);
+                          isConnecting = true;
+                        }else{
+                          if (!$state.is("account.signin")) {
                             $state.go("account.signin");
+                          }
                         }
                         break;
                     //其他设备登陆
                     case RongIMLib.ConnectionStatus.KICKED_OFFLINE_BY_OTHER_CLIENT:
                         console.log('其他设备登录');
-                        if (!$state.is("account.signin")) {
+                        if (!$state.is("account.signin")&&!isOtherLogin) {
+                            isOtherLogin = true;
                             $state.go("account.signin");
                             webimutil.Helper.alertMessage.error("您的账号在其他地方登录!");
                             webimutil.NotificationHelper.showNotification({

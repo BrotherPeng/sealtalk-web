@@ -174,44 +174,44 @@ friendinfo.controller("friendinfoController", ["$scope", "$rootScope", "$state",
     //     $scope.user.firstchar = member.firstchar;
     // }
 
-    //58 演示示例
-    var userinfo = [
-      {
-        "id": 0,
-        "oaName": "张三",
-        "realName": "张三",
-        "deptPathName": "",
-        "mobilePhone": "188888880",
-        "chat": "1"
-      },
-      {
-        "id": 1,
-        "oaName": "李四",
-        "realName": "李四",
-        "deptPathName": "",
-        "mobilePhone": "188888881",
-        "chat": "1"
-      },
-      {
-        "id": 2,
-        "oaName": "王五",
-        "realName": "王五",
-        "deptPathName": "",
-        "mobilePhone": "188888882",
-        "chat": "1"
-      }
-    ];
-
-    userinfo.forEach(function(item) {
-      if (item.id == userid) {
-        $scope.user = {
-          id: item.id,
-          nickName: item.oaName,
-          portraitUri: '',
-          firstchar: ''
-        }
-      }
-    })
+    // //58 演示示例
+    // var userinfo = [
+    //   {
+    //     "id": 0,
+    //     "oaName": "张三",
+    //     "realName": "张三",
+    //     "deptPathName": "",
+    //     "mobilePhone": "188888880",
+    //     "chat": "1"
+    //   },
+    //   {
+    //     "id": 1,
+    //     "oaName": "李四",
+    //     "realName": "李四",
+    //     "deptPathName": "",
+    //     "mobilePhone": "188888881",
+    //     "chat": "1"
+    //   },
+    //   {
+    //     "id": 2,
+    //     "oaName": "王五",
+    //     "realName": "王五",
+    //     "deptPathName": "",
+    //     "mobilePhone": "188888882",
+    //     "chat": "1"
+    //   }
+    // ];
+    //
+    // userinfo.forEach(function(item) {
+    //   if (item.id == userid) {
+    //     $scope.user = {
+    //       id: item.id,
+    //       nickName: item.oaName,
+    //       portraitUri: '',
+    //       firstchar: ''
+    //     }
+    //   }
+    // })
 
 
     $scope.isEditable = false;

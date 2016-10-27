@@ -231,7 +231,7 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
 
         function unshiftHistoryMessages(id: string, type: string, item: any) {
             var arr = conversationServer.historyMessagesCache[type + "_" + id] || [];
-            if (arr[0] && item.messageUId && item.messageUId === arr[0].messageUId) {
+            if (arr[0] && item.messageUId && checkMessageExist(id,type,item.messageUId)) {
                 return;
             }
 
@@ -490,7 +490,7 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
           }
           angular.forEach(currenthis, function (value, key) {
               if(keepGoing){
-                if (value.panelType == webimmodel.PanelType.Message && value.messageUId == messageuid) {
+                if ((value.panelType == webimmodel.PanelType.Message||value.panelType == webimmodel.PanelType.InformationNotification) && value.messageUId == messageuid) {
                     keepGoing = false;
                 }
               }

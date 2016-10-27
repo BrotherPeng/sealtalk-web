@@ -35,8 +35,13 @@ module webim {
             $scope.searchControl = {};//删除搜索内容
             $scope.isCreater = false;
             $scope.disableRemove = [];//非群组创建者不可以删除人员
+            $scope.friendList = [];
 
             $scope.loginuserid = mainDataServer.loginUser.id;//不可以删除自己
+
+            mainDataServer.contactsList.subgroupList.forEach(function(item) {
+                $scope.friendList = $scope.friendList.concat(item.list);
+            })
 
             $scope.clear = function() {
                 $scope.searchControl.clear();
@@ -68,22 +73,36 @@ module webim {
                 }
             }
 
-            $scope.addMember = function(member: any) {
-                // $scope.removeMember(member.id);
+            $scope.addMemberFromFriend = function(friend: webimmodel.Friend) {
+              if(!existMemberList(friend.id)){
+                $scope.groupMember.unshift({
+                    id: friend.id,
+                    name: friend.name,
+                    imgSrc: friend.imgSrc
+                });
+              }
+            }
+
+            function existMemberList(id: any) {
                 var a = $scope.groupMember;
                 var b = $scope.disableRemove;
                 var c = a.concat(b);
                 for (var i = 0, len = c.length; i < len; i++) {
-                    if (member.id === c[i].id) {
-                        return;
+                    if (id === c[i].id) {
+                        return true;
                     }
                 }
+                return false;
+            }
 
-                $scope.groupMember.unshift({
-                    id: member.id,
-                    name: member.oaName,
-                    imgSrc: member.imgSrc
-                });
+            $scope.addMember = function(member: any) {
+                if (!existMemberList(member.userId)) {
+                    $scope.groupMember.unshift({
+                        id: member.userId,
+                        name: member.displayName,
+                        imgSrc: member.imgSrc
+                    });
+                }
             }
 
             $scope.removeMember = function(id: string) {
@@ -157,9 +176,9 @@ module webim {
                 if (index == -1) {
                     memberIds.push(mainDataServer.loginUser.id);
                 }
-                if (memberIds.length <= 2) {
-                  webimutil.Helper.alertMessage.error('至少包含一个群成员');
-                  return;
+                if (memberIds.length <= 1) {
+                    webimutil.Helper.alertMessage.error('至少包含一个群成员');
+                    return;
                 }
 
                 mainServer.group.create($scope.groupname, memberIds).then(function(rep: any) {

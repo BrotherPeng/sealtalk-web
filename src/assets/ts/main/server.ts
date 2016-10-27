@@ -75,7 +75,7 @@ mainServer.factory("mainServer", ["$http", "$q", "appconfig", function($http: an
       logout: function() {
         return $http({
           method: "POST",
-          url: serverBaseUrl + "/user//logout"
+          url: serverBaseUrl + "/user/logout"
         })
       },
       getInfo: function(id: string) {

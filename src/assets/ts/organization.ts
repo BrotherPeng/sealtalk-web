@@ -5,17 +5,17 @@ module webim {
 
         $scope.treeOptions = {
             isLeaf: function(node: any) {
-                return !node.departname;
+                return !node.deptName;
             },
             isSelectable: function(node: any) {
-                return !node.departname;
+                return !node.deptName;
             },
             equality: function(node1: any, node2: any) {
                 return node1 === node2;
             }
         }
 
-        organizationServer.getList().then(function(data: any) {
+        organizationServer.getList('').then(function(data: any) {
             // $scope.organizationList = data.department;
             $scope.organizationList = data;
         });
@@ -23,12 +23,14 @@ module webim {
 
         $scope.toggleNode = function(node: any) {
             if (!node.children) {
-                organizationServer.getList().then(function(data: any) {
-                    node.children = data;
+                organizationServer.getList(node.id).then(function(data: any) {
+                    node.children = node.children || [];
+                    node.children = angular.copy(data.concat(node.children));
                     // node.children = data.person;
                     // node.children = angular.copy(node.children.concat(data.department));
                 });
                 organizationServer.getUserList(node.id).then(function(data: any) {
+                    node.children = node.children || [];
                     node.children = angular.copy(node.children.concat(data));
                 })
             }
@@ -38,7 +40,8 @@ module webim {
             if (angular.isFunction($scope.selection)) {
                 $scope.selection(node);
             } else {
-                $state.go("main.friendinfo", { userid: node.id, groupid: 0, targetid: 0, conversationtype: 0 });
+                // $state.go("main.friendinfo", { userid: node.id, groupid: 0, targetid: 0, conversationtype: 0 });
+                $state.go("main.friendinfo", { userid: node.userId, groupid: 0, targetid: 0, conversationtype: 0 });
             }
         }
 
@@ -56,7 +59,7 @@ module webim {
             ' options="treeOptions"' +
             ' on-node-toggle="toggleNode(node)"' +
             ' on-selection="onSelection(node)">' +
-            '{{node.departname||node.nickname}}' +
+            '{{node.deptName||node.displayName}}' +
             '</treecontrol>',
             controller: 'organizationController'
         }
@@ -74,7 +77,7 @@ module webim {
             '</div>' +
             '<div class="info">' +
             '<h3 class="nickname">' +
-            '<span class="nickname_text">{{::item.oaName||item.realName}}</span>' +
+            '<span class="nickname_text">{{::item.displayName||item.realName}}</span>' +
             '</h3>' +
             '</div>' +
             '<div class="botDivider"></div>' +
@@ -85,6 +88,7 @@ module webim {
 
                 ele.on("click", function() {
                     scope.$parent.selectGo(scope.item.id, webimmodel.conversationType.Private);
+                    // scope.$parent.selectGo(scope.item.userId, webimmodel.conversationType.Private);
                 });
             }
         }
@@ -132,15 +136,27 @@ module webim {
 
     webim.service('organizationServer', ["$q", "$http", function($q: ng.IQService, $http: ng.IHttpService) {
 
+        var serverUrl = "http://api.hitalk.im";
+
         this.getList = function(id: string) {
 
             var defer = $q.defer();
 
             //此处请求示例数据，正式请修改 url 和返回数据。--获取组织结构
+            // $http({
+            //     method: 'get',
+            //     url: './assets/js/exampledata.json',
+            // }).success(function(rep: any) {
+            //     //此处根据具体返回结构处理
+            //     defer.resolve(rep.organizationlist.data.department);
+            // }).error(function(error) {
+            //     defer.reject(error);
+            // })
+            // id= id||'';
             $http({
                 method: 'get',
-                url: 'http://192.168.156.8:8080/org-web/restapi/departs',
-                data: {
+                url: serverUrl + '/departs',
+                params: {
                     parentid: id
                 }
             }).success(function(rep: any) {
@@ -157,9 +173,20 @@ module webim {
             var defer = $q.defer();
 
             //此处请求示例数据，正式请修改 url 和返回数据。--获取组织结构
+
+            // $http({
+            //     method: 'get',
+            //     url: './assets/js/exampledata.json',
+            // }).success(function(rep: any) {
+            //     //此处根据具体返回结构处理
+            //     defer.resolve(rep.organizationlist.data.person);
+            // }).error(function(error) {
+            //     defer.reject(error);
+            // })
+
             $http({
                 method: 'get',
-                url: 'http://192.168.156.8:8080/org-web/restapi/departs/' + departid + '/members',
+                url: serverUrl+'/departs/' + departid + '/members',
             }).success(function(rep: any) {
                 //此处根据具体返回结构处理
                 defer.resolve(rep.result);

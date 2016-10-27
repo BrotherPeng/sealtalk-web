@@ -177,7 +177,7 @@ module webim {
             link: function(scope: any, element: ng.IRootElementService) {
                 var content = '';
                 if (scope.searchstr) {
-                    content = scope.message.content.replace(new RegExp(scope.searchstr,'g'), '<em class="r-msg-keyword">$&</em>');
+                    content = scope.message.content.replace(new RegExp(scope.searchstr.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|<>\-\&])/g,"\\$&"),'g'), '<em class="r-msg-keyword">$&</em>');
                 } else {
                     content = scope.message.content;
                 }

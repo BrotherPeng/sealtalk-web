@@ -103,7 +103,7 @@
                     <div class="membersAreaHeader">联系人</div>
                     <div class="membersAreaBody">
                         <div class="namesortWrap">
-                          <frienditem class="members_item "  ng-repeat="item in ::searchList.friendList" item="item"></frienditem>
+                          <frienditem class="members_item "  ng-repeat="item in searchList.friendList" item="item"></frienditem>
                       </div>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                 <div class="groupArea" >
                     <div class="groupAreaHeader">群组</div>
                     <div class="groupAreaBody">
-                      <groupitem  ng-repeat="item in ::searchList.groupList" item="item" class="noticeBarList"></groupitem>
+                      <groupitem  ng-repeat="item in searchList.groupList" item="item" class="noticeBarList"></groupitem>
                       <!-- <incloudmember ng-repeat="item in searchList.includeMember" item="item" class="noticeBarList"></incloudmember> -->
                     </div>
                     <!-- <groupitem  ng-repeat="item in searchList.groupList" item="item"></groupitem> -->
@@ -130,7 +130,7 @@
             <div class="r-msg-friends" ng-show="switchbtn.searchMessage">
 
           		<div class="r-member-search" ng-hide="showsearchconversation">
-          			<div class="r-members-item" ng-repeat="item in ::allconversations">
+          			<div class="r-members-item" ng-repeat="item in allconversations">
           				<div class="r-member-info" ui-sref="main.searchmessage({targetid:item.targetId,conversationtype:item.targetType,searchstr:''})">
           					<img ng-src="{{::item.imgSrc||'a'}}"  alt="">
           					<span>{{::item.title}}</span>
@@ -139,7 +139,7 @@
 
           		</div>
               <div class="r-member-search" ng-show="showsearchconversation">
-                <div class="r-members-item" ng-repeat="item in ::searchList.conversations">
+                <div class="r-members-item" ng-repeat="item in searchList.conversations">
           				<div class="r-member-info" ui-sref="main.searchmessage({targetid:item.targetId,conversationtype:item.targetType,searchstr:searchContent})">
           					<img ng-src="{{::item.imgSrc}}" alt="">
           					<span>{{::item.title}}</span>
