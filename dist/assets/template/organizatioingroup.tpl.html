@@ -5,17 +5,39 @@
       <search-input search="search(content)" content="content" control="searchControl" delay-time="0" show-text="搜索"></search-input>
       <a href="" class="r-input-clear" ng-click="clear()">X</a>
     </div>
-    <div class="r-member-search" ng-show="searchList.length>0">
-      <div class="r-members-item" ng-repeat="staff in searchList">
-        <div class="r-member-info" ng-click="addMember(staff)">
-          <img ng-src="{{staff.imgSrc}}" src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
-          <span>{{staff.oaName}}</span>
+    <div class="r-group-scroll">
+
+      <div class="r-member-search" ng-show="searchList.length>0">
+        <div class="r-members-item" ng-repeat="staff in searchList">
+          <div class="r-member-info" ng-click="addMember(staff)">
+            <img ng-src="{{staff.imgSrc}}" src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+            <span>{{staff.oaName}}</span>
+          </div>
+          <a href="" class="r-member-add">+</a>
         </div>
-        <a href="" class="r-member-add">+</a>
       </div>
-    </div>
-    <div class="r-group-info" ng-show="searchList.length==0">
-      <organization selection="addMember"></organization>
+
+      <div ng-show="!content">
+        <div class="r-group-head"  ng-click="showfriend=false;">
+          公司通讯录
+        </div>
+        <div class="r-group-head" ng-click="showfriend=true;">
+          好友
+        </div>
+      </div>
+      <div class="r-group-info" ng-show="searchList.length==0">
+        <div ng-show="showfriend">
+          <ul>
+            <li class="r-group-friend"  ng-repeat="item in ::friendList" ng-click="addMemberFromFriend(item)">
+              <img class="r-group-friend-portrait" ng-src="{{item.imgSrc}}"/>
+              <span>{{item.name}}</span>
+            </li>
+          </ul>
+        </div>
+
+        <organization ng-show="!showfriend" selection="addMember"></organization>
+      </div>
+
     </div>
   </div>
   <div class="r-member-result">
@@ -25,14 +47,14 @@
     <div class="r-member-selected">
       <div class="r-members-item" ng-repeat="item in groupMember">
         <div class="r-member-info">
-          <img ng-src="{{item.imgSrc}}" src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          <img ng-src="{{item.imgSrc}}" src="assets/css/images/user.png" alt="">
           <span>{{item.name}}</span>
         </div>
         <a href="" class="r-member-remove" ng-if="loginuserid!==item.id" ng-click="removeMember(item.id)">X</a>
       </div>
       <div class="r-members-item" ng-repeat="item in disableRemove">
         <div class="r-member-info">
-          <img ng-src="{{item.imgSrc}}" src="http://7xogjk.com1.z0.glb.clouddn.com/Fh8xVqod2MQ1mocfI4S4KpRL6D98" alt="">
+          <img ng-src="{{item.imgSrc}}" src="assets/css/images/user.png" alt="">
           <span>{{item.name}}</span>
         </div>
         <!-- <a href="" class="r-member-remove" ng-click="removeMember(item.id)">X</a> -->

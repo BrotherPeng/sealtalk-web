@@ -4,15 +4,15 @@
     <div class="box_hd">
       <div class="clientHd"></div>
         <div class="title_wrap">
-            <a class="phone_return"  ng-show="$parent.showState.isPhone" ng-click="back()"><span class="backArrow"><</span>返回</a>
+            <a class="phone_return"  ng-show="::$parent.showState.isPhone" ng-click="back()"><span class="backArrow"><</span>返回</a>
 
             <div class="title">
-                <a class="title_name chat_title" ng-click="tofriendinfo()">{{currentConversation.title}}</a>
+                <a class="title_name chat_title" ng-click="tofriendinfo()">{{::currentConversation.title}}</a>
                 <span class="title_count "></span>
-                <i class="Presence Presence--stacked Presence--chatBox" ng-show="currentConversation.targetType==4"></i>
+                <i class="Presence Presence--stacked Presence--chatBox" ng-show="::currentConversation.targetType==4"></i>
             </div>
 
-            <a class="editBtn" href="javascript:void 0" ui-sref="main.discussioninfo({discussionid: currentConversation.targetId, conversationtype: currentConversation.targetType})" ng-show="currentConversation.targetType==2">设置</a>
+            <a class="editBtn" href="javascript:void 0" ui-sref="main.discussioninfo({discussionid: currentConversation.targetId, conversationtype: currentConversation.targetType})" ng-show="::currentConversation.targetType==2">设置</a>
         </div>
     </div>
     <!-- content -->
@@ -32,7 +32,7 @@
                 <div class="MessageForm-tool">
                   <i class="iconfont-smile" ng-click="showemoji=!showemoji"></i>
                   <div class="expressionWrap" ng-show="showemoji"><i class="arrow"></i>
-                    <emoji ng-repeat="item in emojiList" item="item" content="msgvalue"></emoji>
+                    <emoji ng-repeat="item in ::emojiList" item="::item" ></emoji>
                   </div>
                 </div>
                 <div class="MessageForm-tool" ng-show="showCutScreen">
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="MessageForm-tool">
-                    <i class="file_shot" id="upload-file" style="position: relative; z-index: 1;" ng-click=""></i>
+                    <i class="file_shot" id="upload-file" style="position: relative; z-index: 1;"></i>
                 </div>
             </div>
             <div class="progress-wrapper ng-isolate-scope" ng-show="uploadStatus.show"><span class="progress-text ng-binding">正在上传: {{uploadStatus.progress}}</span>
@@ -68,14 +68,14 @@
             <pre  id="message-content" style='background-color: rgba(0,0,0,0);
             font-family: "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
                 white-space: pre-wrap;'
-            ng-focus="showemoji=fase"  ng-model="currentConversation.draftMsg"
+              ng-model="currentConversation.draftMsg" 
             contenteditable="true" contenteditable-dire ctrl-enter-keys atshow-dire fun="sendBtn()" ctrlenter="false" placeholder="请输入文字..." ondrop="return false;"></pre>
             <a class="sendBtn" href="javascript:void 0" ng-click="sendBtn()">发送</a>
             <div class="arobase" ng-show="atShow" id="atList">
               <ul>
-                  <li ng-repeat="item in showGroupList" ng-click="moveToItem(this);selectMember(item)">
-                      <img ng-src="{{item.imgSrc||'assets/img/barBg.png'}}">
-                      <span class="involvesName">{{item.name}}</span>
+                  <li ng-repeat="item in ::showGroupList" ng-click="moveToItem(this);selectMember(item)">
+                      <img ng-src="{{::item.imgSrc||'assets/img/barBg.png'}}">
+                      <span class="involvesName">{{::item.name}}</span>
                   </li>
               </ul>
           </div>

@@ -1630,6 +1630,7 @@ var RongIMLib;
         ReceivedStatus[ReceivedStatus["DOWNLOADED"] = 4] = "DOWNLOADED";
         ReceivedStatus[ReceivedStatus["RETRIEVED"] = 8] = "RETRIEVED";
         ReceivedStatus[ReceivedStatus["UNREAD"] = 9] = "UNREAD";
+        ReceivedStatus[ReceivedStatus["ReceivedStatus_UNREAD"] = 0] = "ReceivedStatus_UNREAD";
     })(RongIMLib.ReceivedStatus || (RongIMLib.ReceivedStatus = {}));
     var ReceivedStatus = RongIMLib.ReceivedStatus;
     (function (SearchType) {
@@ -2094,7 +2095,7 @@ var RongIMLib;
          * @param callback  获取的回调，返回差值。
          */
         RongIMClient.prototype.getDeltaTime = function () {
-            return RongIMClient._memoryStore.deltaTime;
+            return RongIMClient._dataAccessProvider.getDelaTime();
         };
         // #region Message
         RongIMClient.prototype.getMessage = function (messageId, callback) {
@@ -3666,9 +3667,9 @@ var RongIMLib;
         };
         MessageHandler.prototype.onReceived = function (msg, pubAckItem, offlineMsg) {
             //实体对象
-            var entity, 
+            var entity,
             //解析完成的消息对象
-            message, 
+            message,
             //会话对象
             con;
             if (msg._name != "PublishMessage") {
@@ -5702,7 +5703,7 @@ var typeMapping = {
     "RC:SRSMsg": "SyncReadStatusMessage",
     "RC:RRReqMsg": "ReadReceiptRequestMessage",
     "RC:RRRspMsg": "ReadReceiptResponseMessage"
-}, 
+},
 //自定义消息类型
 registerMessageTypeMapping = {}, HistoryMsgType = {
     4: "qryCMsg",
@@ -7898,6 +7899,9 @@ var RongIMLib;
         ServerDataProvider.prototype.searchMessageByContent = function (conversationType, targetId, keyword, timestamp, count, total, callback) {
             callback.onSuccess([]);
         };
+        ServerDataProvider.prototype.getDelaTime = function () {
+            return RongIMLib.RongIMClient._memoryStore.deltaTime;
+        };
         return ServerDataProvider;
     }());
     RongIMLib.ServerDataProvider = ServerDataProvider;
@@ -8383,6 +8387,9 @@ var RongIMLib;
                 callback.onError(errcode);
             });
         };
+        VCDataProvider.prototype.getDelaTime = function () {
+            return this.addon.getDeltaTime();
+        };
         VCDataProvider.prototype.hasRemoteUnreadMessages = function (token, callback) {
             callback.onSuccess(false);
         };
@@ -8411,7 +8418,12 @@ var RongIMLib;
             message.targetId = ret.targetId;
             message.messageDirection = ret.direction;
             message.senderUserId = ret.senderUserId;
-            message.receivedStatus = ret.status;
+            if (ret.direction == RongIMLib.MessageDirection.RECEIVE) {
+                message.receivedStatus = ret.status;
+            }
+            else if (ret.direction == RongIMLib.MessageDirection.SEND) {
+                message.sentStatus = ret.status;
+            }
             message.sentTime = ret.sentTime;
             message.objectName = ret.objectName;
             message.content = ret.content ? JSON.parse(ret.content) : ret.content;
@@ -9522,6 +9534,9 @@ var RongIMLib;
         };
         WebSQLDataProvider.prototype.searchMessageByContent = function (conversationType, targetId, keyword, timestamp, count, total, callback) {
             callback.onSuccess([]);
+        };
+        WebSQLDataProvider.prototype.getDelaTime = function () {
+            return 0;
         };
         return WebSQLDataProvider;
     }());
