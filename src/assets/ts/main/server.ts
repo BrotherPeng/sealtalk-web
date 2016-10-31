@@ -608,7 +608,7 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
       });
 
       RongIMSDKServer.getConversationList().then(function(list) {
-        RongIMLib.RongIMClient.getInstance().sortConversationList(list);
+        list = RongIMLib.RongIMClient.getInstance().sortConversationList(list);
         mainDataServer.conversation.conversations = [];
         for (var i = 0, length = list.length; i < length; i++) {
           var result = mainDataServer.conversation.parseConversation(list[i]);
@@ -775,6 +775,14 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
           }
           mainDataServer.conversation.totalUnreadCount = totalUnreadCount;
           if (add && !isfirst) {
+            // var arr = mainDataServer.conversation.conversations;
+            // for(var i=0,len=arr.length;i<len;i++){
+            //   if(arr[i].isTop == 1){
+            //     continue;
+            //   }
+            //   arr.splice(i,0,result.item);
+            //   break;
+            // }
             mainDataServer.conversation.conversations.unshift(result.item);
           }
         }
@@ -1552,7 +1560,7 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
       onError: function(error) {
         defer.reject(error);
       }
-    }, null);
+    }, null, 0, false);
     return defer.promise;
   }
 
@@ -1695,7 +1703,7 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
         onError:function(error){
           defer.reject(error)
         }
-      },null);
+      },null,0,true);
 
       // $http({
       //   url: './assets/js/exampledata.json',

@@ -591,6 +591,8 @@ declare module RongIMLib {
          */
         static connect(token: string, callback: ConnectCallback,userid?:string): RongIMClient;
         static reconnect(callback: ConnectCallback): void;
+
+
         /**
          * 注册消息类型，用于注册用户自定义的消息。
          * 内建的消息类型已经注册过，不需要再次注册。
@@ -613,6 +615,7 @@ declare module RongIMLib {
 
         searchConversationByContent(keyword:string, callback:any, conversationTypes?:any): void;
         searchMessageByContent(conversationType:any, targetId:string, keyword:string, timestamp:string, count:any, total:any, callback:any):void;
+        setConversationHidden(conversationType: number,targetId: string,isHidden: boolean):void;
         /**
          * 清理所有连接相关的变量
          */
@@ -794,8 +797,8 @@ declare module RongIMLib {
          * msg_conversationType_targetId_no.
          */
         private pottingConversation(tempConver);
-        sortConversationList(conversationList: any): void;
-        getConversationList(callback: ResultCallback<Conversation[]>, conversationTypes: ConversationType[]): void;
+        sortConversationList(conversationList: any): Conversation[];
+        getConversationList(callback: ResultCallback<Conversation[]>, conversationTypes: ConversationType[], count: number, isGetHiddenConvers: boolean): void;
         getRemoteConversationList(callback: ResultCallback<Conversation[]>, conversationTypes: ConversationType[]): void;
         /**
          * [createConversation 创建会话。]
@@ -1881,6 +1884,7 @@ declare module RongIMLib {
         conversationType: ConversationType;
         draft: string;
         isTop: boolean;
+        isHidden: boolean;
         latestMessage: any;
         latestMessageId: string;
         mentionedMsg: any;

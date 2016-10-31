@@ -42,6 +42,7 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
                     members = detail.data.data.targetUserIds;
                     break;
                 case "Rename":
+                    detail.data.data.targetGroupName = RongIMLib.RongIMEmoji.symbolToEmoji(RongIMLib.RongIMEmoji.emojiToSymbol(RongIMLib.RongIMEmoji.calculateUTF(detail.data.data.targetGroupName)));
                     if(isself){
                       comment = "你修改名称为" + detail.data.data.targetGroupName;
                       // + detail.data.data.targetGroupName;

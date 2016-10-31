@@ -6,6 +6,7 @@ module webimmodel {
     export class Conversation {
         public title: string;
         public targetId: string;
+        public isTop: any;
         public targetType: any;
         public lastTime: Date;
         public lastMsg: string;
@@ -440,6 +441,7 @@ module webimmodel {
                         }
                         break;
                     case "Rename":
+                        data.targetGroupName = RongIMLib.RongIMEmoji.calculateUTF(data.targetGroupName);
                         if(msg.content.operatorUserId == operatorid){
                           msgContent = "你修改群名称为" + data.targetGroupName;
                         }else{

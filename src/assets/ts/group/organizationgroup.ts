@@ -65,9 +65,17 @@ module webim {
 
             $scope.search = function(str: string) {
                 if (str) {
-                    searchData.searchOrganization(str).then(function(result: any) {
-                        $scope.searchList = result;
-                    })
+                    if(!$scope.showfriend){
+                        searchData.searchOrganization(str).then(function(result: any) {
+                            $scope.searchList = result;
+                        })
+                    }else{
+                        searchData.searchContact(str).then(function(rep: any){
+                            $scope.searchList = rep.friendList;
+                            console.log($scope.searchList );
+                        })
+                    }
+                    
                 } else {
                     $scope.searchList = [];
                 }

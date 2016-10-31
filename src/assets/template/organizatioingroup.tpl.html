@@ -1,31 +1,38 @@
 <div class="r-group-new">
+  <div class="r-group-panle-head">发起群聊</div>
   <div class="r-group-panel">
+
+      <div >
+        <div class="r-group-head" ng-class="{'selected':!showfriend}" ng-click="showfriend=false;">
+          公司通讯录
+        </div>
+        <div class="r-group-head" ng-class="{'selected':showfriend}" ng-click="showfriend=true;">
+          好友
+        </div>
+      </div>
     <div class="r-group-search">
       <!-- <input type="text" class="r-group-search-keyword r-input-focus" placeholder="搜索"/> -->
       <search-input search="search(content)" content="content" control="searchControl" delay-time="0" show-text="搜索"></search-input>
       <a href="" class="r-input-clear" ng-click="clear()">X</a>
     </div>
     <div class="r-group-scroll">
-
-      <div class="r-member-search" ng-show="searchList.length>0">
-        <div class="r-members-item" ng-repeat="staff in searchList">
+      <div class="r-member-search" ng-show="content">
+        <div class="r-members-item" ng-show="!showfriend" ng-repeat="staff in searchList">
           <div class="r-member-info" ng-click="addMember(staff)">
-            <img ng-src="{{staff.imgSrc}}" src="http://7xogjk.com1.z0.glb.clouddn.com/ZfrRmtSkh1467874145615494873" alt="">
+            <img ng-src="{{staff.imgSrc}}" src="assets/css/images/user.png" alt="">
             <span>{{staff.oaName}}</span>
           </div>
           <a href="" class="r-member-add">+</a>
         </div>
-      </div>
-
-      <div ng-show="!content">
-        <div class="r-group-head"  ng-click="showfriend=false;">
-          公司通讯录
-        </div>
-        <div class="r-group-head" ng-click="showfriend=true;">
-          好友
+        <div class="r-members-item" ng-show="showfriend" ng-repeat="staff in searchList">
+          <div class="r-member-info" ng-click="addMemberFromFriend(staff)">
+            <img ng-src="{{staff.imgSrc}}" src="assets/css/images/user.png" alt="">
+            <span>{{staff.name}}</span>
+          </div>
+          <a href="" class="r-member-add">+</a>
         </div>
       </div>
-      <div class="r-group-info" ng-show="searchList.length==0">
+      <div class="r-group-info" ng-show="!content">
         <div ng-show="showfriend">
           <ul>
             <li class="r-group-friend"  ng-repeat="item in ::friendList" ng-click="addMemberFromFriend(item)">

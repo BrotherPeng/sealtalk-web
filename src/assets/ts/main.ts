@@ -223,6 +223,11 @@ webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvi
            templateUrl:'assets/views/searchmessage.html',
            controller:'searchmessageController'
         })
+        .state('main.companyuserinfo',{
+            url:"/companyuserinfo/:userid",
+            templateUrl:"assets/views/companyuserinfo.html",
+            controller:"companyuserinfoController"
+        })
 
     }]);
     // .run(function($rootScope: any, $state: angular.ui.IStateService, $stateParams: any) {

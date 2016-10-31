@@ -830,6 +830,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                                             var groupid = data.targetId;
                                             var groupname = mainDataServer.contactsList.getGroupById(groupid) ? mainDataServer.contactsList.getGroupById(groupid).name : groupid;
                                             var operator = isself ? "你" : groupNotification.data.data.operatorNickname;
+                                            groupNotification.data.data.targetGroupName = RongIMLib.RongIMEmoji.calculateUTF(groupNotification.data.data.targetGroupName);
                                             var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + ' 修改群名称为' + groupNotification.data.data.targetGroupName);
                                             mainDataServer.notification.addNotification(temporarynotifi);
                                             if (!$state.is("main.notification")) {

@@ -994,10 +994,10 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             }
         }
 
-        // setTimeout(function() {
-        //     var obj = document.getElementById("message-content");
-        //     webimutil.Helper.getFocus(obj);
-        // });
+        setTimeout(function() {
+            var obj = document.getElementById("message-content");
+            webimutil.Helper.getFocus(obj);
+        });
 
         function handlePaste(e: any) {
             var reg = new RegExp('^data:image/[^;]+;base64,');

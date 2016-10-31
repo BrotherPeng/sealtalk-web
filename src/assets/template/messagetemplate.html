@@ -3,7 +3,7 @@
   <date-message  ng-switch-when="104" date="::item.sendTime"></date-message>
   <get-more-message ng-switch-when="106" myclick="$parent.$parent.$parent.getMoreMessage()"></get-more-message>
   <get-history-message ng-switch-when="105" myclick="$parent.$parent.$parent.getHistoryMessage()" ></get-history-message>
-  <div ng-switch-when="2" class="sys-tips"><span>{{::item.content}}</span></div>
+  <div ng-switch-when="2" class="sys-tips"><span ng-bind-html="::item.content|trustHtml"></span></div>
 
   <div ng-switch-when="1" class="Message">
     <div class="Messages-unreadLine"></div>

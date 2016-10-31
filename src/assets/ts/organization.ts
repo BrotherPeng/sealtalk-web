@@ -1,7 +1,8 @@
 module webim {
     var webim = angular.module('webim');
 
-    webim.controller('organizationController', ["$scope", "organizationServer", "$state", function($scope: any, organizationServer: any, $state: ng.ui.IStateService) {
+    webim.controller('organizationController', ["$scope", "organizationServer", "$state","organizationData",
+     function($scope: any, organizationServer: any, $state: ng.ui.IStateService,organizationData:any) {
 
         $scope.treeOptions = {
             isLeaf: function(node: any) {
@@ -18,6 +19,7 @@ module webim {
         organizationServer.getList('').then(function(data: any) {
             // $scope.organizationList = data.department;
             $scope.organizationList = data;
+            organizationData.departmentList = data;
         });
 
 
@@ -26,12 +28,14 @@ module webim {
                 organizationServer.getList(node.id).then(function(data: any) {
                     node.children = node.children || [];
                     node.children = angular.copy(data.concat(node.children));
+                    organizationData.departmentList = organizationData.departmentList.concat(data);
                     // node.children = data.person;
                     // node.children = angular.copy(node.children.concat(data.department));
                 });
                 organizationServer.getUserList(node.id).then(function(data: any) {
                     node.children = node.children || [];
                     node.children = angular.copy(node.children.concat(data));
+                    organizationData.userList = organizationData.userList.concat(data);
                 })
             }
         }
@@ -41,7 +45,8 @@ module webim {
                 $scope.selection(node);
             } else {
                 // $state.go("main.friendinfo", { userid: node.id, groupid: 0, targetid: 0, conversationtype: 0 });
-                $state.go("main.friendinfo", { userid: node.userId, groupid: 0, targetid: 0, conversationtype: 0 });
+                // $state.go("main.friendinfo", { userid: node.userId, groupid: 0, targetid: 0, conversationtype: 0 });
+                $state.go("main.companyuserinfo", { userid: node.userId});
             }
         }
 
@@ -132,6 +137,32 @@ module webim {
             }
         }
     }]);
+
+    webim.service('organizationData',[function(){
+
+
+        this.departmentList = [];
+        this.userList = [];
+
+        this.getDepartmentById = function(id: string){
+            var arr=this.departmentList;
+            for(var i=0,len=arr.length;i<len;i++){
+                if(arr[i].id == id){
+                    return arr[i];
+                }
+            }
+        }
+
+        this.getUserById = function(id: string){
+            var arr=this.userList;
+            for(var i=0,len=arr.length;i<len;i++){
+                if(arr[i].userId == id){
+                    return arr[i];
+                }
+            }
+        }
+
+    }])
 
 
     webim.service('organizationServer', ["$q", "$http", function($q: ng.IQService, $http: ng.IHttpService) {

@@ -11,6 +11,7 @@ declare module RongIMLib {
         static emojis: any[]
         static init(): void
 
+        static calculateUTF(str: string): string
         static emojiToSymbol(str: string): string
         static symbolToEmoji(str: string): string
         static symbolToHTML(str: string): string

@@ -1629,8 +1629,7 @@ var RongIMLib;
         ReceivedStatus[ReceivedStatus["LISTENED"] = 2] = "LISTENED";
         ReceivedStatus[ReceivedStatus["DOWNLOADED"] = 4] = "DOWNLOADED";
         ReceivedStatus[ReceivedStatus["RETRIEVED"] = 8] = "RETRIEVED";
-        ReceivedStatus[ReceivedStatus["UNREAD"] = 9] = "UNREAD";
-        ReceivedStatus[ReceivedStatus["ReceivedStatus_UNREAD"] = 0] = "ReceivedStatus_UNREAD";
+        ReceivedStatus[ReceivedStatus["UNREAD"] = 0] = "UNREAD";
     })(RongIMLib.ReceivedStatus || (RongIMLib.ReceivedStatus = {}));
     var ReceivedStatus = RongIMLib.ReceivedStatus;
     (function (SearchType) {
@@ -2573,13 +2572,13 @@ var RongIMLib;
         };
         RongIMClient.prototype.sortConversationList = function (conversationList) {
             var convers = [];
-            for (var i = 0, len = conversationList.length; i < len; i++) {
+            for (var i = 0; i < conversationList.length; i++) {
                 if (conversationList[i].isTop) {
                     convers.push(conversationList[i]);
                     conversationList.splice(i, 1);
                     continue;
                 }
-                for (var j = 0; j < len - i - 1; j++) {
+                for (var j = 0; j < conversationList.length - i - 1; j++) {
                     if (conversationList[j].sentTime < conversationList[j + 1].sentTime) {
                         var swap = conversationList[j];
                         conversationList[j] = conversationList[j + 1];
@@ -2587,10 +2586,10 @@ var RongIMLib;
                     }
                 }
             }
-            RongIMClient._memoryStore.conversationList = convers.concat(conversationList);
+            return RongIMClient._memoryStore.conversationList = convers.concat(conversationList);
         };
-        RongIMClient.prototype.getConversationList = function (callback, conversationTypes, count) {
-            RongIMLib.CheckParam.getInstance().check(["object", "null|array|object|global", "number|undefined|null|object|global"], "getConversationList");
+        RongIMClient.prototype.getConversationList = function (callback, conversationTypes, count, isGetHiddenConvers) {
+            RongIMLib.CheckParam.getInstance().check(["object", "null|array|object|global", "number|undefined|null|object|global", "boolean|undefined|null|object|global"], "getConversationList");
             var me = this;
             RongIMClient._dataAccessProvider.getConversationList({
                 onSuccess: function (data) {
@@ -2613,11 +2612,11 @@ var RongIMLib;
                         callback.onSuccess([]);
                     }
                 }
-            }, conversationTypes, count);
+            }, conversationTypes, count,isGetHiddenConvers);
         };
-        RongIMClient.prototype.getRemoteConversationList = function (callback, conversationTypes, count) {
-            RongIMLib.CheckParam.getInstance().check(["object", "null|array|object|global", "number|undefined|null|object|global"], "getRemoteConversationList");
-            RongIMClient._dataAccessProvider.getRemoteConversationList(callback, conversationTypes, count);
+        RongIMClient.prototype.getRemoteConversationList = function (callback, conversationTypes, count, isGetHiddenConvers) {
+            RongIMLib.CheckParam.getInstance().check(["object", "null|array|object|global", "number|undefined|null|object|global", "boolean|undefined|null|object|global"], "getRemoteConversationList");
+            RongIMClient._dataAccessProvider.getRemoteConversationList(callback, conversationTypes, count,isGetHiddenConvers);
         };
         RongIMClient.prototype.updateConversation = function (conversation) {
             return RongIMClient._dataAccessProvider.updateConversation(conversation);
@@ -2643,6 +2642,10 @@ var RongIMLib;
         RongIMClient.prototype.removeConversation = function (conversationType, targetId, callback) {
             RongIMLib.CheckParam.getInstance().check(["number", "string", "object"], "removeConversation");
             RongIMClient._dataAccessProvider.removeConversation(conversationType, targetId, callback);
+        };
+        RongIMClient.prototype.setConversationHidden = function (conversationType, targetId, isHidden) {
+            RongIMLib.CheckParam.getInstance().check(["number", "string", "boolean"], "setConversationHidden");
+            RongIMClient._dataAccessProvider.setConversationHidden(conversationType, targetId, isHidden);
         };
         RongIMClient.prototype.setConversationToTop = function (conversationType, targetId, callback) {
             RongIMLib.CheckParam.getInstance().check(["number", "string", "object"], "setConversationToTop");
@@ -3667,9 +3670,9 @@ var RongIMLib;
         };
         MessageHandler.prototype.onReceived = function (msg, pubAckItem, offlineMsg) {
             //实体对象
-            var entity,
+            var entity, 
             //解析完成的消息对象
-            message,
+            message, 
             //会话对象
             con;
             if (msg._name != "PublishMessage") {
@@ -5703,7 +5706,7 @@ var typeMapping = {
     "RC:SRSMsg": "SyncReadStatusMessage",
     "RC:RRReqMsg": "ReadReceiptRequestMessage",
     "RC:RRRspMsg": "ReadReceiptResponseMessage"
-},
+}, 
 //自定义消息类型
 registerMessageTypeMapping = {}, HistoryMsgType = {
     4: "qryCMsg",
@@ -6800,7 +6803,7 @@ var RongIMLib;
     }());
     RongIMLib.CustomServiceSession = CustomServiceSession;
     var Conversation = (function () {
-        function Conversation(conversationTitle, conversationType, draft, isTop, latestMessage, latestMessageId, notificationStatus, objectName, receivedStatus, receivedTime, senderUserId, senderUserName, sentStatus, sentTime, targetId, unreadMessageCount, senderPortraitUri, mentionedMsg) {
+        function Conversation(conversationTitle, conversationType, draft, isTop, latestMessage, latestMessageId, notificationStatus, objectName, receivedStatus, receivedTime, senderUserId, senderUserName, sentStatus, sentTime, targetId, unreadMessageCount, senderPortraitUri, isHidden, mentionedMsg) {
             this.conversationTitle = conversationTitle;
             this.conversationType = conversationType;
             this.draft = draft;
@@ -6818,6 +6821,7 @@ var RongIMLib;
             this.targetId = targetId;
             this.unreadMessageCount = unreadMessageCount;
             this.senderPortraitUri = senderPortraitUri;
+            this.isHidden = isHidden;
             this.mentionedMsg = mentionedMsg;
         }
         Conversation.prototype.setTop = function () {
@@ -7663,18 +7667,7 @@ var RongIMLib;
             mod.setType(conversationType);
             RongIMLib.RongIMClient.bridge.queryMsg(27, RongIMLib.MessageUtil.ArrayForm(mod.toArrayBuffer()), targetId, {
                 onSuccess: function () {
-                    RongIMLib.RongIMClient._dataAccessProvider.removeConversation(conversationType, targetId, {
-                        onSuccess: function () {
-                            setTimeout(function () {
-                                callback.onSuccess(true);
-                            });
-                        },
-                        onError: function () {
-                            setTimeout(function () {
-                                callback.onError(RongIMLib.ErrorCode.CONVER_REMOVE_ERROR);
-                            });
-                        }
-                    });
+                    callback.onSuccess(true);
                 }, onError: function () {
                     setTimeout(function () {
                         callback.onError(RongIMLib.ErrorCode.CONVER_REMOVE_ERROR);
@@ -7739,7 +7732,7 @@ var RongIMLib;
             }
             callback.onSuccess(conver);
         };
-        ServerDataProvider.prototype.getConversationList = function (callback, conversationTypes, count) {
+        ServerDataProvider.prototype.getConversationList = function (callback, conversationTypes, count, isHidden) {
             if (RongIMLib.RongIMClient._memoryStore.conversationList.length == 0 || RongIMLib.RongIMClient._memoryStore.isSyncRemoteConverList || (typeof count != undefined && RongIMLib.RongIMClient._memoryStore.conversationList.length < count)) {
                 RongIMLib.RongIMClient.getInstance().getRemoteConversationList({
                     onSuccess: function (list) {
@@ -7757,7 +7750,7 @@ var RongIMLib;
                     onError: function (errorcode) {
                         callback.onSuccess([]);
                     }
-                }, conversationTypes, count);
+                }, conversationTypes, count, isHidden);
             }
             else {
                 if (conversationTypes) {
@@ -7874,6 +7867,8 @@ var RongIMLib;
                     callback.onError(error);
                 }
             });
+        };
+        ServerDataProvider.prototype.setConversationHidden = function (conversationType, targetId, isHidden) {
         };
         ServerDataProvider.prototype.setMessageExtra = function (messageId, value, callback) {
             callback.onSuccess(true);
@@ -8074,15 +8069,20 @@ var RongIMLib;
                 callback.onError(RongIMLib.ErrorCode.TIMEOUT);
             }
         };
-        VCDataProvider.prototype.getRemoteConversationList = function (callback, conversationTypes, count) {
+        VCDataProvider.prototype.getRemoteConversationList = function (callback, conversationTypes, count, isGetHiddenConvers) {
             try {
                 this.useConsole && console.log("getRemoteConversationList");
                 var converTypes = conversationTypes || [1, 2, 3, 4, 5, 6, 7, 8];
                 var result = this.addon.getConversationList(converTypes);
                 var list = JSON.parse(result).list, convers = [], me = this;
                 list.reverse();
+                isGetHiddenConvers = typeof isGetHiddenConvers === 'boolean' ? isGetHiddenConvers : false;
                 for (var i = 0, len = list.length; i < len; i++) {
-                    convers[i] = me.buildConversation(list[i].obj);
+                    var tmpObj = list[i].obj, obj = JSON.parse(tmpObj);
+                    if (obj.isHidden == 1 && isGetHiddenConvers) {
+                        continue;
+                    }
+                    convers[i] = me.buildConversation(tmpObj);
                 }
                 convers.reverse();
                 callback.onSuccess(convers);
@@ -8215,9 +8215,9 @@ var RongIMLib;
                 callback.onError(RongIMLib.ErrorCode.CONVER_GET_ERROR);
             }
         };
-        VCDataProvider.prototype.getConversationList = function (callback, conversationTypes, count) {
+        VCDataProvider.prototype.getConversationList = function (callback, conversationTypes, count, isGetHiddenConvers) {
             this.useConsole && console.log("getConversationList");
-            this.getRemoteConversationList(callback, conversationTypes, count);
+            this.getRemoteConversationList(callback, conversationTypes, count, isGetHiddenConvers);
         };
         VCDataProvider.prototype.clearConversations = function (conversationTypes, callback) {
             try {
@@ -8297,6 +8297,9 @@ var RongIMLib;
             catch (e) {
                 callback.onError(RongIMLib.ErrorCode.CONVER_SETOP_ERROR);
             }
+        };
+        VCDataProvider.prototype.setConversationHidden = function (conversationType, targetId, isHidden) {
+            this.addon.setConversationHidden(conversationType, targetId, isHidden);
         };
         VCDataProvider.prototype.setMessageReceivedStatus = function (messageId, receivedStatus, callback) {
             try {
@@ -8438,6 +8441,7 @@ var RongIMLib;
             conver.conversationType = c.conversationType;
             conver.draft = c.draft;
             conver.isTop = c.isTop;
+            conver.isHidden = c.isHidden;
             lastestMsg.conversationType = c.conversationType;
             lastestMsg.targetId = c.targetId;
             conver.latestMessage = lastestMsg;
@@ -9248,7 +9252,7 @@ var RongIMLib;
                 callback.onSuccess(conver);
             });
         };
-        WebSQLDataProvider.prototype.getConversationList = function (callback, conversationTypes, count) {
+        WebSQLDataProvider.prototype.getConversationList = function (callback, conversationTypes, count, isHidden) {
             if (RongIMLib.RongIMClient._memoryStore.isSyncRemoteConverList) {
                 RongIMLib.RongIMClient.getInstance().getRemoteConversationList({
                     onSuccess: function (list) {
@@ -9264,7 +9268,7 @@ var RongIMLib;
                     onError: function (errorCode) {
                         callback.onError(errorCode);
                     }
-                }, conversationTypes, count);
+                }, conversationTypes, count, isHidden);
             }
             //查询置顶会话。
             var tSql = "select * from t_conversation_" + this.database.userId + " t where t.isTop = 1 ";
@@ -9481,6 +9485,8 @@ var RongIMLib;
             var sql = "update t_conversation_" + this.database.userId + " set isTop = 1 where conversationType = ? and targetId = ?";
             this.database.execUpdateByParams(sql, [conversationType, targetId]);
             callback.onSuccess(true);
+        };
+        WebSQLDataProvider.prototype.setConversationHidden = function (conversationType, targetId, isHidden) {
         };
         WebSQLDataProvider.prototype.setMessageExtra = function (messageUId, value, callback) {
             var sSql = "select t.content from t_message_" + this.database.userId + " t where t.messageUId = ?";
