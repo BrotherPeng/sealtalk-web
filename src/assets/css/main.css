@@ -4139,7 +4139,6 @@ body.ngdialog-open {
 .r-group-info {
   /*margin: 10px;*/
   overflow: auto;
-  height: 88%;
 }
 .r-member-title {
   margin: 17px 10px 18px;
@@ -4160,9 +4159,9 @@ body.ngdialog-open {
   background: #f8f8f8;
 }
 .r-member-info img {
-  width: 25px;
-  height: 25px;
-  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border-radius:50%;
   margin-right: 5px;
 }
 .r-member-info span {
@@ -4424,7 +4423,7 @@ body.ngdialog-open {
 	border-bottom:2px solid #09f;
 }
 .r-group-info{
-  height: 275px
+  height: 275px;
 }
 .r-member-search{
   /*max-height: 335px;*/
@@ -4448,8 +4447,8 @@ body.ngdialog-open {
 }
 
 .r-organ-user-head-img{
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   margin-right: 8px;
 }

@@ -2,6 +2,9 @@
 .communicateList .membersArea, .communicateList .publicArea{
 	margin-bottom:2px;
 }
+.groupAreaBody{
+    padding-left:15px;
+}
 .r-member-info img{
 	border-radius:50%;
 }

@@ -59,7 +59,8 @@ module.exports = (grunt) ->
               'img/**/*.*'
               'js/**/*.js'
               'js/**/*.json'
-              'css/**'
+              'css/images/**'
+              'css/im/**'
               'views/**/*.html'
               'template/*.html'
             ]
@@ -204,8 +205,7 @@ module.exports = (grunt) ->
               './src/assets/css/main.css'
               './vendor/angular-tree-control/css/tree-control.css'
               './vendor/ng-dialog/css/ngDialog.css'
-              './src/assets/css/58.css'
-              './src/assets/css/other.css'
+              './src/assets/css/im.css'
             ]
             dest:'./temp/main.css'
           }
@@ -238,8 +238,7 @@ module.exports = (grunt) ->
               './src/assets/css/main.css'
               './vendor/angular-tree-control/css/tree-control.css'
               './vendor/ng-dialog/css/ngDialog.css'
-              './src/assets/css/58.css'
-              './src/assets/css/other.css'
+              './src/assets/css/im.css'
             ]
             dest:'./build/assets/css/main.css'
           }
