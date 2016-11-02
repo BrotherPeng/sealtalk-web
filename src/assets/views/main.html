@@ -132,7 +132,7 @@
           		<div class="r-member-search" ng-hide="showsearchconversation">
           			<div class="r-members-item" ng-repeat="item in allconversations">
           				<div class="r-member-info" ui-sref="main.searchmessage({targetid:item.targetId,conversationtype:item.targetType,searchstr:''})">
-          					<img ng-src="{{::item.imgSrc||'a'}}"  alt="">
+          					<img ng-src="{{::item.imgSrc||'assets/css/images/user.png'}}"  alt="">
           					<span>{{::item.title}}</span>
           				</div>
           			</div>
@@ -141,7 +141,7 @@
               <div class="r-member-search" ng-show="showsearchconversation">
                 <div class="r-members-item" ng-repeat="item in searchList.conversations">
           				<div class="r-member-info" ui-sref="main.searchmessage({targetid:item.targetId,conversationtype:item.targetType,searchstr:searchContent})">
-          					<img ng-src="{{::item.imgSrc}}" alt="">
+          					<img ng-src="{{::item.imgSrc||'assets/css/images/user.png'}}" alt="">
           					<span>{{::item.title}}</span>
           				</div>
           			</div>

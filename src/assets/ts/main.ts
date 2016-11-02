@@ -304,6 +304,15 @@ webimApp.run(["RongIMSDKServer", "$state", "$rootScope", function(RongIMSDKServe
         function(event, toState, toParams, fromState, fromParams) {
             cancelScollStyle();
         });
+
+    window.BalloonClick = function (n: any) {
+        if (n.data)
+            $state.go("main.chat", { targetId: n.data.targetId, targetType: n.data.targetType });
+     };
+
+     window.logout = function (){
+         RongIMLib.RongIMClient.getInstance().logout();
+     }
 }])
 
 webimApp.filter('trustHtml', ["$sce", function($sce: angular.ISCEService) {

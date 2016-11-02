@@ -36,7 +36,7 @@
         <div ng-show="showfriend">
           <ul>
             <li class="r-group-friend"  ng-repeat="item in ::friendList" ng-click="addMemberFromFriend(item)">
-              <img class="r-group-friend-portrait" ng-src="{{item.imgSrc}}"/>
+              <img class="r-group-friend-portrait" ng-src="{{item.imgSrc||'assets/css/images/user.png'}}"/>
               <span>{{item.name}}</span>
             </li>
           </ul>

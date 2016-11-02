@@ -736,7 +736,7 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
             conversationItem = mainDataServer.conversation.conversations[i];
             if (conversationItem.targetType == type && conversationItem.targetId == id) {
               oldUnread = conversationItem.unReadNum;
-              if (i == 0) {
+              if (i == 0 || conversationItem.isTop ||(mainDataServer.conversation.conversations[i-1]&&mainDataServer.conversation.conversations[i-1].isTop)) {
                 isfirst = true;
                 conversationItem.lastMsg = result.item.lastMsg;
                 conversationItem.unReadNum = result.item.unReadNum;
@@ -757,7 +757,7 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
               break;
             }
           }
-          if (isChat && type == mainDataServer.conversation.currentConversation.targetType && id == mainDataServer.conversation.currentConversation.targetId) {
+          if (isChat && mainDataServer.conversation.currentConversation && type == mainDataServer.conversation.currentConversation.targetType && id == mainDataServer.conversation.currentConversation.targetId) {
             RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
             totalUnreadCount = totalUnreadCount - oldUnread;
             result.item.unReadNum = 0;
@@ -775,15 +775,15 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
           }
           mainDataServer.conversation.totalUnreadCount = totalUnreadCount;
           if (add && !isfirst) {
-            // var arr = mainDataServer.conversation.conversations;
-            // for(var i=0,len=arr.length;i<len;i++){
-            //   if(arr[i].isTop == 1){
-            //     continue;
-            //   }
-            //   arr.splice(i,0,result.item);
-            //   break;
-            // }
-            mainDataServer.conversation.conversations.unshift(result.item);
+            var arr = mainDataServer.conversation.conversations;
+            for(var i=0,len=arr.length;i<len;i++){
+              if(arr[i].isTop == 1){
+                continue;
+              }
+              arr.splice(i,0,result.item);
+              break;
+            }
+            // mainDataServer.conversation.conversations.unshift(result.item);
           }
         }
         else {
@@ -1560,7 +1560,24 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
       onError: function(error) {
         defer.reject(error);
       }
-    }, null, 0, false);
+    }, null, 0, true);
+    return defer.promise;
+  }
+
+  RongIMSDKServer.setConversationHidden = function(targetType:number,targetId:string,isHidden:boolean){
+    RongIMLib.RongIMClient.getInstance().setConversationHidden(targetType,targetId,isHidden);
+  }
+
+  RongIMSDKServer.setConversationToTop = function(conversationType:number, targetId:string, isTop:boolean){
+    var defer = $q.defer();
+    RongIMLib.RongIMClient.getInstance().setConversationToTop(conversationType,targetId,isTop,{
+      onSuccess: function(data) {
+        defer.resolve(data);
+      },
+      onError: function(error) {
+        defer.reject(error);
+      }
+    });
     return defer.promise;
   }
 
@@ -1703,14 +1720,8 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
         onError:function(error){
           defer.reject(error)
         }
-      },null,0,true);
+      },null,0,false);
 
-      // $http({
-      //   url: './assets/js/exampledata.json',
-      //   method:'get',
-      // }).success(function(rep:any){
-      //   defer.resolve(rep.conversation)
-      // })
       return defer.promise;
   }
 

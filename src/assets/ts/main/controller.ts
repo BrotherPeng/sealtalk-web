@@ -441,7 +441,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                             var eleplay = <any>document.getElementById("playsound");
                             eleplay.play();
                         }
-
+                        RongIMLib.RongIMClient.getInstance().setConversationHidden(data.conversationType,data.targetId,true);
                         var msg = <any>webimmodel.Message.convertMsg(data);
 
                         //同自己会话删除targetid为空
@@ -1188,7 +1188,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                 for (var i = 0, len = data.length; i < len; i++) {
                     if (data[i].conversationType == 1 || data[i].conversationType == 3) {
                         var result = mainDataServer.conversation.parseConversation(data[i]);
-                        result.imgSrc = result.imgSrc || 'assets/css/images/user.png';
+                        // result.item.imgSrc = result.imgSrc || 'assets/css/images/user.png';
                         $scope.allconversations.push(result.item);
                     }
                 }

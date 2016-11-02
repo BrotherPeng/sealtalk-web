@@ -798,7 +798,7 @@ declare module RongIMLib {
          */
         private pottingConversation(tempConver);
         sortConversationList(conversationList: any): Conversation[];
-        getConversationList(callback: ResultCallback<Conversation[]>, conversationTypes: ConversationType[], count: number, isGetHiddenConvers: boolean): void;
+        getConversationList(callback: ResultCallback<Conversation[]>, conversationTypes: ConversationType[], count: number, getPartConvers: boolean): void;
         getRemoteConversationList(callback: ResultCallback<Conversation[]>, conversationTypes: ConversationType[]): void;
         /**
          * [createConversation 创建会话。]
@@ -809,7 +809,7 @@ declare module RongIMLib {
          */
         createConversation(conversationType: number, targetId: string, converTitle: string): Conversation;
         removeConversation(conversationType: ConversationType, targetId: string, callback: ResultCallback<boolean>): void;
-        setConversationToTop(conversationType: ConversationType, targetId: string, callback: ResultCallback<boolean>): void;
+        setConversationToTop(conversationType: ConversationType, targetId: string, isTop: boolean, callback: ResultCallback<boolean>): void;
         /**
          * [getConversationNotificationStatus 获取指定用户和会话类型免提醒。]
          * @param  {ConversationType}                               conversationType [会话类型]

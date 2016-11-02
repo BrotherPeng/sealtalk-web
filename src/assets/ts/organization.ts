@@ -64,7 +64,8 @@ module webim {
             ' options="treeOptions"' +
             ' on-node-toggle="toggleNode(node)"' +
             ' on-selection="onSelection(node)">' +
-            '{{node.deptName||node.displayName}}' +
+            '<span ng-show="node.deptName">{{node.deptName}}</span>' +
+            '<span ng-hide="node.deptName"><img class="r-organ-user-head-img" ng-src="{{node.user.portraitUri||\'assets/css/images/user.png\'}}"><span>{{node.displayName}}</span></span>'+
             '</treecontrol>',
             controller: 'organizationController'
         }

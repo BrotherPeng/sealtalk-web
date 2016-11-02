@@ -75,7 +75,7 @@
   height: 335px
 }
 .r-member-search{
-  max-height: 335px;
+  /*max-height: 335px;*/
   overflow:auto;
 }
 .r-group-friend{
@@ -93,4 +93,13 @@ treecontrol li .tree-unselectable {
 }
 .r-group-panel, .r-member-result{
   height: 90%;
+}
+treecontrol.tree-classic li.tree-leaf i.tree-leaf-head{
+  padding: 0px;
+}
+.r-organ-user-head-img{
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 8px;
 }

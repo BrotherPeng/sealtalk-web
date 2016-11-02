@@ -53,6 +53,8 @@ interface Window {
     _open_account_settings: any
     upload_base64: any
     clipboardData: any
+    BalloonClick: any
+    logout: any
 }
 interface Document {
     selection: any
