@@ -59,7 +59,7 @@ module.exports = (grunt) ->
               'img/**/*.*'
               'js/**/*.js'
               'js/**/*.json'
-              'css/images/**'
+              'css/**'
               'views/**/*.html'
               'template/*.html'
             ]

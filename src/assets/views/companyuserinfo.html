@@ -24,16 +24,16 @@
             </div>
         </div>
         <div class="userFunPannel clearfix">
-            <div>企业信息</div>
-            <div><span>部门：</span><span>{{user.deptName}}</span></div>
-            <div><span>职位：</span><span>{{user.duty.dutyName}}</span></div>
-            <div><span>上级：</span><span>{{user.manager}}</span></div>
-            <div><span>邮箱：</span><span></span></div>
-            <div><span>手机：</span><span>{{user.user.phone}}</span></div>
-            <ul class="clearfix ">
+            <h2>企业信息</h2>
+            <div><span>部门：</span><span class="userFunPannel-content">{{user.deptName}}</span></div>
+            <div><span>职位：</span><span class="userFunPannel-content">{{user.duty.dutyName}}</span></div>
+            <div><span>上级：</span><span class="userFunPannel-content">{{user.manager}}</span></div>
+            <div><span>邮箱：</span><span class="userFunPannel-content"></span></div>
+            <div><span>手机：</span><span class="userFunPannel-content">{{user.user.phone}}</span></div>
+            <ul class="clearfix company-btn">
                 <li class="clearfix" >
                     <div class="left">
-                       <p><a href="javascript:void 0" ng-click="toConversation()">发消息</a></p>
+                       <p><a class="userFunPannel-btn" href="javascript:void 0" ng-click="toConversation()"><span>发消息</span></a></p>
                     </div>
                     <div class="right hide"><input type="checkbox" class="js-switch" checked /></div>
                 </li>
