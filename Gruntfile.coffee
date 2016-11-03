@@ -202,10 +202,9 @@ module.exports = (grunt) ->
               './bower_components/bootstrap/dist/css/bootstrap.min.css'
               './bower_components/angular-ui-switch/angular-ui-switch.min.css'
               './vendor/jqueryrebox/jquery-rebox.css'
-              './src/assets/css/main.css'
               './vendor/angular-tree-control/css/tree-control.css'
               './vendor/ng-dialog/css/ngDialog.css'
-              './src/assets/css/im.css'
+              './src/assets/css/main.css'
             ]
             dest:'./temp/main.css'
           }
@@ -235,10 +234,9 @@ module.exports = (grunt) ->
               './bower_components/bootstrap/dist/css/bootstrap.min.css'
               './bower_components/angular-ui-switch/angular-ui-switch.min.css'
               './vendor/jqueryrebox/jquery-rebox.css'
-              './src/assets/css/main.css'
               './vendor/angular-tree-control/css/tree-control.css'
               './vendor/ng-dialog/css/ngDialog.css'
-              './src/assets/css/im.css'
+              './src/assets/css/main.css'
             ]
             dest:'./build/assets/css/main.css'
           }
