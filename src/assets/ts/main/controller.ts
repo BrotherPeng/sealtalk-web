@@ -441,7 +441,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                             var eleplay = <any>document.getElementById("playsound");
                             eleplay.play();
                         }
-                        RongIMLib.RongIMClient.getInstance().setConversationHidden(data.conversationType,data.targetId,true);
+                        // RongIMLib.RongIMClient.getInstance().setConversationHidden(data.conversationType,data.targetId,true);
                         var msg = <any>webimmodel.Message.convertMsg(data);
 
                         //同自己会话删除targetid为空
