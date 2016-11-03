@@ -3948,8 +3948,9 @@ input::-ms-clear{display:none;}
 }
 .LeftNav-item.iconfont-add.searchmessage a{
   background: url(images/time.png) 10px; 
-  background-size: 32px 30px;
+  background-size: 32px 31px;
   background-repeat: no-repeat;
+  margin-left:5px;
 }
 .r-msg-content pre{
   font-size: 14px;
