@@ -3642,7 +3642,7 @@ input::-ms-clear{display:none;}
 
 .r-group-new {
   width: 90%;
-  height: 90%;
+  height: 400px;
   background: #fff;
   border: 1px solid #e9e8e7;
   border-radius: 0 0 10px 10px;
@@ -3737,7 +3737,7 @@ input::-ms-clear{display:none;}
   opacity: 0.7;
 }
 .r-group-scroll{
-	margin:0 20px;
+	margin:0 10px 0 20px;
 }
 .r-btn {
   display: inline-block;
@@ -3827,8 +3827,7 @@ input::-ms-clear{display:none;}
 .r-msg-friends .r-member-search {
   height: 89%;
   overflow: auto;
-  margin-left: 0.8em;
-  padding-top: 0.8em;
+  margin-left:1em;
   padding-bottom: 5em;
 }
 .r-member-msg {
@@ -3920,9 +3919,6 @@ input::-ms-clear{display:none;}
 }
 .r-group-new .searchArea div{
   width: 98%;
-}
-.r-group-new {
-  height: 400px;
 }
 .r-group-new .searchArea div input{
   border: 1px solid #f5f4f2;
@@ -4062,9 +4058,13 @@ input::-ms-clear{display:none;}
 }
 
 /*对组件css做的修改*/
+treecontrol>ul{
+    padding-bottom:8em;
+    padding-left:1em;
+}
 treecontrol li {
   padding: 5px 5px 5px 0;
-  margin:10px 0 6px;
+  margin:10px 0 0;
   font-size: 12px;
 }
 treecontrol li li {
