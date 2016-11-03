@@ -569,11 +569,12 @@ input::-ms-clear{display:none;}
     color: #8e969f;
     font-size: 12px;
     width: 100%;
-    display: -webkit-box;
+    /*display: -webkit-box;*/
     height: 24px;
     line-height: 24px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    word-break:break-all;
+    /*white-space: nowrap;*/
+    /*text-overflow: ellipsis;*/
     overflow: hidden;
     display: inline-block;
     vertical-align: bottom;
@@ -3724,7 +3725,7 @@ input::-ms-clear{display:none;}
 .r-member-remove,
 .r-member-add {
   float: right;
-  margin: -22px 0 0 0;
+  margin: -25px 5px 0 0;
   display: block;
   height: 22px;
   width: 22px;
@@ -3946,7 +3947,9 @@ input::-ms-clear{display:none;}
   cursor: pointer;
 }
 .LeftNav-item.iconfont-add.searchmessage a{
-  background: url(images/time.png) 10px; background-size: 36px 34px;background-repeat: no-repeat;
+  background: url(images/time.png) 10px; 
+  background-size: 32px 30px;
+  background-repeat: no-repeat;
 }
 .r-msg-content pre{
   font-size: 14px;

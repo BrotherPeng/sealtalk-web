@@ -1,30 +1,27 @@
-<div class="chatBoxInner">
-              <div class="box_hd">
-                    <div class="title_wrap">
-                        <a class="phone_return" ng-click="back()"><span class="backArrow"><</span>返回</a>
-                        <div class="title">
-                            <a class="title_name">删除成员</a></a>
-                            <!--<span class="title_count ">(16)</span>
-                            <i class="Presence Presence&#45;&#45;stacked Presence&#45;&#45;chatBox"></i>-->
-                        </div>
-                        <a class="editBtn" href="javascript:void 0" ng-click="save()">删除</a>
-                    </div>
-                </div>
-
-<div id="functionBox">
-    <div class="createGroup">
-      <div class="step2">
-       <search-input search="searchfriend(content)"  show-text="好友昵称"></search-input>
-       <div>
-           <p class="withoutFriends" ng-if="friendList.length==0">没有可删除的好友</p>
-           <ul class="friendsList ">
-               <searchdelitem ng-repeat="item in friendList" item="item"></searchdelitem>
-
-           </ul>
-
-       </div>
-       </div>
+<div class="chatBoxInner sealtalk-group-manage">
+    <div class="box_hd">
+        <div class="title_wrap">
+            <a class="phone_return" ng-click="back()"><span class="backArrow"><</span>返回</a>
+            <div class="title">
+                <a class="title_name">删除成员</a></a>
+                  <!--<span class="title_count ">(16)</span>
+                  <i class="Presence Presence&#45;&#45;stacked Presence&#45;&#45;chatBox"></i>-->
+            </div>
+            <a class="editBtn" href="javascript:void 0" ng-click="save()">删除</a>
+        </div>
     </div>
-</div>
 
+    <div id="functionBox">
+        <div class="createGroup">
+          <div class="step2">
+	           <search-input search="searchfriend(content)"  show-text="好友昵称"></search-input>
+	           <div>
+	               <p class="withoutFriends" ng-if="friendList.length==0">没有可删除的好友</p>
+	               <ul class="friendsList ">
+	                   <searchdelitem ng-repeat="item in friendList" item="item"></searchdelitem>
+	               </ul>
+	           </div>
+           </div>
+        </div>
+    </div>
 </div>
