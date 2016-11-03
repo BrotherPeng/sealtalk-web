@@ -86,13 +86,7 @@
         </div>
         <div class="userFunPannel clearfix" ng-show="!isself">
             <ul class="clearfix ">
-                <li class="clearfix" ng-show="isfriend">
-                    <div class="left">
-                       <p><a href="javascript:void 0" ng-click="toConversation()">发消息</a></p>
-                    </div>
-                    <div class="right hide"><input type="checkbox" class="js-switch" checked /></div>
-                </li>
-                <li class="clearfix" ng-show="isfriend">
+                <li class="clearfix userFunPannel-blacklist" ng-show="isfriend">
                     <div class="left">
                         <p><span>加入黑名单</span></p>
                     </div>
@@ -103,9 +97,15 @@
                 </li>
                 <li class="clearfix" ng-show="isfriend">
                     <div class="left">
+                       <p><a class="userFunPannel-btn" href="javascript:void 0" ng-click="toConversation()"><span>发消息</span></a></p>
+                    </div>
+                    <div class="right hide"><input type="checkbox" class="js-switch" checked /></div>
+                </li>
+                <li class="clearfix" ng-show="isfriend">
+                    <div class="left">
                         <p>
-                          <a href="javascript:void 0">
-                          <span class="redColor" ng-click="removeFriend()">删除好友</span>
+                          <a href="javascript:void 0" class="userFunPannel-btn redColor">
+                          <span ng-click="removeFriend()">删除好友</span>
                           </a>
                         </p>
                     </div>
@@ -113,7 +113,7 @@
                 </li>
                 <li class="clearfix" ng-show="!isfriend">
                     <div class="left">
-                       <p><a href="javascript:void 0" ng-click="toAddFriend()">加为好友</a></p>
+                       <p><a class="userFunPannel-btn" href="javascript:void 0" ng-click="toAddFriend()"><span>加为好友</span></a></p>
                     </div>
                     <div class="right hide"><input type="checkbox" class="js-switch" checked /></div>
                 </li>

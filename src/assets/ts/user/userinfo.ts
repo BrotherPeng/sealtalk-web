@@ -41,6 +41,7 @@ userinfo.controller("userinfoController", ["$scope", "$state", "mainServer", "ma
                 webimutil.CookieHelper.removeCookie("loginuserid");//清除登录状态
                 mainDataServer.loginUser = new webimmodel.UserInfo();//清除用户信息
                 conversationServer.historyMessagesCache.length = 0;
+                mainDataServer.conversation.totalUnreadCount = 0;
                 if (window.Electron) {
                     window.Electron.webQuit();
                 }

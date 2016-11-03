@@ -773,7 +773,10 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
               totalUnreadCount = totalUnreadCount - oldUnread + result.item.unReadNum;
             }
           }
-          mainDataServer.conversation.totalUnreadCount = totalUnreadCount;
+          // mainDataServer.conversation.totalUnreadCount = totalUnreadCount;
+          RongIMSDKServer.getTotalUnreadCount().then(function (data) {
+              mainDataServer.conversation.totalUnreadCount = data;
+          });
           if (add && !isfirst) {
             var arr = mainDataServer.conversation.conversations;
             for(var i=0,len=arr.length;i<len;i++){
