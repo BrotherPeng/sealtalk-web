@@ -569,11 +569,12 @@ input::-ms-clear{display:none;}
     color: #8e969f;
     font-size: 12px;
     width: 100%;
-    display: -webkit-box;
+    /*display: -webkit-box;*/
     height: 24px;
     line-height: 24px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    word-break:break-all;
+    /*white-space: nowrap;*/
+    /*text-overflow: ellipsis;*/
     overflow: hidden;
     display: inline-block;
     vertical-align: bottom;
@@ -3642,7 +3643,7 @@ input::-ms-clear{display:none;}
 
 .r-group-new {
   width: 90%;
-  height: 90%;
+  height: 400px;
   background: #fff;
   border: 1px solid #e9e8e7;
   border-radius: 0 0 10px 10px;
@@ -3724,7 +3725,7 @@ input::-ms-clear{display:none;}
 .r-member-remove,
 .r-member-add {
   float: right;
-  margin: -22px 0 0 0;
+  margin: -25px 5px 0 0;
   display: block;
   height: 22px;
   width: 22px;
@@ -3737,7 +3738,7 @@ input::-ms-clear{display:none;}
   opacity: 0.7;
 }
 .r-group-scroll{
-	margin:0 20px;
+	margin:0 10px 0 20px;
 }
 .r-btn {
   display: inline-block;
@@ -3827,8 +3828,7 @@ input::-ms-clear{display:none;}
 .r-msg-friends .r-member-search {
   height: 89%;
   overflow: auto;
-  margin-left: 0.8em;
-  padding-top: 0.8em;
+  margin-left:1em;
   padding-bottom: 5em;
 }
 .r-member-msg {
@@ -3921,9 +3921,6 @@ input::-ms-clear{display:none;}
 .r-group-new .searchArea div{
   width: 98%;
 }
-.r-group-new {
-  height: 400px;
-}
 .r-group-new .searchArea div input{
   border: 1px solid #f5f4f2;
   outline: none;
@@ -3950,7 +3947,10 @@ input::-ms-clear{display:none;}
   cursor: pointer;
 }
 .LeftNav-item.iconfont-add.searchmessage a{
-  background: url(images/time.png) 10px; background-size: 36px 34px;background-repeat: no-repeat;
+  background: url(images/time.png) 10px; 
+  background-size: 32px 31px;
+  background-repeat: no-repeat;
+  margin-left:5px;
 }
 .r-msg-content pre{
   font-size: 14px;
@@ -4062,9 +4062,13 @@ input::-ms-clear{display:none;}
 }
 
 /*对组件css做的修改*/
+treecontrol>ul{
+    padding-bottom:8em;
+    padding-left:1em;
+}
 treecontrol li {
   padding: 5px 5px 5px 0;
-  margin:10px 0 6px;
+  margin:10px 0 0;
   font-size: 12px;
 }
 treecontrol li li {
