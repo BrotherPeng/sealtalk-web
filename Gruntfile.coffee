@@ -322,6 +322,11 @@ module.exports = (grunt) ->
     usemin:
       html: 'dist/index.html'
 
+
+      
+    
+  
+
   # These plugins provide necessary tasks.
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-concat'
@@ -334,6 +339,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-typescript'
   grunt.loadNpmTasks 'grunt-filerev'
   grunt.loadNpmTasks 'grunt-usemin'
+  grunt.loadNpmTasks 'grunt-deploy'
 
   # Build for dev.
   grunt.registerTask 'build', [
