@@ -1809,11 +1809,13 @@ var RongIMLib;
                 ContactNotificationMessage: { objectName: "RC:ContactNtf", msgTag: new RongIMLib.MessageTag(true, true) },
                 ProfileNotificationMessage: { objectName: "RC:ProfileNtf", msgTag: new RongIMLib.MessageTag(true, true) },
                 CommandNotificationMessage: { objectName: "RC:CmdNtf", msgTag: new RongIMLib.MessageTag(true, true) },
-                CommandMessage: { objectName: "RC:CmdMsg", msgTag: new RongIMLib.MessageTag(false, false) },
-                TypingStatusMessage: { objectName: "RC:TypSts", msgTag: new RongIMLib.MessageTag(false, false) },
                 PublicServiceRichContentMessage: { objectName: "RC:PSImgTxtMsg", msgTag: new RongIMLib.MessageTag(true, true) },
                 PublicServiceMultiRichContentMessage: { objectName: "RC:PSMultiImgTxtMsg", msgTag: new RongIMLib.MessageTag(true, true) },
+                JrmfReadPacketMessage: { objectName: "RCJrmf:RpMsg", msgTag: new RongIMLib.MessageTag(true, true) },
+                JrmfReadPacketOpenedMessage: { objectName: "RCJrmf:RpOpendMsg", msgTag: new RongIMLib.MessageTag(true, true) },
                 GroupNotificationMessage: { objectName: "RC:GrpNtf", msgTag: new RongIMLib.MessageTag(false, true) },
+                CommandMessage: { objectName: "RC:CmdMsg", msgTag: new RongIMLib.MessageTag(false, false) },
+                TypingStatusMessage: { objectName: "RC:TypSts", msgTag: new RongIMLib.MessageTag(false, false) },
                 PublicServiceCommandMessage: { objectName: "RC:PSCmd", msgTag: new RongIMLib.MessageTag(false, false) },
                 RecallCommandMessage: { objectName: "RC:RcCmd", msgTag: new RongIMLib.MessageTag(false, true) },
                 SyncReadStatusMessage: { objectName: "RC:SRSMsg", msgTag: new RongIMLib.MessageTag(false, false) },
@@ -5708,7 +5710,9 @@ var typeMapping = {
     "RC:RcCmd": "RecallCommandMessage",
     "RC:SRSMsg": "SyncReadStatusMessage",
     "RC:RRReqMsg": "ReadReceiptRequestMessage",
-    "RC:RRRspMsg": "ReadReceiptResponseMessage"
+    "RC:RRRspMsg": "ReadReceiptResponseMessage",
+    "RCJrmf:RpMsg": "JrmfReadPacketMessage",
+    "RCJrmf:RpOpendMsg": "JrmfReadPacketOpenedMessage"
 }, 
 //自定义消息类型
 registerMessageTypeMapping = {}, HistoryMsgType = {
@@ -6554,6 +6558,26 @@ var RongIMLib;
         return RichContentMessage;
     }());
     RongIMLib.RichContentMessage = RichContentMessage;
+    var JrmfReadPacketMessage = (function () {
+        function JrmfReadPacketMessage(message) {
+            message && (this.message = message);
+        }
+        JrmfReadPacketMessage.prototype.encode = function () {
+            return "";
+        };
+        return JrmfReadPacketMessage;
+    }());
+    RongIMLib.JrmfReadPacketMessage = JrmfReadPacketMessage;
+    var JrmfReadPacketOpenedMessage = (function () {
+        function JrmfReadPacketOpenedMessage(message) {
+            message && (this.message = message);
+        }
+        JrmfReadPacketOpenedMessage.prototype.encode = function () {
+            return "";
+        };
+        return JrmfReadPacketOpenedMessage;
+    }());
+    RongIMLib.JrmfReadPacketOpenedMessage = JrmfReadPacketOpenedMessage;
     var UnknownMessage = (function () {
         function UnknownMessage(message) {
             this.messageName = "UnknownMessage";
@@ -7918,6 +7942,8 @@ var RongIMLib;
             this.addon.registerMessageType("RC:LBSMsg", 3);
             this.addon.registerMessageType("RC:PSImgTxtMsg", 3);
             this.addon.registerMessageType("RC:PSMultiImgTxtMsg", 3);
+            this.addon.registerMessageType("RCJrmf:RpMsg", 3);
+            this.addon.registerMessageType("RCJrmf:RpOpendMsg", 1);
             this.addon.registerMessageType("RC:GrpNtf", 1);
             this.addon.registerMessageType("RC:DizNtf", 0);
             this.addon.registerMessageType("RC:InfoNtf", 0);

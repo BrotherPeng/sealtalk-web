@@ -200,6 +200,13 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
 
                                 }
                                 break;
+                            case webimmodel.MessageType.JrmfReadPacketMessage:
+                            case webimmodel.MessageType.JrmfReadPacketOpenedMessage:
+                                var item = webimmodel.Message.convertMsg(msgsdk);
+                                if (item) {
+                                    unshiftHistoryMessages(currentConversationTargetId, conver, item);
+                                }
+                                break;
                             default:
                                 console.log("此消息类型未处理：" + msgsdk.messageType);
                                 break;

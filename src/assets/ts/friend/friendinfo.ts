@@ -140,6 +140,7 @@ friendinfo.controller("friendinfoController", ["$scope", "$rootScope", "$state",
       $scope.user.nickName = mainDataServer.loginUser.nickName;
       $scope.user.portraitUri = mainDataServer.loginUser.portraitUri;
       $scope.user.firstchar = mainDataServer.loginUser.firstchar;
+      $scope.user.mobile = mainDataServer.loginUser.phone;
     }
     else {
       mainServer.user.getInfo(userid).then(function(rep) {

@@ -144,7 +144,9 @@ module webimmodel {
         HungupMessage: "HungupMessage",
         ReadReceiptRequestMessage: "ReadReceiptRequestMessage",
         ReadReceiptResponseMessage: "ReadReceiptResponseMessage",
-        SyncReadStatusMessage: "SyncReadStatusMessage"
+        SyncReadStatusMessage: "SyncReadStatusMessage",
+        JrmfReadPacketMessage: "JrmfReadPacketMessage",
+        JrmfReadPacketOpenedMessage: "JrmfReadPacketOpenedMessage"
     }
 
     export enum conversationType {
@@ -359,6 +361,8 @@ module webimmodel {
                     break;
                 case MessageType.InviteMessage:
                 case MessageType.HungupMessage:
+                case MessageType.JrmfReadPacketMessage:
+                case MessageType.JrmfReadPacketOpenedMessage:
                     // if(SDKmsg.content.mediaType == '1'){
                     //   msg.content = '音频消息';
                     // }
@@ -521,6 +525,17 @@ module webimmodel {
             else if(msgtype == webimmodel.MessageType.RecallCommandMessage){
                msgContent = "撤回一条消息";
             }
+            // else if (msgtype == webimmodel.MessageType.JrmfReadPacketMessage) {
+            //     msgContent = msg.content.message.content ? msg.content.message.content : "";
+            // }
+            // else if (msgtype == webimmodel.MessageType.JrmfReadPacketOpenedMessage) {
+            //     if(operatorid == msg.content.message.sendPacketId){
+            //        msgContent = msg.content.message.openPacketId + "领取了你的红包";
+            //     }
+            //     else if(operatorid == msg.content.message.openPacketId){
+            //        msgContent = "你领取了" + msg.content.message.sendPacketId + "的红包";
+            //     }
+            // }
             // else if(msgtype == webimmodel.MessageType.SyncReadStatusMessage){
             // }
             // else if(msgtype == webimmodel.MessageType.ReadReceiptRequestMessage){

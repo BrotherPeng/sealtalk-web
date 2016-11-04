@@ -18,7 +18,7 @@
 	           <div>
 	               <p class="withoutFriends" ng-if="friendList.length==0">没有可删除的好友</p>
 	               <ul class="friendsList ">
-	                   <searchdelitem ng-repeat="item in friendList" item="item"></searchdelitem>
+	                   <searchdelitem ng-repeat="item in friendList" loginuserid="loginuserid" item="item"></searchdelitem>
 	               </ul>
 	           </div>
            </div>

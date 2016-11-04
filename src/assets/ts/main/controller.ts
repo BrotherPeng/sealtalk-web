@@ -15,10 +15,11 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         mainServer: mainServer, RongIMSDKServer: RongIMSDKServer, appconfig: any, searchData: any, organizationgroup: any) {
         var isConnecting = false
         if (!mainDataServer.loginUser.id) {
-            var userid = webimutil.CookieHelper.getCookie("loginuserid"), usertoken = webimutil.CookieHelper.getCookie("loginusertoken");
+            var userid = webimutil.CookieHelper.getCookie("loginuserid"), usertoken = webimutil.CookieHelper.getCookie("loginusertoken"), usermobile = webimutil.CookieHelper.getCookie("loginusermobile");
             if (userid) {
                 mainDataServer.loginUser.id = userid;
                 mainDataServer.loginUser.token = usertoken;
+                mainDataServer.loginUser.phone = usermobile;
             } else {
                 // $state.go("account.signin");
                 mainServer.user.logout().success(function() {

@@ -10,7 +10,7 @@ groupDelMember.controller("groupdelmemberController", ["$scope", "$state", "$sta
         }
 
         $scope.idorname = $stateParams["idorname"];
-
+        $scope.loginuserid = mainDataServer.loginUser.id;
         $scope.isLoading = false;
 
         // var friendList = [].concat.apply([], mainDataServer.contactsList.subgroupList.map(function(item) { return item.list }));
@@ -88,10 +88,13 @@ groupDelMember.controller("groupdelmemberController", ["$scope", "$state", "$sta
 groupDelMember.directive("searchdelitem", function() {
     return {
         restrict: "E",
-        scope: { item: "=" },
+        scope: { item: "=", loginuserid: "=" },
         template: '<li class="chat_item joinGroup_item addFriends_item">' +
-        '<div class="select">' +
+        '<div class="select" ng-hide="isself">' +
         '<input type="checkbox" class="hide" id="{{item.id}}" ng-change="syncState()" ng-model="item.isSelected" value="136" data-count="" name="">' +
+        '<label for="{{item.id}}"></label>' +
+        '</div>' +
+        '<div class="select" ng-show="isself">' +
         '<label for="{{item.id}}"></label>' +
         '</div>' +
         '<div class="photo">' +
@@ -109,6 +112,7 @@ groupDelMember.directive("searchdelitem", function() {
             scope.syncState = function(){
               scope.$parent.syncState(scope.item.id, scope.item.isSelected);
             }
+            scope.isself = scope.loginuserid == scope.item.id;
         }
     }
 })

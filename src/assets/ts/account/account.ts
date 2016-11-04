@@ -49,10 +49,12 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
                         // 登录账户
                         mainDataServer.loginUser.id = rep.result.id;
                         mainDataServer.loginUser.token = rep.result.token;
+                        mainDataServer.loginUser.phone = $scope.user.accountNumber;
                         var exdate = new Date();
 　　　　                 exdate.setDate(exdate.getDate() + 30);
                         webimutil.CookieHelper.setCookie("loginuserid", rep.result.id, exdate.toGMTString());
                         webimutil.CookieHelper.setCookie("loginusertoken", rep.result.token, exdate.toGMTString());
+                        webimutil.CookieHelper.setCookie("loginusermobile", $scope.user.accountNumber, exdate.toGMTString());
                         $state.go("main");
 
                     } else if (rep.code === 1000) {

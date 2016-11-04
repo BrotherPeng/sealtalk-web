@@ -322,10 +322,20 @@ module.exports = (grunt) ->
     usemin:
       html: 'dist/index.html'
 
+    deploy: 
+      liveservers: 
+        options:
+          servers: [{
+            host: '120.92.22.200'
+            port: '21'
+            username: 'hitalk'
+            password: '9e4503964a'
+          }]
+          cmds_before_deploy: []
+          cmds_after_deploy: []
+          deploy_path: '/Ent'
 
-      
-    
-  
+        
 
   # These plugins provide necessary tasks.
   grunt.loadNpmTasks 'grunt-contrib-clean'

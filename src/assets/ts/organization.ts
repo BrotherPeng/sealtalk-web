@@ -1,8 +1,8 @@
 module webim {
     var webim = angular.module('webim');
 
-    webim.controller('organizationController', ["$scope", "organizationServer", "$state","organizationData",
-     function($scope: any, organizationServer: any, $state: ng.ui.IStateService,organizationData:any) {
+    webim.controller('organizationController', ["$scope", "organizationServer", "$state","organizationData", "mainDataServer",
+     function($scope: any, organizationServer: any, $state: ng.ui.IStateService,organizationData: any,mainDataServer: any) {
 
         $scope.treeOptions = {
             isLeaf: function(node: any) {
@@ -27,21 +27,28 @@ module webim {
             if (!node.children) {
                 organizationServer.getList(node.id).then(function(data: any) {
                     node.children = node.children || [];
-                    node.children = angular.copy(data.concat(node.children));
-                    organizationData.departmentList = organizationData.departmentList.concat(data);
+                    // node.children = angular.copy(data.concat(node.children));
+                    // organizationData.departmentList = organizationData.departmentList.concat(data);
+                    node.children = angular.copy(node.children.concat(data));
+                    organizationData.departmentList = data.concat(organizationData.departmentList);
                     // node.children = data.person;
                     // node.children = angular.copy(node.children.concat(data.department));
                 });
                 organizationServer.getUserList(node.id).then(function(data: any) {
                     node.children = node.children || [];
-                    node.children = angular.copy(node.children.concat(data));
-                    organizationData.userList = organizationData.userList.concat(data);
+                    // node.children = angular.copy(node.children.concat(organizationData.userList));
+                    // organizationData.userList = organizationData.userList.concat(data);
+                    node.children = angular.copy(data.concat(node.children));
+                    organizationData.userList = data.concat(organizationData.userList);
                 })
             }
         }
 
         $scope.onSelection = function(node: any) {
             if (angular.isFunction($scope.selection)) {
+                if(node.userId == mainDataServer.loginUser.id){
+                    return;
+                }
                 $scope.selection(node);
             } else {
                 // $state.go("main.friendinfo", { userid: node.id, groupid: 0, targetid: 0, conversationtype: 0 });
