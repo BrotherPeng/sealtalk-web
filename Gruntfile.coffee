@@ -32,7 +32,7 @@ module.exports = (grunt) ->
         options:
           keepalive: true
           livereload: 35722
-          host:'web.sealtalk.im'
+          host:'127.0.0.1'
           port: 80
           base: 'build'
           open:true

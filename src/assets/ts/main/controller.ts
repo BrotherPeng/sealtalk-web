@@ -4,8 +4,10 @@
 
 
 var mainCtr = angular.module("webim.main.controller", ["webim.main.server", "webim.conversation.server"]);
-var IMGDOMAIN = "http://7xogjk.com1.z0.glb.clouddn.com/";
-var FILEDOMAIN = "http://o83059m7d.bkt.clouddn.com/";
+// var IMGDOMAIN = "http://7xogjk.com1.z0.glb.clouddn.com/";
+var IMGDOMAIN = "http://og9g0dwhu.bkt.clouddn.com/";
+// var FILEDOMAIN = "http://o83059m7d.bkt.clouddn.com/";
+var FILEDOMAIN = "http://og9g0dwhu.bkt.clouddn.com/";
 
 mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout", "$http",
     "mainDataServer", "conversationServer", "mainServer", "RongIMSDKServer", "appconfig", 'searchData', 'organizationgroup',
@@ -14,6 +16,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         mainDataServer: mainDataServer, conversationServer: conversationServer,
         mainServer: mainServer, RongIMSDKServer: RongIMSDKServer, appconfig: any, searchData: any, organizationgroup: any) {
         var isConnecting = false
+        alert(11111111111111);
         if (!mainDataServer.loginUser.id) {
             var userid = webimutil.CookieHelper.getCookie("loginuserid"), usertoken = webimutil.CookieHelper.getCookie("loginusertoken"), usermobile = webimutil.CookieHelper.getCookie("loginusermobile");
             if (userid) {

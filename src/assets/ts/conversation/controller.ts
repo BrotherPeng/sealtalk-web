@@ -2,8 +2,10 @@
 /// <reference path="../../../../typings/angular-file-upload/angular-file-upload.d.ts"/>
 
 var conversationCtr = angular.module("webim.conversation.controller", ["webim.main.server", "webim.conversation.server"]);
-var IMGDOMAIN = "http://7xogjk.com1.z0.glb.clouddn.com/";
-var FILEDOMAIN = "http://o83059m7d.bkt.clouddn.com/";
+// var IMGDOMAIN = "http://7xogjk.com1.z0.glb.clouddn.com/";
+var IMGDOMAIN = "http://og9g0dwhu.bkt.clouddn.com/";
+// var FILEDOMAIN = "http://o83059m7d.bkt.clouddn.com/";
+var FILEDOMAIN = "http://og9g0dwhu.bkt.clouddn.com/";
 function adjustScrollbars() {
     var ele = document.getElementById("Messages");
     if (!ele)

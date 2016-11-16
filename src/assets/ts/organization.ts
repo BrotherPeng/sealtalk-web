@@ -175,7 +175,8 @@ module webim {
 
     webim.service('organizationServer', ["$q", "$http", function($q: ng.IQService, $http: ng.IHttpService) {
 
-        var serverUrl = "http://api.sealtalk.im";
+        // var serverUrl = "http://api.sealtalk.im";
+        var serverUrl = "http://127.0.0.1:8586";
 
         this.getList = function(id: string) {
 
