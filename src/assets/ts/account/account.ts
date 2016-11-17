@@ -46,6 +46,9 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
             if ($scope.formSignin.$valid) {
                 mainServer.user.signin($scope.user.accountNumber, "86", $scope.user.passWord).success(function(rep) {
                     if (rep.code === 200) {
+                        console.log('~~~~~~~~~~~~~~~~~');
+                        console.log(rep);
+                        console.log('~~~~~~~~~~~~~~~~~');
                         // 登录账户
                         mainDataServer.loginUser.id = rep.result.id;
                         mainDataServer.loginUser.token = rep.result.token;
@@ -65,7 +68,7 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
                     }
                 }).error(function(error, code) {
                     if (code == 400) {
-                        webimutil.Helper.alertMessage.error("无效的手机号", 2);
+                        webimutil.Helper.alertMessage.error("无效的用户名", 2);
                     }
                 });
             }

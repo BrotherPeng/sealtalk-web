@@ -14,6 +14,7 @@ var webimApp = angular.module("webim", ["ui.router", "ui.event", "uiSwitch", "ng
 webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvider",
     function($provide: angular.auto.IProvideService, $stateProvider: ng.ui.IStateProvider, $urlRouterProvider: ng.ui.IUrlRouterProvider, $httpProvider: angular.IHttpProvider) {
         var baseUrl = window["__sealtalk_config"]["serverUrl"];
+        var authUrl = window["__sealtalk_config"]["authUrl"];
         var appkey = window["__sealtalk_config"]["appkey"];
 
         $provide.provider("appconfig", function() {
@@ -21,6 +22,9 @@ webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvi
                 return {
                     getBaseUrl: function() {
                         return baseUrl;
+                    },
+                    getAuthUrl: function() {
+                        return authUrl;
                     },
                     getAppKey: function() {
                         return appkey;

@@ -8,6 +8,7 @@ var mainServer = angular.module("webim.main.server", []);
 mainServer.factory("mainServer", ["$http", "$q", "appconfig", function($http: angular.IHttpService, $q: angular.IQService, appconfig: any) {
 
   var serverBaseUrl = appconfig.getBaseUrl();
+  var serverAuthUrl = appconfig.getAuthUrl();
   var mainServer = {
     user: {
       sendCode: function(phone: string, region: string) {
@@ -64,11 +65,12 @@ mainServer.factory("mainServer", ["$http", "$q", "appconfig", function($http: an
       signin: function(phone: string, region: string, password: string) {
         return $http({
           method: "POST",
-          url: serverBaseUrl + "/user/login",
+          url: serverAuthUrl + "/auth",
+          // url: serverBaseUrl + "/user/login",
           data: {
-            phone: phone,
-            region: region,
-            password: password
+            j_username: phone,
+            j_password: password,
+            j_ecode: 'sgai'
           }
         })
       },

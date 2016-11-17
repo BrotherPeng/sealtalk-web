@@ -16,7 +16,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         mainDataServer: mainDataServer, conversationServer: conversationServer,
         mainServer: mainServer, RongIMSDKServer: RongIMSDKServer, appconfig: any, searchData: any, organizationgroup: any) {
         var isConnecting = false
-        alert(11111111111111);
+        // alert(11111111111111);
         if (!mainDataServer.loginUser.id) {
             var userid = webimutil.CookieHelper.getCookie("loginuserid"), usertoken = webimutil.CookieHelper.getCookie("loginusertoken"), usermobile = webimutil.CookieHelper.getCookie("loginusermobile");
             if (userid) {
@@ -77,18 +77,30 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
 
         $scope.switchbtn = {
             isFriendList: false,
-            issearchList: false
+            issearchList: false,
+            isEabManageGet: false
         }
         $scope.showChat = function(){
             $scope.switchbtn.isFriendList=false;
             $scope.switchbtn.issearchList=false;
             $scope.switchbtn.searchMessage=false;
         };
-        $scope.showContact = function(){
+        $scope.showContact = function(type: number){
+            if(type == 1){
+                $scope.switchbtn.isEabManageGet=false;
+            }else{
+                $scope.switchbtn.isEabManageGet=true;
+            }
             $scope.switchbtn.isFriendList=true;
             $scope.switchbtn.issearchList=false;
             $scope.switchbtn.searchMessage=false;
-        }
+        };
+        /*$scope.showEabManageGet = function(){
+            $scope.switchbtn.isFriendList=false;
+            $scope.switchbtn.isEabManageGet=true;
+            $scope.switchbtn.issearchList=false;
+            $scope.switchbtn.searchMessage=false;
+        }*/
         $scope.curCon = "";
 
         $scope.unSelectContact = function() {
@@ -290,7 +302,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         //初始化好友数据   邀请通知一起通过好友关系表获取解析
         mainDataServer.notification.notificationList = [];
         mainDataServer.contactsList.subgroupList = [];
-        mainServer.friend.getAll().success(function(rep) {
+        /*mainServer.friend.getAll().success(function(rep) {
             var arr = rep.result;
             for (let i = 0, len = arr.length; i < len; i++) {
                 switch (arr[i].status) {
@@ -317,11 +329,11 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
             mainDataServer.notification._sort();
         }).error(function(e) {
             console.log(e);
-        })
+        })*/
 
         //初始化黑名单数据
         mainDataServer.blackList.list = [];
-        mainServer.user.getBlackList().success(function(rep) {
+        /*mainServer.user.getBlackList().success(function(rep) {
             var blist = rep.result;
             for (var i = 0, len = blist.length; i < len; i++) {
                 mainDataServer.blackList.add(new webimmodel.Friend({
@@ -332,12 +344,13 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
             }
         }).error(function() {
 
-        });
+        });*/
 
         //初始化群组数据
         mainDataServer.contactsList.groupList = [];
         mainServer.user.getMyGroups().success(function(rep) {
             var groups = rep.result;
+            console.log(groups);
             for (var i = 0, len = groups.length; i < len; i++) {
                 var group = new webimmodel.Group({
                     id: groups[i].group.id,

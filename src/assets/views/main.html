@@ -18,12 +18,18 @@
                         <i class="badge bg-tred" ng-show="mainData.conversation.totalUnreadCount">{{mainData.conversation.totalUnreadCount>99 ? "99+" : mainData.conversation.totalUnreadCount}}</i>
                     </div>
                 </div>
-                <div class="LeftNav-item iconfont-group"  title="联系人" ng-class="{cur:switchbtn.isFriendList}" ng-click="showContact()">
+                <div class="LeftNav-item iconfont-group"  title="群组" ng-class="{cur:switchbtn.isFriendList && !switchbtn.isEabManageGet}" ng-click="showContact(1)">
                     <div class="groupChat">
                         <a>group chat</a>
                         <i class="Presence Presence--stacked" ng-show="mainData.notification.hasNewNotification"></i>
                     </div>
                 </div>
+                  <div class="LeftNav-item iconfont-group"  title="企业通讯录" ng-class="{cur:switchbtn.isFriendList && switchbtn.isEabManageGet}" ng-click="showContact(2)">
+                      <div class="groupChat">
+                          <a>group chat</a>
+                          <i class="Presence Presence--stacked" ng-show="mainData.notification.hasNewNotification"></i>
+                      </div>
+                  </div>
                 <div class="LeftNav-item iconfont-add searchmessage" style="bottom: 80px;" ng-click="showMessageManage();" >
                   <div>
                     <a style="">消息管理器</a>
@@ -43,7 +49,7 @@
                   <ul class="addPanel" style="display:none">
                   <!-- <li id="createGroup"><a  ui-sref="main.creategroup" >创建群组</a></li> -->
                   <li id="createGroup"><a ng-click="showgroup()">创建群组</a></li>
-                  <li id="addFriends"><a  ui-sref="main.searchfriend">添加好友</a></li>
+                  <!--<li id="addFriends"><a  ui-sref="main.searchfriend">添加好友</a></li>-->
                   </ul>
                 </div>
                 <!-- <div class="searchAdd" ng-click="showgroup()">
@@ -73,14 +79,14 @@
                           </div>
                       </div>
                   </div>
-                  <div class="groupArea">
+                  <div class="groupArea" ng-show="!switchbtn.isEabManageGet">
                       <div class="groupAreaHeader" ng-click="showgroups=!showgroups">群组<span class="caret" ng-class="{'open':!showgroups}"></span></div>
                       <div class="groupAreaBody" ng-hide="showgroups">
                         <groupitem  ng-repeat="item in mainData.contactsList.groupList" item="item" class="noticeBarList"></groupitem>
                       </div>
                   </div>
 
-                  <div class="membersArea">
+                  <!--<div class="membersArea">
                       <div class="membersAreaHeader" ng-click="showfriends=!showfriends">联系人<span class="caret" ng-class="{'open':!showfriends}"></span></div>
 
                       <div class="membersAreaBody" ng-hide="showfriends">
@@ -88,10 +94,10 @@
                             <div class="namesortHd">{{::subgroup.title}}</div>
                             <frienditem class="members_item " ng-repeat="item in subgroup.list" item="item"></frienditem>
                         </div>
-                          <!-- <frienditem ng-repeat="item in mainData.contactsList.friendList" item="item"></frienditem> -->
+                          &lt;!&ndash; <frienditem ng-repeat="item in mainData.contactsList.friendList" item="item"></frienditem> &ndash;&gt;
                       </div>
-                  </div>
-                  <div class="groupArea">
+                  </div>-->
+                  <div class="groupArea" ng-show="switchbtn.isEabManageGet">
                       <div class="groupAreaHeader" ng-click="showgorganization=!showgorganization">企业通讯录<span class="caret" ng-class="{'open':!showgorganization}"></span></div>
                       <div class="groupAreaBody" ng-show="!showgorganization">
                         <organization></organization>

@@ -32,10 +32,22 @@ module.exports = (grunt) ->
         options:
           keepalive: true
           livereload: 35722
-          host:'127.0.0.1'
+          hostname:'localhost'
           port: 80
           base: 'build'
-          open:true
+          open: false
+          middleware: (connect, options, middlewares) ->
+            middlewares.unshift(require('grunt-middleware-proxy/lib/Utils').getProxyMiddleware())
+            return middlewares
+        proxies: [
+          {
+            context: '/sgai/i3'
+            host: 'www.ishangban.com'
+            port: 80
+            https: false
+            rewriteHost: true
+          }
+        ]
       release:
         options:
           keepalive: true
@@ -338,6 +350,8 @@ module.exports = (grunt) ->
         
 
   # These plugins provide necessary tasks.
+  grunt.loadNpmTasks('grunt-middleware-proxy')
+
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-connect'
@@ -357,6 +371,8 @@ module.exports = (grunt) ->
     'copy:build'
     'concat:build'
     'typescript:build'
+    'setupProxies:server'
+    'connect:server'
     # 'filerev'
     # 'usemin'
     'clean:map'
