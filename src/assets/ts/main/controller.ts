@@ -365,10 +365,10 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                 !function(groupid: string) {
                     mainServer.group.getGroupMember(group.id).success(function(rep) {
                         var members = rep.result;
-                        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-                        console.log(rep);
-                        console.log(members);
-                        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                        // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                        // console.log(rep);
+                        // console.log(members);
+                        // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
                         if(!members){return};
                         for (var j = 0, len = members.length; j < len; j++) {
                             var member = new webimmodel.Member({
@@ -1046,6 +1046,10 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                     //token 错误。
                     mainServer.user.getToken().success(function(data: any) {
                         if (data.code == "200") {
+                            console.log('~~~~~~~~~~~~~~~~~~~~~~');
+                            console.log(data.result);
+                            console.log(mainDataServer.loginUser);
+                            console.log('~~~~~~~~~~~~~~~~~~~~~~');
                             RongIMSDKServer.connect(<string>data.result.token, mainDataServer.loginUser.id).then(function(userId) {
                                 console.log("connect success2:" + userId);
                                 RongIMSDKServer.getConversationList().then(function(list) {

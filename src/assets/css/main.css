@@ -279,6 +279,18 @@ input::-ms-clear{display:none;}
     background-position: -44px -36px;
 }
 
+.iconfont-group1 a {
+    background: url(../img/txl.png) no-repeat;
+    background-size: 30px;
+    margin-left: 14px;
+}
+
+.iconfont-group1 a:hover,.iconfont-group1.cur a {
+    background: url(../img/txl1.png) no-repeat;
+    background-size: 30px;
+    margin-left: 14px;
+}
+
 .iconfont-add {
     position: absolute;
     bottom: 15px;

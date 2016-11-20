@@ -35,6 +35,7 @@ groupInfo.controller("groupinfoController", ["$scope", "$rootScope", "$state", "
                    item.memberList.length = 0;
                 }
                 var members = rep2.result;
+                if(!members){return};
                 for (var j = 0, len = members.length; j < len; j++) {
                     var member = new webimmodel.Member({
                         id: members[j].user.id,
