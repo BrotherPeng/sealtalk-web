@@ -42,7 +42,7 @@ module.exports = (grunt) ->
         proxies: [
           {
             context: '/sgai/i3'
-            host: 'www.ishangban.com'
+            host: '220.194.33.92'
             port: 80
             https: false
             rewriteHost: true

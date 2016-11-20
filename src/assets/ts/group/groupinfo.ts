@@ -52,6 +52,10 @@ groupInfo.controller("groupinfoController", ["$scope", "$rootScope", "$state", "
 
         $scope.groupInfo = mainDataServer.contactsList.getGroupById(groupid);
 
+        console.log('~~~~~~~~~~~~~~~~~~~~');
+        console.log(groupInfo);
+        console.log('~~~~~~~~~~~~~~~~~~~~');
+
         if (!$scope.groupInfo) {
             webimutil.Helper.alertMessage.error("您不在此群组中", 2);
             // back();

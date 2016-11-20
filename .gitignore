@@ -9,3 +9,4 @@ typings
 src/test.html
 sealtalk-web.sublime-project
 sealtalk-web.sublime-workspace
+dist

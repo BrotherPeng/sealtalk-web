@@ -177,7 +177,8 @@ module webim {
 
         // var serverUrl = "http://api.sealtalk.im";
         // var serverUrl = "http://127.0.0.1:8586";
-        var serverUrl = "http://localhost/sgai/i3";
+        // var serverUrl = "http://localhost/sgai/i3";
+        var serverUrl = "http://220.194.33.92/sgai/i3";
 
         this.getList = function(id: string) {
 

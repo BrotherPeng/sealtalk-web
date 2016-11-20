@@ -271,6 +271,9 @@ input::-ms-clear{display:none;}
 .iconfont-group a {
     background: url(../img/icons.png) 16px -36px/100px auto no-repeat;
 }
+.iconfont-tree a {
+    background: url(./images/p2.png) 16px 16px auto no-repeat;
+}
 
 .iconfont-group a:hover,.iconfont-group.cur a {
     background-position: -44px -36px;
@@ -2603,7 +2606,7 @@ input::-ms-clear{display:none;}
 }
 .header-logo {
      text-indent: -9999px;
-     background: url(../img/header-logo.png) no-repeat 0 0/auto 52px;
+     background: url(../img/SealTalk.png) no-repeat 0 0/auto 52px;
      height: 52px;
      width: 160px;
      margin: 19px 10px 19px 48px;

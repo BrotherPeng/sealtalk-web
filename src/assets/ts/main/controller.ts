@@ -365,6 +365,11 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                 !function(groupid: string) {
                     mainServer.group.getGroupMember(group.id).success(function(rep) {
                         var members = rep.result;
+                        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                        console.log(rep);
+                        console.log(members);
+                        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                        if(!members){return};
                         for (var j = 0, len = members.length; j < len; j++) {
                             var member = new webimmodel.Member({
                                 id: members[j].user.id,
