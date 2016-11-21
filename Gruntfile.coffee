@@ -90,7 +90,7 @@ module.exports = (grunt) ->
             dest: './build/assets/js/angular.min.js'
           }
           {
-            src: './bower_components/jquery/dist/jquery.js'
+            src: './bower_components/jquery/jquery.js'
             dest: './build/assets/js/jquery.min.js'
           }
           {
