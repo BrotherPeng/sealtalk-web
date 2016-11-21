@@ -46,6 +46,13 @@ module.exports = (grunt) ->
             port: 80
             https: false
             rewriteHost: true
+          },
+          {
+            context: '/defaultroot/rongCloudServelt'
+            host: '220.194.33.92'
+            port: 7001
+            https: false
+            rewriteHost: true
           }
         ]
       release:

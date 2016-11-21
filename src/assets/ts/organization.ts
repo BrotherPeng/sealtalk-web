@@ -25,7 +25,7 @@ module webim {
 
         $scope.toggleNode = function(node: any) {
             if (!node.children) {
-                organizationServer.getList(node.id).then(function(data: any) {
+                organizationServer.getListOfParent(node.id).then(function(data: any) {
                     node.children = node.children || [];
                     // node.children = angular.copy(data.concat(node.children));
                     // organizationData.departmentList = organizationData.departmentList.concat(data);
@@ -173,12 +173,13 @@ module webim {
     }])
 
 
-    webim.service('organizationServer', ["$q", "$http", function($q: ng.IQService, $http: ng.IHttpService) {
+    webim.service('organizationServer', ["$q", "$http", "appconfig", function($q: ng.IQService, $http: ng.IHttpService, appconfig: any) {
 
         // var serverUrl = "http://api.sealtalk.im";
         // var serverUrl = "http://127.0.0.1:8586";
         // var serverUrl = "http://localhost/sgai/i3";
-        var serverUrl = "http://220.194.33.92/sgai/i3";
+        // var serverUrl = "http://220.194.33.92/sgai/i3";
+        var serverUrl = appconfig.getDeptUrl();
 
         this.getList = function(id: string) {
 
@@ -211,6 +212,34 @@ module webim {
             return defer.promise;
         }
 
+        this.getListOfParent = function(id: string) {
+
+            var defer = $q.defer();
+
+            //此处请求示例数据，正式请修改 url 和返回数据。--获取组织结构
+            // $http({
+            //     method: 'get',
+            //     url: './assets/js/exampledata.json',
+            // }).success(function(rep: any) {
+            //     //此处根据具体返回结构处理
+            //     defer.resolve(rep.organizationlist.data.department);
+            // }).error(function(error) {
+            //     defer.reject(error);
+            // })
+            // id= id||'';
+            $http({
+                method: 'get',
+                url: serverUrl + '/departs/' + id + '/department',
+            }).success(function(rep: any) {
+                //此处根据具体返回结构处理
+                defer.resolve(rep.result);
+            }).error(function(error) {
+                defer.reject(error);
+            })
+
+            return defer.promise;
+        }
+
         this.getUserList = function(departid: string) {
             var defer = $q.defer();
 
@@ -228,7 +257,7 @@ module webim {
 
             $http({
                 method: 'get',
-                url: serverUrl+'/departs/' + departid + '/members',
+                url: serverUrl+'/user/' + departid + '/department',
             }).success(function(rep: any) {
                 //此处根据具体返回结构处理
                 defer.resolve(rep.result);

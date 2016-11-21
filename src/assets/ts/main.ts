@@ -16,6 +16,7 @@ webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvi
         var baseUrl = window["__sealtalk_config"]["serverUrl"];
         var authUrl = window["__sealtalk_config"]["authUrl"];
         var appkey = window["__sealtalk_config"]["appkey"];
+        var deptUrl = window["__sealtalk_config"]["deptUrl"];
 
         $provide.provider("appconfig", function() {
             this.$get = function() {
@@ -28,6 +29,9 @@ webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvi
                     },
                     getAppKey: function() {
                         return appkey;
+                    },
+                    getDeptUrl: function() {
+                        return deptUrl;
                     }
                 }
             }
