@@ -337,6 +337,11 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
     totalUnreadCount: 0,
     lastOfflineMsg: null,
     conversations: <webimmodel.Conversation[]>[],
+    updateTotalUnreadCount: function(){
+       RongIMSDKServer.getTotalUnreadCount().then(function (data) {
+           mainDataServer.conversation.totalUnreadCount = data;
+       });
+    },
     currentConversation: <webimmodel.Conversation>{},
     parseConversation: function(item: RongIMLib.Conversation) {
       var conversationitem = webimmodel.Conversation.convertToWebIM(item, mainDataServer.loginUser.id);
@@ -370,7 +375,7 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
             //TODO:添加最后一条消息的发送人
             if (conversationitem.lastMsg && item.latestMessage.objectName != "RC:GrpNtf" && item.latestMessage.objectName != "RC:InfoNtf") {
               var atStr = '';
-              if (item.mentionedMsg) {
+              if (item.mentionedMsg && item.unreadMessageCount > 0) {
                 conversationitem.mentionedInfo = item.mentionedMsg.mentionedInfo;
                 var atType = conversationitem.mentionedInfo.type;
                 var atUsers = conversationitem.mentionedInfo.userIdList;
@@ -420,6 +425,7 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
             break;
           }
           removeUnreadCount = 0;
+          var isself = mainDataServer.loginUser.id == item.targetId;
           var friendinfo = mainDataServer.contactsList.getFriendById(item.targetId || item.senderUserId)
           if (friendinfo) {
             item.conversationTitle = friendinfo.displayName || friendinfo.name;
@@ -442,7 +448,8 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
             else {
               (function(id: string, conv: webimmodel.Conversation) {
                 mainServer.user.getInfo(id).success(function(rep) {
-                  conv.title = rep.result.nickname + "(非好友)";
+                  // conv.title = rep.result.nickname + "(非好友)";
+                  conv.title = isself ? rep.result.nickname : rep.result.nickname + "(非好友)";
                   conv.firstchar = webimutil.ChineseCharacter.getPortraitChar(rep.result.nickname);
                   var obj = webimutil.ChineseCharacter.convertToABC(rep.result.nickname);
                   var f = webimutil.ChineseCharacter.getPortraitChar(rep.result.nickname);
@@ -605,9 +612,9 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
       //更新未读总数
       var defer = $q.defer();
       var allUnreadCount = 0;
-      RongIMSDKServer.getTotalUnreadCount().then(function(data) {
-        allUnreadCount = data;
-      });
+      // RongIMSDKServer.getTotalUnreadCount().then(function(data) {
+      //   allUnreadCount = data;
+      // });
 
       RongIMSDKServer.getConversationList().then(function(list) {
         list = RongIMLib.RongIMClient.getInstance().sortConversationList(list);
@@ -618,7 +625,8 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
           if (list[i].conversationType == RongIMLib.ConversationType.CUSTOMER_SERVICE || list[i].conversationType == RongIMLib.ConversationType.DISCUSSION || list[i].conversationType == RongIMLib.ConversationType.SYSTEM || list[i].conversationType == RongIMLib.ConversationType.CHATROOM ||list[i].conversationType == RongIMLib.ConversationType.PUBLIC_SERVICE||list[i].conversationType == RongIMLib.ConversationType.APP_PUBLIC_SERVICE ) continue;
           mainDataServer.conversation.conversations.push(result.item);
         }
-        mainDataServer.conversation.totalUnreadCount = allUnreadCount;
+        // mainDataServer.conversation.totalUnreadCount = allUnreadCount;
+        mainDataServer.conversation.updateTotalUnreadCount();
         defer.resolve();
       }, function() {
         defer.reject();
@@ -744,8 +752,9 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
                 conversationItem.unReadNum = result.item.unReadNum;
                 conversationItem.lastTime = result.item.lastTime;
                 if (msg.senderUserId == mainDataServer.loginUser.id) {
-                  RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
-                  totalUnreadCount = totalUnreadCount - oldUnread;
+                  // RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
+                  RongIMSDKServer.clearMsgUnreadStatus(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId, result.item.lastTime);
+                  // totalUnreadCount = totalUnreadCount - oldUnread;
                   result.item.unReadNum = 0;
                   conversationItem.atStr = '';
                 }
@@ -760,25 +769,33 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
             }
           }
           if (isChat && mainDataServer.conversation.currentConversation && type == mainDataServer.conversation.currentConversation.targetType && id == mainDataServer.conversation.currentConversation.targetId) {
-            RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
-            totalUnreadCount = totalUnreadCount - oldUnread;
+            // RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
+            RongIMSDKServer.clearMsgUnreadStatus(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId, result.item.lastTime);
+
+            // totalUnreadCount = totalUnreadCount - oldUnread;
             result.item.unReadNum = 0;
             result.item.atStr = '';
           } else {
             if (msg.senderUserId == mainDataServer.loginUser.id) {
-              RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
-              totalUnreadCount = totalUnreadCount - oldUnread;
+              // RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
+              RongIMSDKServer.clearMsgUnreadStatus(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId, result.item.lastTime);
+
+              // totalUnreadCount = totalUnreadCount - oldUnread;
               result.item.unReadNum = 0;
               result.item.atStr = '';
             }
             else {
-              totalUnreadCount = totalUnreadCount - oldUnread + result.item.unReadNum;
+              // totalUnreadCount = totalUnreadCount - oldUnread + result.item.unReadNum;
             }
           }
           // mainDataServer.conversation.totalUnreadCount = totalUnreadCount;
-          RongIMSDKServer.getTotalUnreadCount().then(function (data) {
-              mainDataServer.conversation.totalUnreadCount = data;
-          });
+          mainDataServer.conversation.updateTotalUnreadCount();
+
+          if(mainDataServer.conversation.conversations.length == 0){
+              mainDataServer.conversation.conversations.push(result.item);
+              return;
+          }
+          
           if (add && !isfirst) {
             var arr = mainDataServer.conversation.conversations;
             for(var i=0,len=arr.length;i<len;i++){
@@ -1361,10 +1378,10 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
   return mainDataServer;
 }]);
 
-mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQService, $http: ng.IHttpService) {
+mainServer.factory("RongIMSDKServer", ["$q", "$http", "appconfig", function($q: angular.IQService, $http: ng.IHttpService, appconfig: any) {
   var RongIMSDKServer = <any>{};
 
-  RongIMSDKServer.init = function(appkey: string) {
+  /*RongIMSDKServer.init = function(appkey: string) {
     // RongIMLib.RongIMClient.init(appkey, new RongIMLib.WebSQLDataProvider());
     if(window.__sealtalk_config.online){
       if(window.Electron){
@@ -1380,7 +1397,28 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
       }
     }
 
-  }
+  }*/
+
+    RongIMSDKServer.init = function(appkey: string) {
+        console.log('xxxxxxxxxx');
+        // RongIMLib.RongIMClient.init(appkey, new RongIMLib.WebSQLDataProvider());
+        if(window.__sealtalk_config.online){
+            if(window.Electron){
+                RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon),{voiceLibamr:'cdn.ronghub.com/libamr-2.0.13.min.js'});
+            }else{
+                RongIMLib.RongIMClient.init(appkey,null,{voiceLibamr:'cdn.ronghub.com/libamr-2.0.13.min.js'});
+            }
+        } else{
+
+            if(window.Electron){
+                RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon),{navi:"119.254.111.49:9100",voiceLibamr:'cdn.ronghub.com/libamr-2.0.13.min.js'});
+            }else{
+                RongIMLib.RongIMClient.init(appkey,null,{navi:"119.254.111.49:9100",voiceLibamr:'cdn.ronghub.com/libamr-2.0.13.min.js'});
+            }
+        }
+    }
+
+
 
   RongIMSDKServer.connect = function(token: string,userid?:string) {
     var defer = $q.defer();
@@ -1542,6 +1580,18 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
     return defer.promise;
   }
 
+  RongIMSDKServer.clearUnreadCountByTimestamp = function(type: number, targetid: string, timestamp: number) {
+    var defer = $q.defer();
+    RongIMLib.RongIMClient.getInstance().clearUnreadCountByTimestamp(type, targetid, timestamp, {
+      onSuccess: function(data) {
+        defer.resolve(data);
+      },
+      onError: function(error) {
+        defer.reject(error);
+      }
+    });
+    return defer.promise;
+  }
 
   RongIMSDKServer.getTotalUnreadCount = function() {
     var defer = $q.defer();
@@ -1783,6 +1833,42 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", function($q: angular.IQSer
     return defer.promise;
   }
 
+  RongIMSDKServer.getUserStatus = function(userid: string) {
+      var defer = $q.defer();
+      RongIMLib.RongIMClient.getInstance().getUserStatus(userid, {
+        onSuccess:function(result:any){
+          defer.resolve(result)
+        },
+        onError:function(error:any){
+          defer.reject(error)
+        }
+      });
+      return defer.promise;
+  }
+
+  RongIMSDKServer.subscribeUserStatus = function(userids: string[]) {
+      var defer = $q.defer();
+      RongIMLib.RongIMClient.getInstance().subscribeUserStatus(userids, {
+        onSuccess:function(result: boolean){
+          defer.resolve(result)
+        },
+        onError:function(error:any){
+          defer.reject(error)
+        }
+      });
+      return defer.promise;
+  }
+
+
+  RongIMSDKServer.clearMsgUnreadStatus = function(targetType: number, targetId: string, timestamp: number){
+        if(window.Electron){
+           RongIMSDKServer.clearUnreadCountByTimestamp(targetType, targetId, timestamp);
+
+        }else{
+           RongIMSDKServer.clearUnreadCount(targetType, targetId);
+        }
+  }
+
 
   return RongIMSDKServer;
 }]);
@@ -1794,6 +1880,7 @@ interface RongIMSDKServer {
   setOnReceiveMessageListener(listener: any): void
   removeConversation(type: number, targetId: string): angular.IPromise<boolean>
   clearUnreadCount(type: number, targetid: string): angular.IPromise<boolean>
+  clearUnreadCountByTimestamp(type: number, targetid: string, timestamp: number): angular.IPromise<boolean>
   getTotalUnreadCount(): angular.IPromise<number>
   sendMessage(conver: number, targetId: string, content: any, isAt?: boolean): angular.IPromise<RongIMLib.Message>
   sendReceiptResponse(conver: number, targetId: string): angular.IPromise<RongIMLib.Message>
@@ -1819,6 +1906,10 @@ interface RongIMSDKServer {
   getAllConversations():ng.IPromise<any>
   getConversationByContent(str:string):ng.IPromise<any>
   getMessagesFromConversation(targetId:string,targetType:any,str:string,timestamp:any,count:number):ng.IPromise<any>
+  getUserStatus(userid:string):ng.IPromise<any>
+
+
+  clearMsgUnreadStatus(type: number, targetId: string, timestamp?: number): void
   // sortConversationList(list: RongIMLib.Conversation[]): void
 }
 
@@ -1831,8 +1922,9 @@ interface mainDataServer {
     totalUnreadCount: number
     lastOfflineMsg: any,
     conversations: webimmodel.Conversation[]
+    updateTotalUnreadCount(): void
     currentConversation: webimmodel.Conversation,
-    parseConversation(item: RongIMLib.Conversation): any,
+    parseConversation(item: RongIMLib.Conversation): any
     updateConversations(): angular.IPromise<any>
     createConversation(targetType: number, targetId: string): webimmodel.Conversation
     getConversation(type: number, id: string): webimmodel.Conversation

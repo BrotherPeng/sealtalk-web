@@ -615,6 +615,8 @@ declare module RongIMLib {
 
         searchConversationByContent(keyword:string, callback:any, conversationTypes?:any): void;
         searchMessageByContent(conversationType:any, targetId:string, keyword:string, timestamp:string, count:any, total:any, callback:any):void;
+        getUserStatus(userId:string,callback:any):UserStatus;
+        subscribeUserStatus(userIds:string[],callback:any):boolean;
         setConversationHidden(conversationType: number,targetId: string,isHidden: boolean):void;
         /**
          * 清理所有连接相关的变量
@@ -759,6 +761,7 @@ declare module RongIMLib {
 
 
         clearUnreadCount(conversationType: ConversationType, targetId: string, callback: ResultCallback<boolean>): void;
+        clearUnreadCountByTimestamp(conversationType: ConversationType, targetId: string, timeStamp: number, callback: ResultCallback<boolean>): void;
 
         setMessageExtra(messageId: string, value: string, callback: ResultCallback<boolean>): void;
         setMessageReceivedStatus(messageId: string, receivedStatus: ReceivedStatus, callback: ResultCallback<boolean>): void;
@@ -1106,7 +1109,7 @@ declare module RongIMLib {
         constructor(client: Client);
         putCallback(callbackObj: any, _publishMessageId: any, _msg: any): any;
         setConnectCallback(_connectCallback: any): void;
-        onReceived(msg: any): void;
+        onReceived(msg: any,left?: number): void;
         handleMessage(msg: any): void;
     }
 }
@@ -1873,6 +1876,12 @@ declare module RongIMLib {
 
 }
 declare module RongIMLib {
+    class UserStatus {
+        platform: string[];
+        online: boolean;
+        status: number;
+        constructor(platform?: string[], online?: boolean, status?: number);
+    }
     class MentionedInfo {
         type: number;
         userIdList: string[];

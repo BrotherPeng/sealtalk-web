@@ -73,7 +73,7 @@
             <a class="sendBtn" href="javascript:void 0" ng-click="sendBtn()">发送</a>
             <div class="arobase" ng-show="atShow" id="atList">
               <ul>
-                  <li ng-repeat="item in ::showGroupList" ng-click="moveToItem(this);selectMember(item)">
+                  <li ng-repeat="item in showGroupList" ng-click="moveToItem(this);selectMember(item)">
                       <img ng-src="{{::item.imgSrc||'assets/img/barBg.png'}}">
                       <span class="involvesName">{{::item.name}}</span>
                   </li>

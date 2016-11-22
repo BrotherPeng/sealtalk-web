@@ -26,6 +26,8 @@ declare module RongIMLib {
     }
     class RongUploadLib {
         static init(img1Opts?: any, img2Opts?: any, fileOpts?: any): void
+        static getFileUrl(info:any, callback: any): void
+        static uploadAjax(base64:any, callback: any): void
         static getInstance(): RongUploadLib;
         reload(image: string, file: string): void
         setListeners(listener: any): void
@@ -55,6 +57,8 @@ interface Window {
     clipboardData: any
     BalloonClick: any
     logout: any
+    TEMPORARY: any
+    webkitRequestFileSystem: any
 }
 interface Document {
     selection: any

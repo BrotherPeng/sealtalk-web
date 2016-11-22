@@ -458,7 +458,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                 var typingTimeID: any;
                 var timeOfflineMsg: any;
                 RongIMSDKServer.setOnReceiveMessageListener({
-                    onReceived: function(data: RongIMLib.Message) {
+                    onReceived: function(data: RongIMLib.Message, left: number) {
                         if ($scope.mainData.loginUser.hasSound) {
                             var eleplay = <any>document.getElementById("playsound");
                             eleplay.play();
@@ -479,10 +479,12 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                             msg.targetId = mainDataServer.loginUser.id;
                         }
 
-                        // if ($state.is("main.chat") && !document.hidden) {
-                        if ($state.is("main.chat")) {
-                            RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
-                        }
+                // if ($state.is("main.chat") && !document.hidden) {
+                if ($state.is("main.chat")) {
+                    // RongIMSDKServer.clearUnreadCount(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId);
+                    RongIMSDKServer.clearMsgUnreadStatus(mainDataServer.conversation.currentConversation.targetType, mainDataServer.conversation.currentConversation.targetId, data.sentTime);
+
+                }
 
                         switch (data.messageType) {
                             case webimmodel.MessageType.ContactNotificationMessage:
@@ -717,15 +719,17 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
 
                                 var isself = mainDataServer.loginUser.id == msg.senderUserId;
                                 if (isself || $state.is("main.chat") && !document.hidden && msg.conversationType == mainDataServer.conversation.currentConversation.targetType && msg.senderUserId == mainDataServer.conversation.currentConversation.targetId) {
-                                    RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
+                            // RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
+                               RongIMSDKServer.clearMsgUnreadStatus(msg.conversationType, msg.targetId, data.sentTime);
                                     var curCon = mainDataServer.conversation.getConversation(msg.conversationType, msg.targetId);
                                     if (curCon) {
                                         curCon.atStr = '';
-                                        mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
+                                // mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
+                                mainDataServer.conversation.updateTotalUnreadCount();
                                         curCon.unReadNum = 0;
                                     }
                                 }
-                                else {
+                        else if (!data.offLineMessage){
                                     if (msg.senderUserName) {
                                         webimutil.NotificationHelper.showNotification({
                                             title: msg.senderUserName,
@@ -937,11 +941,13 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                             case webimmodel.MessageType.ReadReceiptMessage:
                                 //清除会话已读状态,改变消息总数
                                 if (msg.objectName == 'RC:ReadNtf' && msg.senderUserId == mainDataServer.loginUser.id) {
-                                    RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
+                            // RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
+                             RongIMSDKServer.clearMsgUnreadStatus(msg.conversationType, msg.targetId, data.sentTime);
                                     var curCon = mainDataServer.conversation.getConversation(msg.conversationType, msg.targetId);
                                     if (curCon) {
                                         curCon.atStr = '';
-                                        mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
+                                // mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
+                                mainDataServer.conversation.updateTotalUnreadCount();
                                         curCon.unReadNum = 0;
                                     }
                                     //去除消息的未读状态
@@ -1009,11 +1015,15 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                                 break;
                             case webimmodel.MessageType.SyncReadStatusMessage:
                                 conversationServer.clearAtMessage(msg.targetId, msg.conversationType);
-                                RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
+                        // RongIMSDKServer.clearUnreadCount(msg.conversationType, msg.targetId);
+                        var _syncReadStatusMessage = <any>data.content;
+                        // RongIMSDKServer.clearUnreadCountByTimestamp(msg.conversationType, msg.targetId, _syncReadStatusMessage.lastMessageSendTime);
+                        RongIMSDKServer.clearMsgUnreadStatus(msg.conversationType, msg.targetId, data.sentTime);
                                 var curCon = mainDataServer.conversation.getConversation(msg.conversationType, msg.targetId);
                                 if (curCon) {
                                     curCon.atStr = '';
-                                    mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
+                            // mainDataServer.conversation.totalUnreadCount = mainDataServer.conversation.totalUnreadCount - curCon.unReadNum;
+                            mainDataServer.conversation.updateTotalUnreadCount();
                                     curCon.unReadNum = 0;
                                 }
                                 break;
@@ -1023,11 +1033,20 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                         }
 
                         // $scope.mainData.conversation.updateConversations();
-                        $scope.mainData.conversation.updateConStatic(msg, true, $state.is("main.chat") && !document.hidden);
-                        $scope.$apply();
+                if (data.offLineMessage && left == 0){
+                    RongIMSDKServer.getConversationList().then(function(list) {
+                        mainDataServer.conversation.updateConversations();
+                    });
+                }
+                else if(data.offLineMessage){}
+                else
+                {
+                    $scope.mainData.conversation.updateConStatic(msg, true, $state.is("main.chat") && !document.hidden);
+                    $scope.$apply();
+                }
 
-                    }
-                })
+            }
+        })
 
         if (mainDataServer.loginUser.token) {
             console.log(mainDataServer.loginUser.id)

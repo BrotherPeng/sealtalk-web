@@ -17,8 +17,8 @@ function adjustScrollbars() {
     ele.scrollTop = ele.scrollHeight;
 }
 
-conversationCtr.controller("conversationController", ["$scope", "$state", "mainDataServer", "conversationServer", "mainServer", "RongIMSDKServer", "$http", "$timeout", "$location", "$anchorScroll",
-    function($scope: any, $state: angular.ui.IStateService, mainDataServer: mainDataServer, conversationServer: conversationServer, mainServer: mainServer, RongIMSDKServer: RongIMSDKServer, $http: angular.IHttpService, $timeout: angular.ITimeoutService, $location: angular.ILocationService, $anchorScroll: angular.IAnchorScrollService) {
+conversationCtr.controller("conversationController", ["$scope", "$state", "mainDataServer", "conversationServer", "mainServer", "RongIMSDKServer", "$http", "$timeout", "$location", "$anchorScroll", "appconfig",
+    function($scope: any, $state: angular.ui.IStateService, mainDataServer: mainDataServer, conversationServer: conversationServer, mainServer: mainServer, RongIMSDKServer: RongIMSDKServer, $http: angular.IHttpService, $timeout: angular.ITimeoutService, $location: angular.ILocationService, $anchorScroll: angular.IAnchorScrollService, appconfig: any) {
 
         // if (mainDataServer.scopeCache){
         //
@@ -31,6 +31,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         var targetId = $state.params["targetId"];
         var targetType = Number($state.params["targetType"]);
         var currentCon = new webimmodel.Conversation();
+        mainDataServer.isTyping = false;
         currentCon.targetId = targetId;
         currentCon.targetType = targetType;
         $scope.currentConversation = currentCon;
@@ -780,7 +781,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         $scope.getHistoryMessage = function() {
             conversationServer.historyMessagesCache[targetType + "_" + targetId] = [];
             var _pullMessageTime = conversationServer.getLastMessageTime(targetId, targetType);
-            conversationServer.getHistory(targetId, targetType, _pullMessageTime, 5).then(function(has) {
+            conversationServer.getHistory(targetId, targetType, _pullMessageTime, 10).then(function(has) {
                 conversationServer.conversationMessageList = conversationServer.historyMessagesCache[targetType + "_" + targetId];
                 if (has) {
                     conversationServer.unshiftHistoryMessages(targetId, targetType, new webimmodel.GetMoreMessagePanel());
@@ -796,7 +797,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         $scope.getMoreMessage = function() {
             conversationServer.historyMessagesCache[targetType + "_" + targetId].shift();
             var _pullMessageTime = conversationServer.getLastMessageTime(targetId, targetType);
-            conversationServer.getHistory(targetId, targetType, _pullMessageTime, 5).then(function(has) {
+            conversationServer.getHistory(targetId, targetType, _pullMessageTime, 10).then(function(has) {
                 if (has) {
                     conversationServer.unshiftHistoryMessages(targetId, targetType, new webimmodel.GetMoreMessagePanel());
                 }
@@ -847,6 +848,21 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                 // qiniuuploader.files.pop();
             }
         }
+
+        RongIMLib.RongUploadLib.getFileUrl = function (info: any,callback: any) {
+            var str =  info.rc_url.path;
+            var url = appconfig.getUploadFile() + str;
+            callback.onSuccess(url);
+        };
+        RongIMLib.RongUploadLib.uploadAjax = function (base64: string, callback:any) {
+           var url = appconfig.getUploadImage() + "base64.php";                    // 接收上传文件的后台地址
+           var xhr: any = new XMLHttpRequest();
+           xhr.open("post", url, true);
+           xhr.onload = function (data: any,ret: any) {
+             callback(JSON.parse(xhr.responseText));
+           };
+           xhr.send(encodeURIComponent(base64));
+        };
 
         RongIMLib.RongUploadLib.getInstance().setListeners({
           onFileAdded:function(file: any){
