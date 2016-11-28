@@ -382,7 +382,7 @@ module.exports = (grunt) ->
     'connect:server'
     # 'filerev'
     # 'usemin'
-    'clean:map'
+#    'clean:map'
     'watch:build'
   ]
 

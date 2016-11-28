@@ -301,9 +301,9 @@ webimApp.run(["RongIMSDKServer", "$state", "$rootScope", function(RongIMSDKServe
 
     webimutil.NotificationHelper.requestPermission();
 
-    RongIMLib.RongIMVoice.init();
+    /*RongIMLib.RongIMVoice.init();
     RongIMLib.RongIMEmoji.init();
-
+*/
     window._open_account_settings = function() {
         $state.go("main.userinfo");
     }

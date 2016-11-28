@@ -9,6 +9,7 @@ mainServer.factory("mainServer", ["$http", "$q", "appconfig", function($http: an
 
   var serverBaseUrl = appconfig.getBaseUrl();
   var serverAuthUrl = appconfig.getAuthUrl();
+  var serverDeptUrl = appconfig.getDeptUrl();
   var mainServer = {
     user: {
       sendCode: function(phone: string, region: string) {
@@ -84,6 +85,12 @@ mainServer.factory("mainServer", ["$http", "$q", "appconfig", function($http: an
         return $http({
           method: "get",
           url: serverBaseUrl + "/user/" + id
+        })
+      },
+      getDeptUserInfo: function(id: string) {
+        return $http({
+          method: "get",
+          url: serverDeptUrl + '/user/' + id + '/department'
         })
       },
       getBatchInfo: function(ids: string[]) {
@@ -647,8 +654,10 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
             item.firstchar = friendinfo.firstchar;
             item.imgSrc = friendinfo.imgSrc;
           } else {
-            mainServer.user.getInfo(targetId).success(function(rep) {
-              item.title = rep.result.nickname + "(非好友)";
+            mainServer.user.getDeptUserInfo(targetId).success(function(rep) {
+                console.log('_________________');
+                console.log(rep.result);
+              item.title = rep.result.user.nickname;
               item.firstchar = webimutil.ChineseCharacter.getPortraitChar(rep.result.nickname);
               item.imgSrc = rep.result.portraitUri;
             }).error(function() {
@@ -1402,20 +1411,30 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", "appconfig", function($q: 
     RongIMSDKServer.init = function(appkey: string) {
         console.log('xxxxxxxxxx');
         // RongIMLib.RongIMClient.init(appkey, new RongIMLib.WebSQLDataProvider());
-        if(window.__sealtalk_config.online){
-            if(window.Electron){
-                RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon),{voiceLibamr:'cdn.ronghub.com/libamr-2.0.13.min.js'});
-            }else{
-                RongIMLib.RongIMClient.init(appkey,null,{voiceLibamr:'cdn.ronghub.com/libamr-2.0.13.min.js'});
-            }
-        } else{
-
-            if(window.Electron){
-                RongIMLib.RongIMClient.init(appkey,new RongIMLib.VCDataProvider(window.Electron.addon),{navi:"119.254.111.49:9100",voiceLibamr:'cdn.ronghub.com/libamr-2.0.13.min.js'});
-            }else{
-                RongIMLib.RongIMClient.init(appkey,null,{navi:"119.254.111.49:9100",voiceLibamr:'cdn.ronghub.com/libamr-2.0.13.min.js'});
-            }
+      if (window.__sealtalk_config.online) {
+        if (window.Electron) {
+          RongIMLib.RongIMClient.init(appkey, new RongIMLib.VCDataProvider(window.Electron.addon));
+          RongIMLib.RongIMVoice.init();
+          RongIMLib.RongIMEmoji.init();
         }
+        else {
+          RongIMLib.RongIMClient.init(appkey, null);
+          RongIMLib.RongIMVoice.init();
+          RongIMLib.RongIMEmoji.init();
+        }
+      }
+      else {
+        if (window.Electron) {
+          RongIMLib.RongIMClient.init(appkey, new RongIMLib.VCDataProvider(window.Electron.addon), { navi: "119.254.111.49:9100"});
+          RongIMLib.RongIMVoice.init();
+          RongIMLib.RongIMEmoji.init();
+        }
+        else {
+          RongIMLib.RongIMClient.init(appkey, null, { navi: "119.254.111.49:9100"});
+          RongIMLib.RongIMVoice.init();
+          RongIMLib.RongIMEmoji.init();
+        }
+      }
     }
 
 
@@ -1990,6 +2009,7 @@ interface mainServer {
     signin(phone: string, region: string, password: string): angular.IHttpPromise<any>
     logout(): angular.IHttpPromise<any>
     getInfo(id: string): angular.IHttpPromise<{ result: { id: string, nickname: string, portraitUri: string, displayName: string }, code: number }>
+    getDeptUserInfo(id: string): angular.IHttpPromise<any>
     getBatchInfo(id: string[]): angular.IHttpPromise<{ result: [{ id: string, nickname: string, portraitUri: string, displayName: string }], code: number }>
     getUserByPhone(region: string, phone: string): angular.IHttpPromise<any>
     setNickName(nickname: string): angular.IHttpPromise<any>

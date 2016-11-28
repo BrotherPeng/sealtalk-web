@@ -16,6 +16,8 @@ companyuserinfo.controller('companyuserinfoController',["$scope","$state","organ
      }
 
 	var userid = $state.params['userid'];
+	console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+	console.log(userid);
 
 	$scope.user = {
 
@@ -23,12 +25,17 @@ companyuserinfo.controller('companyuserinfoController',["$scope","$state","organ
 	angular.element(document.getElementById("portrait")).css("background-color", webimutil.Helper.portraitColors[userid.charCodeAt(0) % webimutil.Helper.portraitColors.length]);
 
 	var user = organizationData.getUserById(userid);
+		console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+		console.log(user);
 
 	var dep = organizationData.getDepartmentById(user.deptId);
 
 	user.deptName = dep.deptName;
 
-	mainServer.user.getInfo(user.managerId).then(function(rep){
+	// mainServer.user.getInfo(user.managerId).then(function(rep){
+	mainServer.user.getDeptUserInfo(userid).then(function(rep){
+	    console.log('~~~~~~~~~~~~~~~~~~~~~~~~');
+	    console.log(rep.data.result);
 		user.managerName = rep.data.result.nickname;
 	})
 

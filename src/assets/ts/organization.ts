@@ -25,7 +25,7 @@ module webim {
 
         $scope.toggleNode = function(node: any) {
             if (!node.children) {
-                organizationServer.getListOfParent(node.id).then(function(data: any) {
+                organizationServer.getList(node.id).then(function(data: any) {
                     node.children = node.children || [];
                     // node.children = angular.copy(data.concat(node.children));
                     // organizationData.departmentList = organizationData.departmentList.concat(data);
@@ -163,6 +163,8 @@ module webim {
 
         this.getUserById = function(id: string){
             var arr=this.userList;
+            console.log('#####################');
+            console.log(arr);
             for(var i=0,len=arr.length;i<len;i++){
                 if(arr[i].userId == id){
                     return arr[i];
@@ -257,7 +259,7 @@ module webim {
 
             $http({
                 method: 'get',
-                url: serverUrl+'/user/' + departid + '/department',
+                url: serverUrl+'/departs/' + departid + '/department',
             }).success(function(rep: any) {
                 //此处根据具体返回结构处理
                 defer.resolve(rep.result);
