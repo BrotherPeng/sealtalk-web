@@ -1,33 +1,88 @@
+<div ng-if="item.messageDirection!=1">
 <div ng-switch="::item.panelType">
-  <!-- <div ng-switch-when="104" class="Messages-date"><b class="">2015 年 8 月 6日</b></div> -->
-  <date-message  ng-switch-when="104" date="::item.sendTime"></date-message>
-  <get-more-message ng-switch-when="106" myclick="$parent.$parent.$parent.getMoreMessage()"></get-more-message>
-  <get-history-message ng-switch-when="105" myclick="$parent.$parent.$parent.getHistoryMessage()" ></get-history-message>
-  <div ng-switch-when="2" class="sys-tips"><span ng-bind-html="::item.content|trustHtml"></span></div>
+    <!-- <div ng-switch-when="104" class="Messages-date"><b class="">2015 年 8 月 6日</b></div> -->
+    <date-message ng-switch-when="104" date="::item.sendTime"></date-message>
+    <get-more-message ng-switch-when="106" myclick="$parent.$parent.$parent.getMoreMessage()"></get-more-message>
+    <get-history-message ng-switch-when="105"
+                         myclick="$parent.$parent.$parent.getHistoryMessage()"></get-history-message>
+    <div ng-switch-when="2" class="sys-tips"><span ng-bind-html="::item.content|trustHtml"></span></div>
 
-  <div ng-switch-when="1" class="Message">
-    <div class="Messages-unreadLine"></div>
-     <div>
-         <div class="Message-header ">
-           <div class="img u-isActionable Message-avatar avatar portrait"  ng-hide="::item.imgSrc" ng-click="$parent.$parent.$parent.touserinfo(item.senderUserId)">
-             {{::item.senderUserImgSrc}}
-           </div>
-           <img class="img u-isActionable Message-avatar avatar" ng-show="::item.imgSrc" ng-click="$parent.$parent.$parent.touserinfo(item.senderUserId)"
-             ng-src="{{::item.imgSrc}}" alt="">
-             <div class="Message-author clearfix">
-                 <a class="author u-isActionable"  ng-click="$parent.$parent.$parent.touserinfo(item.senderUserId)">{{::item.senderUserName}}</a>
-             </div>
-         </div>
-     </div>
-     <div class="Message-body" >
-         <div  ng-switch="::item.messageType">
-           <text-message item="::item.content" message="item" ng-switch-when="TextMessage"></text-message>
-           <image-message item="::item.content" ng-switch-when="ImageMessage"></image-message>
-           <voice-message item="::item.content" ng-switch-when="VoiceMessage"></voice-message>
-           <richcontent-message item="::item.content" ng-switch-when="RichContentMessage"></richcontent-message>
-           <location-message  item="::item.content" ng-switch-when="LocationMessage"></location-message>
-           <file-message  item="::item.content" message="item" ng-switch-when="FileMessage"></file-message>
-         </div>
-     </div>
-  </div>
+    <div ng-switch-when="1" class="Message"><!-- && item.messageDirection!=1-->
+        <div class="Messages-unreadLine"></div>
+        <div>
+            <div class="Message-header ">
+                <div class="img u-isActionable Message-avatar avatar portrait" ng-hide="::item.imgSrc"
+                     ng-click="$parent.$parent.$parent.touserinfo(item.senderUserId)">
+                    {{::item.senderUserImgSrc}}
+                </div>
+                <img class="img u-isActionable Message-avatar avatar" ng-show="::item.imgSrc"
+                     ng-click="$parent.$parent.$parent.touserinfo(item.senderUserId)"
+                     ng-src="{{::item.imgSrc}}" alt="">
+                <div class="Message-author clearfix">
+                    <a class="author u-isActionable" ng-click="$parent.$parent.$parent.touserinfo(item.senderUserId)">{{::item.senderUserName}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="Message-body">
+            <div ng-switch="::item.messageType">
+                <text-message item="::item.content" message="item" ng-switch-when="TextMessage"></text-message>
+                <image-message item="::item.content" ng-switch-when="ImageMessage"></image-message>
+                <voice-message item="::item.content" ng-switch-when="VoiceMessage"></voice-message>
+                <richcontent-message item="::item.content" ng-switch-when="RichContentMessage"></richcontent-message>
+                <location-message item="::item.content" ng-switch-when="LocationMessage"></location-message>
+                <file-message item="::item.content" message="item" ng-switch-when="FileMessage"></file-message>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div ng-if="item.messageDirection==1">
+<div ng-switch="::item.panelType">
+    <!-- <div ng-switch-when="104" class="Messages-date"><b class="">2015 年 8 月 6日</b></div> -->
+    <date-message ng-switch-when="104" date="::item.sendTime"></date-message>
+    <get-more-message ng-switch-when="106" myclick="$parent.$parent.$parent.getMoreMessage()"></get-more-message>
+    <get-history-message ng-switch-when="105"
+                         myclick="$parent.$parent.$parent.getHistoryMessage()"></get-history-message>
+    <div ng-switch-when="2" class="sys-tips"><span ng-bind-html="::item.content|trustHtml"></span></div>
+
+    <div ng-switch-when="1" class="Message" style=" float: right;width: 90%;"><!-- && item.messageDirection!=1-->
+        <div class="Messages-unreadLine"></div>
+        <div>
+            <div class="Message-header ">
+
+                <div class="img u-isActionable Message-avatar avatar portrait"
+                      ng-hide="::item.imgSrc"
+                     ng-click="$parent.$parent.$parent.touserinfo(item.senderUserId)">
+                    {{::item.senderUserImgSrc}}
+                </div>
+                <img class="img u-isActionable Message-avatar avatar" style="position: absolute; right: 0px;"
+                     ng-show="::item.imgSrc" ng-click="$parent.$parent.$parent.touserinfo(item.senderUserId)"
+                     ng-src="{{::item.imgSrc}}" alt="">
+                <div class="Message-author clearfix" style="width: 100%">
+                    <a class="author u-isActionable" style="position: absolute;right: 50px;top: -5px;"
+                       ng-click="$parent.$parent.$parent.touserinfo(item.senderUserId)">{{::item.senderUserName}}</a>
+                </div>
+
+            </div>
+        </div>
+        <div class="Message-body" style="float: right; margin-right: 50px;">
+            <div ng-switch="::item.messageType">
+                <text-message  item="::item.content"
+                              message="item" ng-switch-when="TextMessage"></text-message>
+                <image-message  item="::item.content"
+                               ng-switch-when="ImageMessage"></image-message>
+                <voice-message  item="::item.content"
+                               ng-switch-when="VoiceMessage"></voice-message>
+                <richcontent-message  item="::item.content"
+                                     ng-switch-when="RichContentMessage"></richcontent-message>
+                <location-message item="::item.content"
+                                  ng-switch-when="LocationMessage"></location-message>
+                <file-message  item="::item.content"
+                              message="item" ng-switch-when="FileMessage"></file-message>
+            </div>
+        </div>
+    </div>
+</div>
+    <div style="clear: both"></div>
 </div>

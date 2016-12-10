@@ -856,15 +856,17 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                                             var groupid = data.targetId;
                                             var groupname = mainDataServer.contactsList.getGroupById(groupid) ? mainDataServer.contactsList.getGroupById(groupid).name : groupid;
                                             var operator = isself ? "你" : groupNotification.data.data.operatorNickname;
-                                            groupNotification.data.data.targetGroupName = RongIMLib.RongIMEmoji.calculateUTF(groupNotification.data.data.targetGroupName);
-                                            var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + ' 修改群名称为' + groupNotification.data.data.targetGroupName);
+                                            console.log('groupNotification.data____________________________');
+                                            console.log(groupNotification.data.targetGroupName);
+                                            groupNotification.data.targetGroupName = RongIMLib.RongIMEmoji.calculateUTF(groupNotification.data.targetGroupName);
+                                            var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + ' 修改群名称为' + groupNotification.data.targetGroupName);
                                             mainDataServer.notification.addNotification(temporarynotifi);
                                             if (!$state.is("main.notification")) {
                                                 mainDataServer.notification.hasNewNotification = true;
                                             }
                                             var group = new webimmodel.Group({
                                                 id: groupid,
-                                                name: groupNotification.data.data.targetGroupName,
+                                                name: groupNotification.data.targetGroupName,
                                                 imgSrc: undefined,
                                                 upperlimit: undefined,
                                                 fact: undefined,
@@ -872,11 +874,13 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
                                             });
 
                                             mainDataServer.contactsList.updateGroupInfoById(groupid, group);
-                                            mainDataServer.conversation.updateConversationTitle(webimmodel.conversationType.Group, groupid, groupNotification.data.data.targetGroupName);
+                                            mainDataServer.conversation.updateConversationTitle(webimmodel.conversationType.Group, groupid, groupNotification.data.targetGroupName);
                                             break;
                                         case "Create":
                                             var groupid = data.targetId;
                                             mainServer.group.getById(groupid).success(function(rep) {
+                                                console.log('groupNotification.Create~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                                                console.log(groupNotification.data);
                                                 var operator = isself ? "你" : groupNotification.data.data.operatorNickname;
                                                 var temporarynotifi = new webimmodel.WarningNoticeMessage(operator + "创建了群组");
                                                 mainDataServer.notification.addNotification(temporarynotifi);

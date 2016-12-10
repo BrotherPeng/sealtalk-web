@@ -6,10 +6,12 @@ var account = angular.module("webim.account", ["webim.main.server"]);
 
 account.controller("signinController", ["$scope", "$state", "mainServer", "mainDataServer", "conversationServer", "RongIMSDKServer",
     function($scope: any, $state: angular.ui.IStateService, mainServer: mainServer, mainDataServer: mainDataServer, conversationServer: conversationServer, RongIMSDKServer: RongIMSDKServer) {
+
+
         $scope.user = {
             accountNumber: "",
             passWord: ""
-        }
+        };
 
         $scope.userorpwdIsError = false;
 
@@ -30,6 +32,7 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
         if (RongIMLib.RongIMClient && RongIMLib.RongIMClient.getInstance) {
             try {
                 RongIMSDKServer.logout();
+                localStorage.clear();
                 //清除之前会话列表SDK问题 TODO:SDK2.0 logout时已清除
                 // var carr = RongIMSDKServer.conversationList();
                 // carr.splice(0, carr.length);
@@ -39,9 +42,9 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
 
         }
         $scope.signin = function() {
-            var username1 = localStorage.getItem('username1');
-            alert(username1);
-            localStorage.setItem('username1', $scope.user.accountNumber);
+            // var username1 = localStorage.getItem('username1');
+            // alert(username1);
+
             $scope.formSignin.submitted = true;
             webimutil.CookieHelper.removeCookie("loginuserid");//清除登录状态
             mainDataServer.loginUser = new webimmodel.UserInfo();//清除用户信息
@@ -49,6 +52,8 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
             if ($scope.formSignin.$valid) {
                 mainServer.user.signin($scope.user.accountNumber, "86", $scope.user.passWord).success(function(rep) {
                     if (rep.code === 200) {
+                        localStorage.setItem('username1', $scope.user.accountNumber);
+                        localStorage.setItem('password1', $scope.user.passWord);
                         console.log('~~~~~~~~~~~~~~~~~');
                         console.log(rep);
                         console.log('~~~~~~~~~~~~~~~~~');
@@ -76,6 +81,7 @@ account.controller("signinController", ["$scope", "$state", "mainServer", "mainD
                 });
             }
         }
+
     }])
 
 account.controller("signupController", ["$scope", "$interval", "$state", "mainServer",

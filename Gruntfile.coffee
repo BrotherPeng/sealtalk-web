@@ -43,6 +43,7 @@ module.exports = (grunt) ->
           {
             context: '/sgai/i3'
             host: '220.194.33.92'
+#            host: '220.194.33.119'
             port: 80
             https: false
             rewriteHost: true
@@ -382,7 +383,7 @@ module.exports = (grunt) ->
     'connect:server'
     # 'filerev'
     # 'usemin'
-#    'clean:map'
+    'clean:map'
     'watch:build'
   ]
 

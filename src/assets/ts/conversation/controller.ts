@@ -455,7 +455,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                     //更新会话列表
                     mainDataServer.conversation.updateConversationDetail(webimmodel.conversationType.Group, targetId, rep.result.name, rep.result.portraitUri);
 
-                    mainServer.group.getGroupMember(targetId).success(function (rep2) {
+                    /*mainServer.group.getGroupMember(targetId).success(function (rep2) {
                         var members = rep2.result;
                         if(members){
                           var item = mainDataServer.contactsList.getGroupById(targetId);
@@ -474,7 +474,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                             mainDataServer.contactsList.addGroupMember(targetId, member);
                         }
                         initAtList();
-                    });
+                    });*/
                   // }
               }).error(function () {
               });
@@ -852,6 +852,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         RongIMLib.RongUploadLib.getFileUrl = function (info: any,callback: any) {
             var str =  info.rc_url.path;
             var url = appconfig.getUploadFile() + str;
+            // var url = 'http://220.194.33.118:8080/' + str;
             callback.onSuccess(url);
         };
         RongIMLib.RongUploadLib.uploadAjax = function (base64: string, callback:any) {

@@ -17,6 +17,7 @@ webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvi
         var authUrl = window["__sealtalk_config"]["authUrl"];
         var appkey = window["__sealtalk_config"]["appkey"];
         var deptUrl = window["__sealtalk_config"]["deptUrl"];
+        var fileUrl = window["__sealtalk_config"]["fileUrl"];
 
         $provide.provider("appconfig", function() {
             this.$get = function() {
@@ -32,6 +33,9 @@ webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvi
                     },
                     getDeptUrl: function() {
                         return deptUrl;
+                    },
+                    getUploadFile: function() {
+                        return fileUrl;
                     }
                 }
             }
@@ -43,12 +47,40 @@ webimApp.config(["$provide", "$stateProvider", "$urlRouterProvider", "$httpProvi
 
         $urlRouterProvider.when("/main", ["$state", "mainDataServer", "mainServer", function($state: angular.ui.IStateService, mainDataServer: mainDataServer, mainServer: mainServer) {
             var userid = webimutil.CookieHelper.getCookie("loginuserid");
+            var username1 = localStorage.getItem('username1');
+            var password1 = localStorage.getItem('password1');
             if (userid) {
                 if (!$state.is("main")) {
                     $state.go("main")
                 }
                 return;
-            } else {
+            } else if(username1){
+                console.log('**********************');
+                console.log(username1);
+                mainServer.user.signin(username1, "86", password1).success(function(rep) {
+                    if (rep.code === 200) {
+                        console.log('~~~~~~~~~~~~~~~~~');
+                        console.log(rep);
+                        console.log('~~~~~~~~~~~~~~~~~');
+                        // 登录账户
+                        mainDataServer.loginUser.id = rep.result.id;
+                        mainDataServer.loginUser.token = rep.result.token;
+                        mainDataServer.loginUser.phone = username1;
+                        var exdate = new Date();
+                        exdate.setDate(exdate.getDate() + 30);
+                        webimutil.CookieHelper.setCookie("loginuserid", rep.result.id, exdate.toGMTString());
+                        webimutil.CookieHelper.setCookie("loginusertoken", rep.result.token, exdate.toGMTString());
+                        webimutil.CookieHelper.setCookie("loginusermobile", username1, exdate.toGMTString());
+                        if (!$state.is("main")) {
+                            $state.go("main")
+                        }
+                    }
+                }).error(function(error, code) {
+                    if (code == 400) {
+                        webimutil.Helper.alertMessage.error("无效的用户名", 2);
+                    }
+                });
+            }else {
                 $state.go("account.signin");
                 // mainServer.user.logout().success(function () {
                 //     webimutil.CookieHelper.removeCookie("loginuserid");

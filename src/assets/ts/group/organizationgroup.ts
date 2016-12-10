@@ -176,6 +176,7 @@ module webim {
             }
 
             $scope.createGroup = function() {
+                console.log('~~~~~~~~~~~~~~~~~~createGroup')
                 var memberIds = $scope.groupMember.map(function(item: any) {
                     return item.id;
                 });
@@ -190,15 +191,20 @@ module webim {
                 }
 
                 mainServer.group.create($scope.groupname, memberIds).then(function(rep: any) {
+                    console.log(rep);
+                    rep = rep.data;
                     if (rep.code == 200) {
+                        console.log('rep.code == 200');
                         var group = new webimmodel.Group({
                             id: rep.result.id,
-                            name: $scope.idorname,
+                            // name: $scope.idorname,
+                            name: $scope.groupname,
                             imgSrc: "",
                             upperlimit: 500,
                             fact: 1,
                             creater: mainDataServer.loginUser.id
                         });
+                        console.log(group);
                         mainDataServer.contactsList.addGroup(group);
                         //1.添加群成员2.添加自己
                         mainDataServer.contactsList.addGroupMember(group.id, new webimmodel.Member({

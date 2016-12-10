@@ -1755,7 +1755,7 @@ var RongIMLib;
                 cookieValidity: 1,
                 protocol: protocol,
                 openMp: true,
-                isPrivate: true,
+                isPrivate: false,
                 postImageUrl: protocol + 'upload.qiniu.com/putb64/-1',
                 fileServer: protocol + 'upload.qiniu.com',
                 fileUploadURL: protocol + 'cdn.ronghub.com/plupload.min.js',

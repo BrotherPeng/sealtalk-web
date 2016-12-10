@@ -71,7 +71,7 @@ mainServer.factory("mainServer", ["$http", "$q", "appconfig", function($http: an
           data: {
             j_username: phone,
             j_password: password,
-            j_ecode: 'sgai'
+            j_ecode: 'sgjt'
           }
         })
       },
@@ -368,6 +368,8 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
             } else {
               (function(id: string, conv: webimmodel.Conversation, listi: any) {
                 mainServer.group.getById(id).success(function(rep) {
+                  console.log('~~~~~~~~~~~~~~~~~~~~~~~~');
+                  console.log(rep.result);
                   listi.conversationTitle = rep.result.name;
                   conv.title = rep.result.name;
                   var obj = webimutil.ChineseCharacter.convertToABC(rep.result.name);
@@ -405,8 +407,10 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
                 conversationitem.lastMsg = member.name + "：" + conversationitem.lastMsg;
               } else {
                 (function(id: string, conv: webimmodel.Conversation) {
-                  mainServer.user.getInfo(id).success(function(user) {
-                    conv.lastMsg = user.result.nickname + "：" + conversationitem.lastMsg;
+                  // mainServer.user.getInfo(id).success(function(user) {
+                  mainServer.user.getDeptUserInfo(id).success(function(user) {
+                    // conv.lastMsg = user.result.nickname + "：" + conversationitem.lastMsg;
+                    conv.lastMsg = user.result.user.nickname + "：" + conversationitem.lastMsg;
                   });
                 } (item.latestMessage.senderUserId, conversationitem))
               }
@@ -454,14 +458,19 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
             }
             else {
               (function(id: string, conv: webimmodel.Conversation) {
-                mainServer.user.getInfo(id).success(function(rep) {
+                // mainServer.user.getInfo(id).success(function(rep) {
+                mainServer.user.getDeptUserInfo(id).success(function(rep) {
+                    console.log('_________________');
+                    console.log(rep.result.user);
+                    console.log('_________________');
                   // conv.title = rep.result.nickname + "(非好友)";
-                  conv.title = isself ? rep.result.nickname : rep.result.nickname + "(非好友)";
-                  conv.firstchar = webimutil.ChineseCharacter.getPortraitChar(rep.result.nickname);
-                  var obj = webimutil.ChineseCharacter.convertToABC(rep.result.nickname);
-                  var f = webimutil.ChineseCharacter.getPortraitChar(rep.result.nickname);
+                  // conv.title = isself ? rep.result.nickname : rep.result.nickname + "(非好友)";
+                  conv.title = isself ? rep.result.user.nickname : rep.result.user.nickname;// + "(非好友)";
+                  conv.firstchar = webimutil.ChineseCharacter.getPortraitChar(rep.result.user.nickname);
+                  var obj = webimutil.ChineseCharacter.convertToABC(rep.result.user.nickname);
+                  var f = webimutil.ChineseCharacter.getPortraitChar(rep.result.user.nickname);
                   conv.setpinying({ pinyin: obj.pinyin, everychar: obj.first, firstchar: f });
-                  conv.imgSrc = rep.result.portraitUri;
+                  conv.imgSrc = rep.result.user.portraitUri;
 
                   var _friend = new webimmodel.Friend({
                     id: id,
@@ -658,8 +667,10 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
                 console.log('_________________');
                 console.log(rep.result);
               item.title = rep.result.user.nickname;
-              item.firstchar = webimutil.ChineseCharacter.getPortraitChar(rep.result.nickname);
-              item.imgSrc = rep.result.portraitUri;
+              // item.firstchar = webimutil.ChineseCharacter.getPortraitChar(rep.result.nickname);
+              item.firstchar = webimutil.ChineseCharacter.getPortraitChar(rep.result.user.nickname);
+              // item.imgSrc = rep.result.portraitUri;
+              item.imgSrc = rep.result.user.portraitUri;
             }).error(function() {
 
             });
@@ -1411,7 +1422,7 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", "appconfig", function($q: 
     RongIMSDKServer.init = function(appkey: string) {
         console.log('xxxxxxxxxx');
         // RongIMLib.RongIMClient.init(appkey, new RongIMLib.WebSQLDataProvider());
-      if (window.__sealtalk_config.online) {
+      /*if (window.__sealtalk_config.online) {
         if (window.Electron) {
           RongIMLib.RongIMClient.init(appkey, new RongIMLib.VCDataProvider(window.Electron.addon));
           RongIMLib.RongIMVoice.init();
@@ -1423,8 +1434,8 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", "appconfig", function($q: 
           RongIMLib.RongIMEmoji.init();
         }
       }
-      else {
-        if (window.Electron) {
+      else {*/
+        /*if (window.Electron) {
           RongIMLib.RongIMClient.init(appkey, new RongIMLib.VCDataProvider(window.Electron.addon), { navi: "119.254.111.49:9100"});
           RongIMLib.RongIMVoice.init();
           RongIMLib.RongIMEmoji.init();
@@ -1433,9 +1444,19 @@ mainServer.factory("RongIMSDKServer", ["$q", "$http", "appconfig", function($q: 
           RongIMLib.RongIMClient.init(appkey, null, { navi: "119.254.111.49:9100"});
           RongIMLib.RongIMVoice.init();
           RongIMLib.RongIMEmoji.init();
-        }
+        }*/
+      if (window.Electron) {
+        // RongIMLib.RongIMClient.init(appkey, new RongIMLib.VCDataProvider(window.Electron.addon), { navi: '119.254.111.49:9100', fileServer: '220.194.33.118:8080' });
+        RongIMLib.RongIMClient.init(appkey, new RongIMLib.VCDataProvider(window.Electron.addon), { navi: '119.254.111.49:9100', fileServer: '220.194.33.118:8080' });
       }
+      else {
+        // RongIMLib.RongIMClient.init(appkey, null, { navi: '220.194.33.117:80', fileServer: '220.194.33.118:8080' });
+        RongIMLib.RongIMClient.init(appkey, null, { navi: 'nav.cn.ronghub.com', fileServer: '220.194.33.118:8080' });
+      }
+      RongIMLib.RongIMVoice.init();
+      RongIMLib.RongIMEmoji.init();
     }
+    // }
 
 
 

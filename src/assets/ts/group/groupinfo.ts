@@ -29,24 +29,24 @@ groupInfo.controller("groupinfoController", ["$scope", "$rootScope", "$state", "
             //更新会话列表
             mainDataServer.conversation.updateConversationDetail(webimmodel.conversationType.Group, groupid, rep.result.name, rep.result.portraitUri);
 
-            mainServer.group.getGroupMember(groupid).success(function (rep2) {
-                var item = mainDataServer.contactsList.getGroupById(groupid);
-                if (item) {
-                   item.memberList.length = 0;
-                }
-                var members = rep2.result;
-                if(!members){return};
-                for (var j = 0, len = members.length; j < len; j++) {
-                    var member = new webimmodel.Member({
-                        id: members[j].user.id,
-                        name: members[j].user.nickname,
-                        imgSrc: members[j].user.portraitUri,
-                        role: members[j].role,
-                        displayName: members[j].displayName
-                    });
-                    mainDataServer.contactsList.addGroupMember(groupid, member);
-                }
-            });
+            // mainServer.group.getGroupMember(groupid).success(function (rep2) {
+            //     var item = mainDataServer.contactsList.getGroupById(groupid);
+            //     if (item) {
+            //        item.memberList.length = 0;
+            //     }
+            //     var members = rep2.result;
+            //     if(!members){return};
+            //     for (var j = 0, len = members.length; j < len; j++) {
+            //         var member = new webimmodel.Member({
+            //             id: members[j].user.id,
+            //             name: members[j].user.nickname,
+            //             imgSrc: members[j].user.portraitUri,
+            //             role: members[j].role,
+            //             displayName: members[j].displayName
+            //         });
+            //         mainDataServer.contactsList.addGroupMember(groupid, member);
+            //     }
+            // });
 
         }).error(function () {
         });

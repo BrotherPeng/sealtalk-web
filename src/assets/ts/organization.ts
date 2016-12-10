@@ -26,9 +26,14 @@ module webim {
         $scope.toggleNode = function(node: any) {
             if (!node.children) {
                 organizationServer.getList(node.id).then(function(data: any) {
+                    console.log('data.concat~~~~~~~~~~~~~~~~~~~~~~');
+                    console.log(data);
+                    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+
                     node.children = node.children || [];
                     // node.children = angular.copy(data.concat(node.children));
                     // organizationData.departmentList = organizationData.departmentList.concat(data);
+                    if(data == '不存下级组织!')return;
                     node.children = angular.copy(node.children.concat(data));
                     organizationData.departmentList = data.concat(organizationData.departmentList);
                     // node.children = data.person;
@@ -154,6 +159,8 @@ module webim {
 
         this.getDepartmentById = function(id: string){
             var arr=this.departmentList;
+            console.log(arr);
+            console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
             for(var i=0,len=arr.length;i<len;i++){
                 if(arr[i].id == id){
                     return arr[i];
@@ -200,10 +207,10 @@ module webim {
             // id= id||'';
             $http({
                 method: 'get',
-                url: serverUrl + '/departs',
+                url: serverUrl + '/departs/orgParentId/' + id/*,
                 params: {
                     parentid: id
-                }
+                }*/
             }).success(function(rep: any) {
                 //此处根据具体返回结构处理
                 defer.resolve(rep.result);

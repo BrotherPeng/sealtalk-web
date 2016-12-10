@@ -22,6 +22,8 @@ friendinfo.controller("friendinfoController", ["$scope", "$rootScope", "$state",
       }
       var _file = e.target.files[0];
       mainServer.user.getImageToken().success(function(rep) {
+        console.log('~~~~~~~~~~~~getImageToken:');
+        console.log(rep);
         var fd = new FormData();
         fd.append("file", _file);
         fd.append("token", rep.result.token);
@@ -143,25 +145,29 @@ friendinfo.controller("friendinfoController", ["$scope", "$rootScope", "$state",
       $scope.user.mobile = mainDataServer.loginUser.phone;
     }
     else {
-      mainServer.user.getInfo(userid).then(function(rep) {
-
-        var f = new webimmodel.Friend({ id: rep.data.result.id, name: rep.data.result.nickname, imgSrc: rep.data.result.portraitUri });
+      // mainServer.user.getInfo(userid).then(function(rep) {
+      mainServer.user.getDeptUserInfo(userid).then(function(rep) {
+        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~');
+        console.log(rep);
+        var user = rep.data.result.user;
+          console.log(user);
+        var f = new webimmodel.Friend({ id: user.id, name: user.nickname, imgSrc: user.portraitUri });
 
         // f = mainDataServer.contactsList.updateOrAddFriend(f);
         // mainDataServer.conversation.updateConversationDetail(webimmodel.conversationType.Private, userid, rep.data.result.displayName || rep.data.result.nickname, rep.data.result.portraitUri);
-        mainDataServer.conversation.updateConversationDetail(webimmodel.conversationType.Private, userid, rep.data.result.displayName || rep.data.result.nickname, rep.data.result.portraitUri);
+        mainDataServer.conversation.updateConversationDetail(webimmodel.conversationType.Private, userid, rep.data.result.displayName || user.nickname, user.portraitUri);
 
         var _member = new webimmodel.Member({
-          id: rep.data.result.id,
-          name: rep.data.result.nickname,
-          imgSrc: rep.data.result.portraitUri
+          id: user.id,
+          name: user.nickname,
+          imgSrc: user.portraitUri
         });
         mainDataServer.contactsList.updateGroupMember(_member.id, _member);
 
-        $scope.user.id = rep.data.result.id
-        $scope.user.nickName = rep.data.result.nickname
-        $scope.user.portraitUri = rep.data.result.portraitUri;
-        $scope.user.firstchar = webimutil.ChineseCharacter.getPortraitChar(rep.data.result.nickname);
+        $scope.user.id = user.id
+        $scope.user.nickName = user.nickname
+        $scope.user.portraitUri = user.portraitUri;
+        $scope.user.firstchar = webimutil.ChineseCharacter.getPortraitChar(user.nickname);
         setPortrait();
 
 

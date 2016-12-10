@@ -506,7 +506,7 @@ conversationDire.directive("voiceMessage", ["$timeout", function($timeout: angul
     return {
         restrict: "E",
         scope: { item: "=" },
-        template: '<div class="">' +
+        template: '<div style="margin-top: 5px;" class="">' +
         '<div class="Message-audio">' +
         '<span class="Message-entry" style="">' +
         // '<span class="audioBox clearfix " ng-class="{\'animate\':isplaying}" ng-click="play()"><i></i><i></i><i></i></span>'+
@@ -732,7 +732,7 @@ conversationDire.directive("imageMessage", [function() {
   return {
     restrict: "E",
     scope: { item: "=" },
-    template: '<div class="" id={{itemid}}>' +
+    template: '<div style="margin-top: 5px;" class="" id={{itemid}}>' +
     '<div class="Message-img">' +
     '<span id="{{\'rebox_\'+$id}}" class="Message-entry gallery" style="max-height:240px;max-width:240px;border-radius:5px;">' +
     '<a href="{{item.imageUri}}" style="max-height:240px;max-width:240px;display:inline-block;"></a>' +
@@ -857,7 +857,7 @@ conversationDire.directive("richcontentMessage", [function() {
             item: "="
         },
         template: '    <a href="{{item.url}}" target="_blank">' +
-        '<div class="" >' +
+        '<div style="margin-top: 5px;" class="" >' +
         '<div class="Message-image-text">' +
         '<span class="Message-entry" style="">' +
         '<div class="image-textBox">' +
@@ -880,7 +880,7 @@ conversationDire.directive("locationMessage", [function() {
         scope: {
             item: "="
         },
-        template: ' <div class="">' +
+        template: ' <div style="margin-top: 5px;" class="">' +
         '<div class="Message-map">' +
         '<span class="Message-entry" style="">' +
         '<div class="mapBox">' +
@@ -900,7 +900,7 @@ conversationDire.directive("fileMessage", [function() {
           item: "=",
           message: "="
         },
-        template: '<div class="" id="{{message.messageUId || message.messageId}}">' +
+        template: '<div style="margin-top: 5px;" class="" id="{{message.messageUId || message.messageId}}">' +
         '<div class="{{msgStyle}} message_statue_position"></div>' +
         '<div class="upload_file">' +
          '<div class="out_border">' +
