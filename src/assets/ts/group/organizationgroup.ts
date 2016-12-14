@@ -64,6 +64,8 @@ module webim {
 
 
             $scope.search = function(str: string) {
+                console.log('########################');
+                console.log(str);
                 if (str) {
                     if(!$scope.showfriend){
                         searchData.searchOrganization(str).then(function(result: any) {
@@ -193,9 +195,11 @@ module webim {
                 mainServer.group.create($scope.groupname, memberIds).then(function(rep: any) {
                     console.log(rep);
                     rep = rep.data;
+
                     if (rep.code == 200) {
                         console.log('rep.code == 200');
-                        var group = new webimmodel.Group({
+                        var group_id = rep.result.id;
+                        /*var group = new webimmodel.Group({
                             id: rep.result.id,
                             // name: $scope.idorname,
                             name: $scope.groupname,
@@ -221,10 +225,59 @@ module webim {
                                 role: "1"
                             });
                             mainDataServer.contactsList.addGroupMember(group.id, member);
-                        }
+                        }*/
 
-                        webimutil.Helper.alertMessage.success("创建成功！", 2);
-                        $state.go("main.chat", { targetId: group.id, targetType: webimmodel.conversationType.Group });
+                        /*webimutil.Helper.alertMessage.success("创建成功！", 2);
+                        $state.go("main.chat", { targetId: rep.result.id, targetType: webimmodel.conversationType.Group });*/
+                        // $state.go("main.chat", { targetId: group.id, targetType: webimmodel.conversationType.Group });
+
+
+                        //这个地方创建群组后重新获取一下群组的列表
+                        mainServer.user.getMyGroups().success(function(rep) {
+                            var groups = rep.result;
+                            // console.log(groups);
+                            for (var i = 0, len = groups.length; i < len; i++) {
+                                var group = new webimmodel.Group({
+                                    id: groups[i].group.id,
+                                    name: groups[i].group.name,
+                                    imgSrc: groups[i].group.portraitUri,
+                                    upperlimit: 500,
+                                    fact: 1,
+                                    creater: groups[i].group.creatorId
+                                });
+                                mainDataServer.contactsList.addGroup(group);
+                                //获取群成员
+                                !function(groupid: string) {
+                                    mainServer.group.getGroupMember(group.id).success(function(rep) {
+                                        var members = rep.result;
+                                        // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                                        // console.log(rep);
+                                        // console.log(members);
+                                        // console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                                        if(!members){return};
+                                        for (var j = 0, len = members.length; j < len; j++) {
+                                            var member = new webimmodel.Member({
+                                                id: members[j].user.id,
+                                                name: members[j].user.nickname,
+                                                imgSrc: members[j].user.portraitUri,
+                                                role: members[j].role,
+                                                displayName: members[j].displayName
+                                            });
+                                            mainDataServer.contactsList.addGroupMember(groupid, member);
+                                        }
+
+                                        if(group.id == group_id){
+                                            webimutil.Helper.alertMessage.success("创建成功！", 2);
+                                            $state.go("main.chat", { targetId: group_id, targetType: webimmodel.conversationType.Group });
+                                        }
+                                    });
+                                } (group.id);
+
+
+                            }
+                        }).error(function(err) {
+
+                        })
 
                     } else if (rep.code == 1000) {
                         //群组超过上限

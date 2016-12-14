@@ -144,6 +144,8 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
             $scope.searchControl.clear();
         });
         $scope.search = function(content: string) {
+            console.log('```````````````````````````````');
+            console.log(content);
             if (content.trim()) {
                 // var friendList = [].concat.apply([], mainDataServer.contactsList.subgroupList.map(function(item) { return item.list }));
                 // $scope.searchList.friendList = mainDataServer.contactsList.find(content, friendList) || [];
@@ -302,34 +304,83 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         //初始化好友数据   邀请通知一起通过好友关系表获取解析
         mainDataServer.notification.notificationList = [];
         mainDataServer.contactsList.subgroupList = [];
-        /*mainServer.friend.getAll().success(function(rep) {
-            var arr = rep.result;
-            for (let i = 0, len = arr.length; i < len; i++) {
-                switch (arr[i].status) {
-                    case webimmodel.FriendStatus.Agreed:
-                        mainDataServer.contactsList.addFriend(new webimmodel.Friend({
-                            id: arr[i].user.id,
-                            name: arr[i].displayName || arr[i].user.nickname,
-                            imgSrc: arr[i].user.portraitUri,
-                        }));
-                        break;
-                    case webimmodel.FriendStatus.Requested:
-                        mainDataServer.notification.addNotification(new webimmodel.NotificationFriend({
-                            id: arr[i].user.id,
-                            name: arr[i].user.nickname,
-                            portraitUri: arr[i].user.portraitUri,
-                            status: arr[i].status,
-                            content: arr[i].message,
-                            timestamp: (new Date(arr[i].updatedAt)).getTime()
-                        }));
-                        break;
-                }
-            }
+        var deptMembers = localStorage.getItem('deptMembers');
+        var deptVersion = localStorage.getItem('deptVersion') ? localStorage.getItem('deptVersion') : '0';
 
-            mainDataServer.notification._sort();
-        }).error(function(e) {
-            console.log(e);
-        })*/
+        // console.log(deptMembers + '~~deptMembers');
+        deptMembers = deptMembers ? JSON.parse(deptMembers) : [];
+
+            mainServer.friend.getAll(deptVersion).success(function(rep) {
+                var arr = rep.result.deptMembers;
+                // if(arr){
+                    localStorage.setItem('deptVersion', rep.result.version); //设置当前通讯录版本
+                    console.log('***************************');
+
+                    var hasMember = false;
+                   if(deptVersion == '0' && arr.length > 0){ //初次加载
+                        for (let i = 0, len = arr.length; i < len; i++) {
+                            /*switch (arr[i].status) {
+                             case webimmodel.FriendStatus.Agreed:*/
+                            mainDataServer.contactsList.addFriend(new webimmodel.Friend({
+                                id: arr[i].user.id,
+                                name: arr[i].displayName || arr[i].user.nickname,
+                                imgSrc: arr[i].user.portraitUri,
+                            }));
+                            /*break;
+                             case webimmodel.FriendStatus.Requested:
+                             mainDataServer.notification.addNotification(new webimmodel.NotificationFriend({
+                             id: arr[i].user.id,
+                             name: arr[i].user.nickname,
+                             portraitUri: arr[i].user.portraitUri,
+                             status: arr[i].status,
+                             content: arr[i].message,
+                             timestamp: (new Date(arr[i].updatedAt)).getTime()
+                             }));
+                             break;
+                             }*/
+                        }
+                       localStorage.setItem('deptMembers', JSON.stringify(arr)); //缓存通讯录
+                    }else if(deptMembers.length > 0){ //有数据
+                       console.log('__________________');
+                       if(arr){ //有数据更新
+                           console.log('增量更新__________________');
+                           for(let j = 0; j < arr.length; j++){ //查询出的通讯录数据
+                               for (let i = 0, len = deptMembers.length; i < len; i++) { //循环缓存的通讯录
+                                   if(arr[j].userId == deptMembers[i].userId){ //相等的话判断
+                                       hasMember = true; //标记存在
+                                       if(arr[j].user.status == 'REMOVED'){ //是否为已删除
+                                           deptMembers.splice(i, 1); //删除这条数据
+                                       }else{
+                                           deptMembers[i] = arr[j]; //更新当前缓存的此条数据
+
+                                       }
+                                   }
+                               }
+                               if(!hasMember){ //不存在这个用户
+                                   deptMembers.push(arr[j]);
+                               }else{
+                                   hasMember = false;
+                               }
+                           }
+                       }
+
+                       for (let i = 0, len = deptMembers.length; i < len; i++) {
+                           mainDataServer.contactsList.addFriend(new webimmodel.Friend({
+                               id: deptMembers[i].user.id,
+                               name: deptMembers[i].displayName || deptMembers[i].user.nickname,
+                               imgSrc: deptMembers[i].user.portraitUri,
+                           }));
+                       }
+
+                       localStorage.setItem('deptMembers', JSON.stringify(deptMembers)); //缓存通讯录
+                    }
+
+                    // mainDataServer.notification._sort();
+                // }
+            }).error(function(e) {
+                console.log(e);
+            })
+
 
         //初始化黑名单数据
         mainDataServer.blackList.list = [];
@@ -350,7 +401,7 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
         mainDataServer.contactsList.groupList = [];
         mainServer.user.getMyGroups().success(function(rep) {
             var groups = rep.result;
-            console.log(groups);
+            // console.log(groups);
             for (var i = 0, len = groups.length; i < len; i++) {
                 var group = new webimmodel.Group({
                     id: groups[i].group.id,

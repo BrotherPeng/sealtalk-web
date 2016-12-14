@@ -230,11 +230,13 @@ mainDire.directive("searchInput", ["$timeout", function($timeout: angular.ITimeo
             var _timeout: angular.IPromise<any>;
 
             scope.$watch("content", function(newVal: string, oldVal: string) {
+                // console.log(newVal);
                 if (newVal === oldVal)
                     return;
                 $timeout.cancel(_timeout);
                 _timeout = $timeout(function() {
                     scope.search({ content: scope.content });
+                    console.log(scope.content + '===================');
                 }, scope.delayTime);
             })
 

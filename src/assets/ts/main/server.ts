@@ -207,10 +207,11 @@ mainServer.factory("mainServer", ["$http", "$q", "appconfig", function($http: an
           }
         });
       },
-      getAll: function() {
+      getAll: function(version: string) {
         return $http({
           method: "get",
-          url: serverBaseUrl + "/friendship/all",
+          // url: serverBaseUrl + "/friendship/all",
+          url: serverDeptUrl + '/user/sync/' + version,
         });
       },
       agree: function(friendId: string) {
@@ -243,7 +244,8 @@ mainServer.factory("mainServer", ["$http", "$q", "appconfig", function($http: an
       getProfile: function(id: string) {
         return $http({
           method: "get",
-          url: serverBaseUrl + "/friendship/" + id + "/profile",
+          url: serverDeptUrl + '/user/' + id + '/department'
+          // url: serverBaseUrl + "/friendship/" + id + "/profile",
         });
       },
       setDisplayName: function(friendId: string, displayName: string) {
@@ -1107,6 +1109,9 @@ mainServer.factory("mainDataServer", ["$q", "RongIMSDKServer", "mainServer", fun
       return null;
     },
     addFriend: function(friend: webimmodel.Friend) {
+        // console.log('addFriend----------------------');
+        // console.log(friend);
+        // console.log('-------------------------------');
       var obj = webimutil.ChineseCharacter.convertToABC(friend.name);
       var f = webimutil.ChineseCharacter.getPortraitChar(friend.name);
       friend.setpinying({ pinyin: obj.pinyin, everychar: obj.first, firstchar: f });
@@ -2046,7 +2051,7 @@ interface mainServer {
     setPortraitUri(uri: string): angular.IHttpPromise<any>
   }
   friend: {
-    getAll(): angular.IHttpPromise<any>
+    getAll(version: string): angular.IHttpPromise<any>
     agree(friendId: string): angular.IHttpPromise<any>
     invite(friendId: number, message: string): angular.IHttpPromise<any>
     ignore(friendId: string): angular.IHttpPromise<any>

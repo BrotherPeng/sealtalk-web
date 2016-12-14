@@ -24,7 +24,12 @@ groupAddMember.controller("groupaddmemberController", ["$scope", "$state", "$sta
             var rawFriendList = webimutil.Helper.cloneObject(friendList);
             $scope.friendList = webimutil.Helper.cloneObject(friendList);
 
+            console.log('$scope.friendList~~~~~~~~~~~~~~~~~~~~~~~~~');
+            console.log($scope.friendList);
+
             $scope.searchfriend = function(str: string) {
+                console.log('搜索好友~~~~~~~~~~~~~~~');
+                console.log(str);
                 if (str == "") {
                     $scope.friendList.length = 0;
                     $scope.friendList = webimutil.Helper.cloneObject(rawFriendList);
@@ -47,6 +52,9 @@ groupAddMember.controller("groupaddmemberController", ["$scope", "$state", "$sta
                     }
                 });
 
+                console.log('==========================');
+                console.log(members);
+                console.log('==========================');
                 if (membersid.length < 1) {
                     webimutil.Helper.alertMessage.error("至少要有1个群成员", 2);
                     return;
@@ -84,6 +92,8 @@ groupAddMember.controller("groupaddmemberController", ["$scope", "$state", "$sta
                             mainDataServer.contactsList.addGroupMember(group.id, member);
                         }
 
+                        console.log('create group 》》》》》》》》');
+                        console.log(members);
                         members = undefined;
                         membersid = undefined;
                         webimutil.Helper.alertMessage.success("创建成功！", 2);
@@ -120,6 +130,7 @@ groupAddMember.controller("groupaddmemberController", ["$scope", "$state", "$sta
             //修改群组
 
             var friendList = [].concat.apply([], mainDataServer.contactsList.subgroupList.map(function(item) { return item.list }));
+            // console.log(friendList);
             var memberList = mainDataServer.contactsList.getGroupById($scope.idorname).memberList;
 
             //排除已经在群里的用户
@@ -132,11 +143,14 @@ groupAddMember.controller("groupaddmemberController", ["$scope", "$state", "$sta
             })
 
             var rawFriendList = webimutil.Helper.cloneObject(friendList);
-            $scope.friendList = webimutil.Helper.cloneObject(friendList);
+            // $scope.friendList = webimutil.Helper.cloneObject(friendList);
 
             $scope.searchfriend = function(str: string) {
-                if (str == "") {
-                    $scope.friendList = webimutil.Helper.cloneObject(rawFriendList);
+                console.log('searchfriend~~~~~~~~~~~~~~~');
+                console.log(str);
+                if (str == "") { //通讯录用户太多不显示
+                    $scope.friendList = [];
+                    // $scope.friendList = webimutil.Helper.cloneObject(rawFriendList);
                 } else {
                     var searchList = mainDataServer.contactsList.find(str, rawFriendList);
                     $scope.friendList = webimutil.Helper.cloneObject(searchList);

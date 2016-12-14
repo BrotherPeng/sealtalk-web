@@ -30,6 +30,8 @@ groupDelMember.controller("groupdelmemberController", ["$scope", "$state", "$sta
         $scope.friendList = webimutil.Helper.cloneObject(friendList);
 
         $scope.searchfriend = function(str: string) {
+            console.log('查询要删除的用户~~~~~~~~~~~~');
+            console.log(str);
             if (str == "") {
                 $scope.friendList = webimutil.Helper.cloneObject(rawFriendList);
             } else {

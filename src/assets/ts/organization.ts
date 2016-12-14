@@ -33,7 +33,11 @@ module webim {
                     node.children = node.children || [];
                     // node.children = angular.copy(data.concat(node.children));
                     // organizationData.departmentList = organizationData.departmentList.concat(data);
-                    if(data == '不存下级组织!')return;
+                    console.log(data instanceof Array);
+                    if(!(data instanceof Array)){
+                        console.log(data instanceof Array);
+                        return;
+                    }
                     node.children = angular.copy(node.children.concat(data));
                     organizationData.departmentList = data.concat(organizationData.departmentList);
                     // node.children = data.person;
@@ -41,6 +45,10 @@ module webim {
                 });
                 organizationServer.getUserList(node.id).then(function(data: any) {
                     node.children = node.children || [];
+                    if(!(data instanceof Array)){
+                        console.log(data instanceof Array);
+                        return;
+                    }
                     // node.children = angular.copy(node.children.concat(organizationData.userList));
                     // organizationData.userList = organizationData.userList.concat(data);
                     node.children = angular.copy(data.concat(node.children));
@@ -193,7 +201,7 @@ module webim {
         this.getList = function(id: string) {
 
             var defer = $q.defer();
-
+            id = id ? id : '0';
             //此处请求示例数据，正式请修改 url 和返回数据。--获取组织结构
             // $http({
             //     method: 'get',

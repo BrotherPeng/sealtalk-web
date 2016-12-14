@@ -49,6 +49,13 @@ module.exports = (grunt) ->
             rewriteHost: true
           },
           {
+            context: '/webim/int-e9C14/113A_085'
+            host: '220.194.33.92'
+            port: 80
+            https: false
+            rewriteHost: true
+          },
+          {
             context: '/defaultroot/rongCloudServelt'
             host: '220.194.33.92'
             port: 7001
@@ -397,6 +404,8 @@ module.exports = (grunt) ->
     'uglify:release'
     'filerev'
     'usemin'
+    'setupProxies:server'
+    'connect:server'
   ]
 
   grunt.registerTask 'test', [
